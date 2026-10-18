@@ -7,7 +7,7 @@ MINECRAFT="1.20.1"
 FORGE="47.4.10"
 NAME="MCA-Ultimate-Life-Friends-1.20.1.mrpack"
 BASE="https://api.modrinth.com/v2"
-CORE=["minecraft-comes-alive-reborn","mca-conversations","mca-quests","townstead","architectury-api","capitals-a-monarchy-mod-for-mca-reborn","paxi"]
+CORE=["minecraft-comes-alive-reborn","mca-conversations","mca-quests","townstead","architectury-api","patchouli","geckolib","capitals-a-monarchy-mod-for-mca-reborn","paxi"]
 EXTRAS=[
  "farmers-delight","handcrafted","supplementaries","serene-seasons","waystones","jade","jei",
  "xaeros-minimap","xaeros-world-map","embeddium","bountiful","ftb-quests","ftb-library","ftb-teams",
