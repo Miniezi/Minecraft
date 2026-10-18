@@ -1,40 +1,69 @@
-# MRPACK Builder — Minecraft 1.20.1 Forge
+# MRPACK Builder — MCA Ultimate Village (Forge 1.20.1)
 
-**Этот репозиторий содержит СБОРЩИК (генератор) файлов .mrpack, а НЕ готовую Minecraft-сборку.**
+**Это исходники СБОРЩИКА MRPACK (генератора), а не готовая вручную протестированная сборка.**
+**This repository is an MRPACK BUILDER, not a prepackaged/tested modpack.**
 
-The project is a **MRPACK BUILDER**, not a packaged, tested modpack. The generator downloads release metadata (not JARs), assembles SHA-verified references to Modrinth-hosted files, and writes a Prism Launcher-importable `.mrpack` manifest.
+This project creates a Prism Launcher-compatible `.mrpack`, resolving real JAR URLs and SHA1/SHA512 hashes at build time. GitHub Actions packages the **generated output** separately as a downloadable artifact. Third-party JARs are not committed.
 
-## How to use
-- Python 3.10+ and internet access: `python build_mrpack.py`
-- Optional: `python build_mrpack.py --lean` or `--strict-extras`
-- GitHub Actions → **Build MRPACK Builder Output** → Run workflow, branch `minecraft`; download the generated MRPACK artifact.
-- In Prism Launcher: **Add Instance → Import** the generated `.mrpack`.
-- All friends should import the **same** resulting file, not independently rebuild against different current versions.
-- Dedicated Forge 47.4.10 Minecraft 1.20.1 server (Java 17): run `python install_server_mods.py generated.mrpack /path/to/forge/server`. Forge itself must be installed separately.
+## Target & purpose
 
-## Design
-- Core: MCA Reborn, MCA Conversations, MCA Quests, Townstead, Architectury API.
-- Extras: farming, building, seasons, maps and optional client optimisation.
-- Modrinth API is queried **when building**. Version numbers and hashes are taken from live responses, not fabricated.
-- Optional mods missing from Modrinth may be skipped (shown in build report).
-- CurseForge-only MCA Reputation / Crime are not silently bundled.
-- Client-only files must be excluded from the dedicated server.
-- Generated pack and multiplayer have **not been tested in-game**. Successful CI proves only manifest generation, not mod compatibility.
+- Minecraft Java **1.20.1**, **Forge 47.4.10**, **Java 17**
+- 32 GB host RAM: start with 10 GB allocated to the client.
+- The intended gameplay revolves around MCA villagers, marriage and children, conversations, reputation, crime, noble families, and co-op village projects.
+- Core integrations: MCA Reborn 7.6.26, MCA Conversations, MCA Quests, Townstead 0.7.6, MCA Capitals (pinned to a MCA 7.6.26-compatible build), MCA Crime and MCA Reputation.
+- Extra mods: bounty boards, food, farm/housing, building blocks, Create and village facilities, mapping and performance.
+- **Three author-created co-op village projects in Russian:** communal granary, night watch and village festival. These are bundled as a Paxi datapack in every newly created world.
+
+## How to build in GitHub
+
+1. Open Actions → **Build MRPACK Builder Output**.
+2. Select branch **`mrpack-builder`**, then click **Run workflow**.
+3. Download artifact `mrpack-builder-output`.
+4. Extract `MCA-Ultimate-Life-Friends-1.20.1.mrpack` and import in Prism Launcher via Add Instance → Import.
+5. Share the **identical** generated `.mrpack` with friends. Do not build independently on different days because external releases can change.
+
+Alternatively, with Python 3.10+ and internet access:
+
+```bash
+python scripts/translate_quests.py --seconds 365
+python build_mrpack.py
+# or a smaller experimental preset:
+python build_mrpack.py --lean
+```
+
+`--strict-extras` makes missing optional mods fail the build. The `.mod-list.txt` report records resolved versions and skipped mods.
+
+## Russian localization coverage
+
+- `localization/mcaquests_ru_ru.json`: **150 manually translated UI and objectives strings**; manual translations win.
+- `scripts/translate_quests.py`: best-effort machine translation of MCA Quests' English quest titles, dialogue, shared projects and situations, preserving/verifying formatting placeholders.
+- The workflow embeds any validated generated keys into `overrides/resourcepacks/MCA-Quests-Russian-UI.zip` and enables it in Prism's new instance with `options.txt`.
+- Machine translation is **not proofread**, and untranslated keys continue to display in English. This is **not a complete Russian translation** of every integrated mod.
+
+## Dedicated server and co-op
+
+Install a dedicated Forge 47.4.10 server for Minecraft 1.20.1 (Java 17). Install matching mods with:
+
+```bash
+python install_server_mods.py MCA-Ultimate-Life-Friends-1.20.1.mrpack /path/to/forge-server
+```
+
+The server installer copies only server-compatible JARs and the Paxi village datapack from the same `.mrpack`; it does **not** install Forge, generate launch scripts, or start the Minecraft server. Remove old duplicate JARs before starting and back up the world before updates.
+
+Use `/datapack list` to inspect Paxi's community datapack, `/mcaquests project list` and `/mcaquests project validate` to inspect shared projects, and `/mcaquests validate` for quest definitions. MCA Quests supports shared project progress server-side; different players can contribute to the same village project.
 
 ## For other AI agents
-1. This is a Python **generator** for .mrpack; don't describe the repo or source zip as a completed pack.
-2. Modify **branch `minecraft` only** unless the owner explicitly says otherwise.
-3. Entry points: `build_mrpack.py` and `install_server_mods.py`. CI: `.github/workflows/build-mrpack.yml`.
-4. Preserve Modrinth pack format, real hashes, dependency checks, and client/server distinctions.
-5. Do not commit third-party JARs without redistribution permission.
-6. Add real multiplayer integration tests before calling output fully compatible.
 
-## Expanded village-oriented preset (October 2026)
+1. This is **MRPACK BUILDER source code**. Distinguish the source repository from the output `.mrpack`. Do not describe output as multiplayer-tested unless two-client/one-dedicated-server testing actually occurred.
+2. Work only in Git branch **`mrpack-builder`**, unless the repository owner authorizes another branch.
+3. Entry point: `build_mrpack.py`. Translation: `scripts/translate_quests.py`. Server install: `install_server_mods.py`. CI: `.github/workflows/build-mrpack.yml`.
+4. Do not fabricate release versions, URLs or hashes. Resolve downloads, hash downloaded external releases and keep Modrinth manifest entries correct.
+5. The MCA Crime GitHub Release and MCA Reputation CurseForge CDN file are only referenced by verified URLs/hashes after a successful build-time download, not mirrored into git.
+6. Protect Minecraft 1.20.1's datapack format `15`, supported MCA Quests schema, and distinct client/server environments. For player-facing text preserve placeholders (`%s`, `%1$s`, etc.).
+7. GitHub CI currently validates packaging and contents, **not actual Forge startup, datapack semantic validity in a live game, or multiplayer stability**. Test a clean world, two clients and server reboot before publishing compatibility claims.
 
-Default build attempts ~40 additional Forge 1.20.1 projects covering bounty boards, village world generation, professions, decorations, food, quests and travel. Some are intentionally optional and are skipped when Modrinth cannot resolve them; the generated `.mod-list.txt` reports this. No invented versions.
+## Known limitations
 
-**Russian localization:** `localization/mcaquests_ru_ru.json` contains **150 manually authored translations** for MCA: Quests interface, objectives, deliveries, village projects and rewards. It is bundled inside `overrides/resourcepacks/MCA-Quests-Russian-UI.zip` and enabled for new Prism instances by `options.txt`. It is **not a complete translation of the hundreds of quest stories, dialogues or all other MCA mods**. English remains for untranslated keys.
-
-**MCA addon limitation:** Reputation, Crime and Capitals are listed on CurseForge, but the builder intentionally does not forge unsigned third-party download URLs or redistribute JARs. Those components require a separately verified installation/metadata integration before being automatically included. On a shared server, everybody must have matching client+server mods.
-
-The Quest module supports multiplayer shared village projects. Use `/mcaquests project list` and `/mcaquests validate` on a test server. For a lasting shared settlement, run a dedicated Forge server, back up the world and test saving/restarting with at least two connected clients.
+- Some optional mods are skipped when no matching Modrinth release is available; consult `.mod-list.txt`.
+- A full Russian translation of every MCA module is not included. Machine-generated text may contain awkward phrasing.
+- Built-in quest definitions and custom projects require validation on a real Forge server.
