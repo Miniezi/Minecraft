@@ -287,7 +287,7 @@ fully run or stress-tested with the new visuals.
                 datapack.writestr("data/mcavillage/mcaquests/projects/"+project_file.name,json.dumps(project_data,ensure_ascii=False,indent=2))
             # Visible Russian progression tab for ordinary survival gameplay.
             advancements_dir=Path(__file__).parent/"datapacks"/"mcavillage"/"data"/"mcavillage"/"advancements"
-            required_advancements={"root","food","market","workshop","electricity"}
+            required_advancements={"root","food","market","workshop","electricity","agriculture","livestock","hospitality","education","defense","infrastructure","automation","illumination","navigation","industry","prestige","harvest"}
             present={p.stem for p in advancements_dir.glob("*.json")}
             if not required_advancements.issubset(present):
                 raise RuntimeError("Missing village progression milestones: "+str(required_advancements-present))
