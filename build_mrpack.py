@@ -21,7 +21,7 @@ EXTRAS=[
  "immersive-engineering","create-new-age","createaddition","immersive-aircraft",
  "create-bells-and-whistles","create-stuff-additions","create-enchantment-industry",
  "create-ore-excavation","create-diesel-generators","create-industry",
- "engineers-decor","industrial-foregoing",
+ "engineers-decor","industrial-foregoing","power-grid",
  "ct-overhaul-village","prefab","effortless-building","prefabricated-structures"
 ]
 
