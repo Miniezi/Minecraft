@@ -100,6 +100,23 @@ def build(output,lean=False,strict_extras=False):
         if sides.get("server_side")=="unsupported":entry["env"]={"client":"required","server":"unsupported"}
         if sides.get("client_side")=="unsupported":entry["env"]={"client":"unsupported","server":"required"}
         result.append(entry)
+    # MCA: Crime GPL-3.0 release, sourced from the author's official GitHub Releases.
+    # Download at build time so sha1/sha512 in the .mrpack are verified, never guessed.
+    crime_url="https://github.com/otectus/MCACrime/releases/download/forge/1.20.1/v0.7.8/mcacrime-0.7.8-forge-1.20.1.jar"
+    try:
+        req=urllib.request.Request(crime_url,headers={"User-Agent":"MCA-MRPACK-Builder/1.0"})
+        with urllib.request.urlopen(req,timeout=90) as response: crime_bytes=response.read()
+        if not crime_bytes.startswith(b"PK") or len(crime_bytes)<10000:
+            raise ValueError("Downloaded file is not a valid mod archive")
+        crime_name="mods/mcacrime-0.7.8-forge-1.20.1.jar"
+        if crime_name in paths:raise ValueError("Duplicate MCA Crime archive")
+        result.append({"path":crime_name,
+          "hashes":{"sha1":hashlib.sha1(crime_bytes).hexdigest(),"sha512":hashlib.sha512(crime_bytes).hexdigest()},
+          "downloads":[crime_url],"fileSize":len(crime_bytes)})
+        logs.append("MCA Crime -> 0.7.8 (author GitHub Release)")
+    except Exception as exc:
+        if strict_extras:raise
+        logs.append("SKIPPED MCA Crime: "+str(exc))
     index={"formatVersion":1,"game":"minecraft","versionId":"1.0.0","name":"MCA Ultimate Life — Friends Edition","summary":"Produced by MRPACK Builder; multiplayer requires testing","files":sorted(result,key=lambda f:f["path"]),"dependencies":{"minecraft":MINECRAFT,"forge":FORGE}}
     with zipfile.ZipFile(output,"w",zipfile.ZIP_DEFLATED) as archive:
         archive.writestr("modrinth.index.json",json.dumps(index,indent=2,ensure_ascii=False))
