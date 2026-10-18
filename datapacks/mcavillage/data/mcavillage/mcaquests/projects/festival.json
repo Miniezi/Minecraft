@@ -1,0 +1,99 @@
+{
+  "format_version": 1,
+  "id": "mcavillage:festival",
+  "scope": "village",
+  "sponsor": {
+    "professions": [
+      "minecraft:farmer",
+      "minecraft:butcher",
+      "minecraft:librarian"
+    ],
+    "on_death": "transfer"
+  },
+  "title": {
+    "text": "Праздник деревни"
+  },
+  "category": "culture",
+  "reputation": {
+    "on_phase_complete": 2,
+    "on_project_complete": 9
+  },
+  "phases": [
+    {
+      "key": "feast",
+      "dialogue": {
+        "offer": {
+          "text": "Наши жители заслужили общий праздник. Соберём большой стол!"
+        },
+        "in_progress": {
+          "text": "Еды понадобится много: на праздник придёт вся деревня."
+        }
+      },
+      "objectives": [
+        {
+          "type": "mcaquests:donate_item",
+          "item": "minecraft:bread",
+          "count": 48
+        },
+        {
+          "type": "mcaquests:donate_item",
+          "item": "minecraft:apple",
+          "count": 32
+        },
+        {
+          "type": "mcaquests:donate_item",
+          "item": "minecraft:cake",
+          "count": 3
+        }
+      ],
+      "rewards": [
+        {
+          "reward": {
+            "type": "mcaquests:xp",
+            "amount": 40
+          },
+          "target": "contributors"
+        }
+      ]
+    },
+    {
+      "key": "decorations",
+      "dialogue": {
+        "offer": {
+          "text": "Угощение готово — осталось украсить площадь!"
+        },
+        "in_progress": {
+          "text": "Принеси цветы и фонари, чтобы праздник запомнился каждому."
+        }
+      },
+      "objectives": [
+        {
+          "type": "mcaquests:donate_item",
+          "item": "minecraft:lantern",
+          "count": 12
+        },
+        {
+          "type": "mcaquests:donate_item",
+          "item": "minecraft:poppy",
+          "count": 24
+        }
+      ],
+      "rewards": [
+        {
+          "reward": {
+            "type": "mcaquests:hearts_with_participants",
+            "amount": 16
+          },
+          "target": "all_participants"
+        },
+        {
+          "reward": {
+            "type": "mcaquests:village_reputation",
+            "amount": 7
+          },
+          "target": "sponsor_village"
+        }
+      ]
+    }
+  ]
+}
