@@ -1,0 +1,27 @@
+{
+  "parent": "mcavillage:electricity",
+  "display": {
+    "icon": {
+      "item": "minecraft:blast_furnace"
+    },
+    "title": "Индустриальное сердце",
+    "description": "Постройте плавильную печь для тяжёлой промышленности.",
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "stock": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:blast_furnace"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
