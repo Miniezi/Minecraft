@@ -68,7 +68,7 @@ jobs:
           for name,fragment in required.items():
               assert any(fragment in path for path in paths), 'Missing required mod: '+name
           assert not any('minecraft-comes-alive-7.7' in p for p in paths)
-          assert any('mcacapitals-1.1.1' in p for p in paths), 'MCA Capitals is not the 7.6-compatible release'
+          assert any('mcacapitals-1.3.' in p for p in paths), 'MCA Capitals must be 1.3.5 or newer for Conversations/Quests'
           print('Validated',len(paths),'mods and required MCA/Forge libraries')
           PY
       - uses: actions/upload-artifact@v4
