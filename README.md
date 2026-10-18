@@ -120,3 +120,12 @@ This preset now includes **Create: Power Grid** for visually laid-out poles, cab
 Quick start: build a FE-producing generator -> attach the Power Grid **FE inverter** as described in the mod's Ponder/JEI -> connect Power Grid wires -> connect a Power Grid machine, lamp or motor. Configure the FE inverter and connector according to the mod's documentation; ordinary FE cables from other mods are not the same as Power Grid's electrical wires. Inverter input/outputs and safety ratings matter. The Power Grid model simulates actual voltage/current; it is not a no-configuration FE cable mod. It is suitable for a power station next to the village, supplying industrial workshops and lights.
 
 This connects the industrial settlement thematically. It does **not** automatically connect NPC Townstead needs or let villagers build wires themselves. Multiplayer server and client must use matching versions. Verify the generated mod list includes the power-grid project and its dependencies before installing.
+
+
+## Townstead compatibility status (2026-10-19)
+
+Townstead 0.7.6 is deliberately **not included** in the MCA 7.7.1 + MCA Capitals 1.3.5 profile. The official Townstead 0.7.6 Forge 1.20.1 release uses the old MCA `forge.net.mca` class layout and crashes against newer `forge.net.conczin.mca`. MCA Quests' TOWNSTEAD.md describes Townstead 0.7.7 modern and 0.8 but states they were not publicly released. Do **not** insert Townstead 0.7.6 into this profile manually. The custom worker-chests addon falls back to its own experimental virtual food/comfort counters without Townstead, not real Townstead hunger. Restore Townstead only when a compatible released or separately tested build is available.
+
+## Expanded Russian resource pack
+
+`translate_all_mods.py` runs after the quests translation and main builder. It examines the pinned mod JARs' `assets/<namespace>/lang/en_us.json` and `ru_ru.json`, preserves upstream Russian strings, and machine-translates missing strings when placeholders stay valid. It packages `MCA-Expanded-Russian-Language.zip` and enables it for new Prism instances. This covers supported lang JSON keys; mod-authored hard-coded text cannot be reliably replaced using a resource pack. Review machine translations before distributing them as polished Russian localization. Run the builder workflow and check its log for actual per-namespace coverage.
