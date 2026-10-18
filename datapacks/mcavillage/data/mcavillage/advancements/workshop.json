@@ -1,0 +1,27 @@
+{
+  "parent": "mcavillage:market",
+  "display": {
+    "icon": {
+      "item": "minecraft:piston"
+    },
+    "title": "Первая мастерская",
+    "description": "Создайте поршень и подготовьтесь к механизации посёлка.",
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "machine": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:piston"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
