@@ -143,3 +143,10 @@ python translate_all_mods.py --seconds 330 --pack MCA-Townstead-Villages-RU-1.20
 CI workflow: `.github/workflows/build-townstead.yml`; artifact `mrpack-townstead-output`.
 
 Keep worlds separately backed up when moving between profiles. Removing Capitals or changing MCA backwards can affect world data and NPC relationships. **Do not update to MCA 7.7.x in Townstead mode**, and do not add Townstead 0.7.6 to the Capitals mode. An official 0.7.7-modern/0.8 Townstead release may later allow combining them.
+
+
+## Development cycle: Russian village progression
+
+Implemented the first five vanilla advancement milestones in `datapacks/mcavillage/data/mcavillage/advancements/`: **Начало поселения**, **Тёплый хлеб**, **Деревенский рынок**, **Первая мастерская**, **Энергия для деревни**. The MRPACK builder embeds them in the existing Paxi village datapack, and CI verifies each advancement's JSON and inclusion. These are lightweight, translated progression indicators rather than a replacement for MCA Quests. The electricity advancement tracks redstone supplies, **not** actual Power Grid connectivity, which needs a Forge integration to detect safely.
+
+Next development cycle: improve the custom MCA worker-chests GUI and indicators, including a low-overhead translated status overlay and clearer work/comfort controls; confirm class compatibility with the selected MCA version before shipping. Later cycles: unify the village's visual palette and improve sound/lighting using compatible optional mods. Test actual launch and back up world data before declaring runtime stability.
