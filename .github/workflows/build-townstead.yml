@@ -81,5 +81,5 @@ jobs:
         with:
           name: mrpack-townstead-output
           path: |
-            MCA-Ultimate-Life-Friends-1.20.1.mrpack
+            MCA-Townstead-Villages-RU-1.20.1.mrpack
             MCA-Townstead-Villages-RU-1.20.1.mod-list.txt
