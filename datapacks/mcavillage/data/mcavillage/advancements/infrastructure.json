@@ -1,0 +1,27 @@
+{
+  "parent": "mcavillage:workshop",
+  "display": {
+    "icon": {
+      "item": "minecraft:rail"
+    },
+    "title": "Дороги торговли",
+    "description": "Постройте рельсы для будущей логистической сети.",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "stock": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:rail"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
