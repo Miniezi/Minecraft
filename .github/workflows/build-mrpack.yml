@@ -53,7 +53,23 @@ jobs:
           assert any(n.startswith('overrides/mods/mca-worker-chests') and n.endswith('.jar') for n in z.namelist())
           assert any('ImmersiveEngineering' in f['path'] for f in index['files'])
           assert index['files']
-          print(len(index['files']),'files')
+          paths=[item['path'].lower() for item in index['files']]
+          assert len(paths)==len(set(paths)), 'Duplicate files in MRPACK'
+          required={
+            'mca-7.6.26': 'minecraft-comes-alive-7.6.26',
+            'townstead-0.7.6': 'townstead-0.7.6',
+            'architectury': 'architectury',
+            'geckolib': 'geckolib',
+            'patchouli': 'patchouli',
+            'paxi': 'paxi',
+            'create': 'mods/create-',
+            'mca-quests': 'mcaquests',
+          }
+          for name,fragment in required.items():
+              assert any(fragment in path for path in paths), 'Missing required mod: '+name
+          assert not any('minecraft-comes-alive-7.7' in p for p in paths)
+          assert any('mcacapitals-1.1.1' in p for p in paths), 'MCA Capitals is not the 7.6-compatible release'
+          print('Validated',len(paths),'mods and required MCA/Forge libraries')
           PY
       - uses: actions/upload-artifact@v4
         with:
