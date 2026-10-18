@@ -7,7 +7,7 @@ MINECRAFT="1.20.1"
 FORGE="47.4.10"
 NAME="MCA-Ultimate-Life-Friends-1.20.1.mrpack"
 BASE="https://api.modrinth.com/v2"
-CORE=["minecraft-comes-alive-reborn","mca-conversations","mca-quests","townstead","architectury-api","capitals-a-monarchy-mod-for-mca-reborn"]
+CORE=["minecraft-comes-alive-reborn","mca-conversations","mca-quests","townstead","architectury-api","capitals-a-monarchy-mod-for-mca-reborn","paxi"]
 EXTRAS=[
  "farmers-delight","handcrafted","supplementaries","serene-seasons","waystones","jade","jei",
  "xaeros-minimap","xaeros-world-map","embeddium","bountiful","ftb-quests","ftb-library","ftb-teams",
@@ -150,6 +150,19 @@ def build(output,lean=False,strict_extras=False):
             pack.writestr("pack.mcmeta",json.dumps({"pack":{"pack_format":15,"description":"MCA Quests Russian partial translation"}},ensure_ascii=False))
             pack.writestr("assets/mcaquests/lang/ru_ru.json",json.dumps(localization,ensure_ascii=False,indent=2))
         archive.writestr("overrides/resourcepacks/MCA-Quests-Russian-UI.zip",memory.getvalue())
+        # Paxi loads community village project datapacks into every world.
+        project_directory=Path(__file__).parent/"datapacks"/"mcavillage"/"data"/"mcavillage"/"mcaquests"/"projects"
+        if not project_directory.exists():raise RuntimeError("Missing village project definitions")
+        project_memory=io.BytesIO()
+        with zipfile.ZipFile(project_memory,"w",zipfile.ZIP_DEFLATED) as datapack:
+            datapack.writestr("pack.mcmeta",json.dumps({"pack":{"pack_format":15,"description":"MCA: совместные проекты деревни"}} ,ensure_ascii=False))
+            for project_file in sorted(project_directory.glob("*.json")):
+                project_data=json.loads(project_file.read_text(encoding="utf-8"))
+                if project_data.get("scope")!="village" or not project_data.get("phases"):
+                    raise RuntimeError("Invalid shared village project: "+project_file.name)
+                datapack.writestr("data/mcavillage/mcaquests/projects/"+project_file.name,json.dumps(project_data,ensure_ascii=False,indent=2))
+        archive.writestr("overrides/config/paxi/datapacks/MCA-Shared-Village-Projects-RU.zip",project_memory.getvalue())
+
         archive.writestr("overrides/options.txt",'lang:ru_ru\nresourcePacks:["vanilla","file/MCA-Quests-Russian-UI.zip"]\n')
     Path(output).with_suffix(".mod-list.txt").write_text("\n".join(logs)+"\n",encoding="utf-8")
     print("Generated:",output,"entries:",len(result))
