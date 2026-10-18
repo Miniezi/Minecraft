@@ -85,7 +85,7 @@ def main():
     upstream_ru.setdefault("mcaquests",{}).update(quest_values)
     count=0
     # Dialogue first: the screenshots show unlocalized MCA Conversations lines & village screens.
-    priority=("mcaconversations","mca","mcareputation","mcacapitals","mcacrime","mcaquests",
+    priority=("mcaconversations","mcareputation","mcacrime","mcacapitals","mca","mcaquests",
               "blueprints","prefab","effortlessbuilding","powergrid")
     for namespace in priority:
         en=upstream_en.get(namespace,{})
