@@ -55,6 +55,83 @@ def safe_download(url, max_bytes=60_000_000):
 def valid(en,ru):
     return bool(ru.strip()) and sorted(PLACEHOLDER.findall(en))==sorted(PLACEHOLDER.findall(ru))
 
+
+# Protect formatting, interpolation, and non-language syntax from machine translation.
+TOKEN = re.compile(
+    r"%(?:\d+\$)?[-+#0,.(\d]*[a-zA-Z%]"
+    r"|\{\{?[\w.:-]+\}?\}"
+    r"|§[0-9a-fk-or]"
+    r"|&[0-9a-fk-or]"
+    r"|<[/!]?[A-Za-z][^<>]{0,120}>"
+    r"|\\[nrt]"
+    r"|\$\{[^{}]{1,120}\}"
+    r"|\[[A-Za-z_]+:[^\]]+\]"
+)
+CYRILLIC=re.compile(r"[А-Яа-яЁё]")
+def protected_tokens(value):
+    return sorted(TOKEN.findall(value))
+
+def complex_valid(source, value):
+    return (bool(value.strip()) and protected_tokens(source)==protected_tokens(value)
+            and bool(CYRILLIC.search(value)) and len(value)<max(150, len(source)*7))
+
+def translate_safe(text):
+    """Mask fragile tokens, then check exact token inventory on return."""
+    tokens=[]
+    def mask(m):
+        tokens.append(m.group())
+        return "ZXQPROTECT"+str(len(tokens)-1)+"QXZ"
+    masked=TOKEN.sub(mask,text)
+    result=translated(masked)
+    for i, original in enumerate(tokens):
+        marker="ZXQPROTECT"+str(i)+"QXZ"
+        if result.count(marker)!=1:raise ValueError("Masked placeholder was altered")
+        result=result.replace(marker,original)
+    if not complex_valid(text,result):raise ValueError("Invalid translated string")
+    return result
+
+def translate_resilient(batch, deadline, counters, depth=0):
+    """Try batching, then bisect failures, finally translate individually.
+
+    A changed batch separator or placeholder must never corrupt other keys.
+    """
+    if time.monotonic()>deadline:return {}
+    if len(batch)==1:
+        key,value=batch[0]
+        try:
+            counters["individual_attempts"]+=1
+            return {key:translate_safe(value)}
+        except Exception:
+            counters["individual_failures"]+=1
+            return {}
+    # Batch only plain text: complex markup needs single-key masking.
+    if any(TOKEN.search(value) for _,value in batch):
+        middle=len(batch)//2
+        result=translate_resilient(batch[:middle],deadline,counters,depth+1)
+        result.update(translate_resilient(batch[middle:],deadline,counters,depth+1))
+        return result
+    separator=" 🟩 "
+    try:
+        counters["batch_attempts"]+=1
+        output=translated(separator.join(value.replace("\n"," ⏎ ") for _,value in batch))
+        parts=output.split("🟩")
+        if len(parts)!=len(batch):raise ValueError("Changed translation separators")
+        translated_values={}
+        invalid=[]
+        for (key,source),part in zip(batch,parts):
+            target=part.strip().replace(" ⏎ ","\n")
+            if complex_valid(source,target):translated_values[key]=target
+            else:invalid.append((key,source))
+        for pair in invalid:
+            translated_values.update(translate_resilient([pair],deadline,counters,depth+1))
+        return translated_values
+    except Exception:
+        counters["batch_failures"]+=1
+        middle=len(batch)//2
+        left=translate_resilient(batch[:middle],deadline,counters,depth+1)
+        left.update(translate_resilient(batch[middle:],deadline,counters,depth+1))
+        return left
+
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument("--pack",default="MCA-Ultimate-Life-Friends-1.20.1.mrpack")
@@ -104,30 +181,24 @@ def main():
         upstream_en.pop(namespace,None)
         upstream_ru.pop(namespace,None)
     count=0
-    # Dialogue first: the screenshots show unlocalized MCA Conversations lines & village screens.
+    counters={"batch_attempts":0,"batch_failures":0,"individual_attempts":0,"individual_failures":0}
+    deadline=start+args.seconds
     priority=("mcaconversations","mcareputation","mcacrime","mcacapitals","mca","mcaquests",
               "powergrid","create","immersiveengineering","prefab","effortlessbuilding")
     priority=priority+tuple(sorted(ns for ns in upstream_en if ns not in priority))
     for namespace in priority:
         en=upstream_en.get(namespace,{})
         ru=upstream_ru.setdefault(namespace,{})
-        missing=[(k,v) for k,v in en.items() if k not in ru and v.strip() and len(v)<2000]
+        missing=[(k,v) for k,v in en.items() if k not in ru and v.strip()]
         missing.sort(key=lambda pair:(not any(t in pair[0].lower() for t in
                       ("dialog","greet","conversation","reput","journal","quest","title","gui")),pair[0]))
-        for batch in chunks(missing,1500):
-            if time.monotonic()-start>args.seconds:break
-            text="🟩".join(v.replace("\\n"," ⏎ ") for _,v in batch)
-            try:
-                translation=translated(text)
-                pieces=translation.split("🟩")
-                if len(pieces)!=len(batch):continue
-                for (key,original),value in zip(batch,pieces):
-                    value=value.strip().replace(" ⏎ ","\\n")
-                    if valid(original,value) and re.search("[А-Яа-яЁё]",value):
-                        ru[key]=value;count+=1
-            except Exception as exc:
-                print("Translation batch issue:",str(exc)[:100],flush=True)
+        for batch in chunks(missing,900):
+            if time.monotonic()>deadline:break
+            results=translate_resilient(batch,deadline,counters)
+            ru.update(results)
+            count+=len(results)
         print("Namespace",namespace,"keys",len(ru),"missing",sum(k not in ru for k in en),flush=True)
+    print("TRANSLATOR DIAGNOSTICS",json.dumps(counters),flush=True)
     mem=io.BytesIO()
     with zipfile.ZipFile(mem,"w",zipfile.ZIP_DEFLATED) as res:
         res.writestr("pack.mcmeta",json.dumps({"pack":{"pack_format":15,
