@@ -1,0 +1,27 @@
+{
+  "parent": "mcavillage:root",
+  "display": {
+    "icon": {
+      "item": "minecraft:bread"
+    },
+    "title": "Тёплый хлеб",
+    "description": "Запаситесь едой для долгой жизни и работы поселения.",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "baker": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:bread"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
