@@ -83,6 +83,20 @@ def main():
     with zipfile.ZipFile(io.BytesIO(legacy)) as archive:
         quest_values=json.loads(archive.read("assets/mcaquests/lang/ru_ru.json"))
     upstream_ru.setdefault("mcaquests",{}).update(quest_values)
+    # Preserve successfully translated keys from a previous pass of this same MRPACK.
+    # Additional CI passes can focus on the remaining untranslated strings.
+    with zipfile.ZipFile(pack_path) as archive:
+        existing="overrides/resourcepacks/"+RESOURCE_NAME
+        if existing in archive.namelist():
+            with zipfile.ZipFile(io.BytesIO(archive.read(existing))) as previous:
+                for name in previous.namelist():
+                    parts=name.split("/")
+                    if len(parts)==4 and parts[0]=="assets" and parts[2]=="lang" and parts[3]=="ru_ru.json":
+                        try:
+                            previous_values=json.loads(previous.read(name))
+                            upstream_ru.setdefault(parts[1],{}).update(previous_values)
+                        except (ValueError,KeyError):
+                            pass
     count=0
     # Dialogue first: the screenshots show unlocalized MCA Conversations lines & village screens.
     priority=("townstead","mcaconversations","mcareputation","mcacrime","mcacapitals","mca","mcaquests",
