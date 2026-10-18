@@ -7,7 +7,7 @@ MINECRAFT="1.20.1"
 FORGE="47.4.10"
 NAME="MCA-Ultimate-Life-Friends-1.20.1.mrpack"
 BASE="https://api.modrinth.com/v2"
-CORE=["minecraft-comes-alive-reborn","mca-conversations","mca-quests","architectury-api","patchouli","geckolib","capitals-a-monarchy-mod-for-mca-reborn","paxi"]
+CORE=["minecraft-comes-alive-reborn","mca-conversations","mca-quests","architectury-api","patchouli","geckolib","capitals-a-monarchy-mod-for-mca-reborn","paxi","power-grid"]
 EXTRAS=[
  "farmers-delight","handcrafted","supplementaries","serene-seasons","waystones","jade","jei",
  "xaeros-minimap","xaeros-world-map","embeddium","bountiful","ftb-quests","ftb-library","ftb-teams",
@@ -21,7 +21,7 @@ EXTRAS=[
  "immersive-engineering","create-new-age","createaddition","immersive-aircraft",
  "create-bells-and-whistles","create-stuff-additions","create-enchantment-industry",
  "create-ore-excavation","create-diesel-generators","create-industry",
- "engineers-decor","industrial-foregoing","power-grid",
+ "engineers-decor","industrial-foregoing",
  "ct-overhaul-village","prefab","effortless-building","prefabricated-structures"
 ]
 
