@@ -141,6 +141,21 @@ def build(output,lean=False,strict_extras=False):
     except Exception as exc:
         if strict_extras:raise
         logs.append("SKIPPED MCA Reputation: "+str(exc))
+    # Immersive Engineering 1.20.1-10.2.0-183, CurseForge official file #6206989.
+    # Resolve and hash the real archive at build time (do not commit it into Git).
+    ie_url="https://mediafilez.forgecdn.net/files/6206/989/ImmersiveEngineering-1.20.1-10.2.0-183.jar"
+    try:
+        req=urllib.request.Request(ie_url,headers={"User-Agent":"Mozilla/5.0 MCA-MRPACK-Builder"})
+        with urllib.request.urlopen(req,timeout=90) as response: ie_bytes=response.read()
+        if not ie_bytes.startswith(b"PK") or len(ie_bytes)<1000000:
+            raise ValueError("Immersive Engineering JAR could not be validated")
+        result.append({"path":"mods/ImmersiveEngineering-1.20.1-10.2.0-183.jar",
+          "hashes":{"sha1":hashlib.sha1(ie_bytes).hexdigest(),"sha512":hashlib.sha512(ie_bytes).hexdigest()},
+          "downloads":[ie_url],"fileSize":len(ie_bytes)})
+        logs.append("Immersive Engineering -> 10.2.0-183 (CurseForge file 6206989)")
+    except Exception as exc:
+        # Industry preset is incomplete without its namesake mod.
+        raise RuntimeError("Immersive Engineering must be downloadable: "+str(exc)) from exc
     index={"formatVersion":1,"game":"minecraft","versionId":"1.0.0","name":"MCA Ultimate Life — Friends Edition","summary":"Produced by MRPACK Builder; multiplayer requires testing","files":sorted(result,key=lambda f:f["path"]),"dependencies":{"minecraft":MINECRAFT,"forge":FORGE}}
     with zipfile.ZipFile(output,"w",zipfile.ZIP_DEFLATED) as archive:
         archive.writestr("modrinth.index.json",json.dumps(index,indent=2,ensure_ascii=False))
