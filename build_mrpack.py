@@ -41,6 +41,13 @@ def choose(project,townstead=False):
             m=re.search(r"(\\d+)\\.(\\d+)\\.(\\d+)",v.get("version_number",""))
             return tuple(map(int,m.groups())) if m else (0,0,0)
         versions=[v for v in versions if vers(v)>=(1,3,5)]
+        if not versions:
+            # Older but published Modrinth 1.3.5 release is not returned by
+            # some filtered version listings; use its exact confirmed version ID.
+            fallback=api("/version/cE7zt4nS")
+            if MINECRAFT not in fallback.get("game_versions",[]) or "forge" not in fallback.get("loaders",[]):
+                raise ValueError("No compatible MCA Capitals release found")
+            versions=[fallback]
     if project=="minecraft-comes-alive-reborn" and townstead:
         pinned=[v for v in versions if v.get("version_number","").startswith("7.6.26")]
         if not pinned:raise ValueError("Townstead mode requires MCA 7.6.26")
