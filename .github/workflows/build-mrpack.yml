@@ -76,6 +76,13 @@ jobs:
                       assert name in worldpack.namelist(), 'Missing village advancement: '+name
                       advancement=json.loads(worldpack.read(name))
                       assert advancement['criteria'] and advancement['display']
+                  for project in ('festival','granary','industrial_revolution','watch','street_lights','public_library','trade_routes','emergency_clinic'):
+                      name='data/mcavillage/mcaquests/projects/'+project+'.json'
+                      assert name in worldpack.namelist(), 'Missing village project: '+name
+                      definition=json.loads(worldpack.read(name))
+                      assert definition['scope']=='village' and len(definition['phases'])>=1
+                      for phase in definition['phases']:
+                          assert phase['objectives'] and phase['rewards']
           assert any(n.startswith('overrides/mods/mca-worker-chests') and n.endswith('.jar') for n in z.namelist())
           assert any('ImmersiveEngineering' in f['path'] for f in index['files'])
           assert 'overrides/resourcepacks/MCA-Expanded-Russian-Language.zip' in z.namelist()
