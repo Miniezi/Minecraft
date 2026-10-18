@@ -90,3 +90,14 @@ Limitations:
 - Further tests needed for item loss on interruption, chest destruction, entity death, claims and third-party inventory mods.
 
 For other AI agents: the source must be compiled and validated independently before describing this addon as stable. The work-chest feature is **experimental**.
+
+### Autonomous resource decisions (experimental v0.2)
+
+The Worker Chests source now models **standalone food need and comfort demand** on a villager, stored as persistent entity NBT:
+- Needs rise while the villager is active, and comfort demand increases in rain/low health.
+- When picking up edible drops, a villager reserves 0–12 pieces of food depending on need, and deposits the remaining crop items in the assigned chest.
+- If the communal chest holds fewer than 16 food items, the villager prioritizes its stock unless critically hungry.
+- Personal food reserve is a **virtual NBT counter** consumed by the simulated food need. It does not feed vanilla hunger, Townstead hunger, or MCA mood.
+- This is an intentionally limited fallback, **not** a verified integration with MCA/Townstead internal need APIs. A future adapter should read the relevant real hunger, thirst, energy and mood signals via their documented API and consume actual held food safely.
+
+**Known issue:** The original item-collection AI needs in-game testing for pathfinding, unloaded entities, protected item drops and interruptions. Do not claim autonomous work is production ready based solely on compilation.
