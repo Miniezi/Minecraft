@@ -48,19 +48,27 @@ def choose(project):
     return max(versions,key=lambda v:v.get("date_published",""))
 
 def build(output,lean=False,strict_extras=False):
-    selected={}; pending=[]; logs=[]; incompat=[]
+    # Canonical Modrinth project IDs prevent slug/id aliases from double-installing mods.
+    selected={}; pending=[]; logs=[]; incompat=[]; aliases={}
     def add(project,required=True,version=None):
-        if project in selected:
-            if version and version["id"]!=selected[project][0]["id"]:raise ValueError("Conflicting required versions: "+project)
-            return
         try:
             version=version or choose(project)
+            if MINECRAFT not in version.get("game_versions",[]) or "forge" not in version.get("loaders",[]):
+                raise ValueError("Incompatible game version or loader")
+            project_id=version.get("project_id")
+            if not project_id:raise ValueError("Version has no canonical project_id")
+            aliases[project]=project_id
+            if project_id in selected:
+                previous=selected[project_id][0]
+                if previous["id"]!=version["id"]:
+                    raise ValueError("Version conflict for "+project+": "+previous.get("version_number","")+" vs "+version.get("version_number",""))
+                return
             files=[f for f in version["files"] if f["filename"].endswith(".jar") and f.get("hashes",{}).get("sha1") and f.get("hashes",{}).get("sha512")]
             if not files:raise ValueError("No hashed JAR")
             file=next((f for f in files if f.get("primary")),files[0])
             if not file["url"].startswith("https://"):raise ValueError("Non-HTTPS file")
-            selected[project]=(version,file)
-            pending.append(project)
+            selected[project_id]=(version,file)
+            pending.append(project_id)
             logs.append(project+" -> "+version["version_number"])
         except Exception as exc:
             if required or strict_extras:raise ValueError(project+": "+str(exc)) from exc
@@ -85,7 +93,8 @@ def build(output,lean=False,strict_extras=False):
                 raise ValueError("Incompatible pinned dependency of "+project)
             add(dependency,True,pinned)
     for parent,project,vid in incompat:
-        if project in selected and (not vid or selected[project][0]["id"]==vid):
+        canonical=aliases.get(project,project)
+        if canonical in selected and (not vid or selected[canonical][0]["id"]==vid):
             raise ValueError(parent+" incompatible with "+project)
     result=[];paths=set()
     for project,(version,file) in selected.items():
@@ -159,7 +168,7 @@ def build(output,lean=False,strict_extras=False):
     # Fail closed: Townstead 0.7.6 crashes when MCA Reborn uses the 7.7.x package layout.
     mca_versions=[(project,v.get("version_number",""),f.get("filename",""))
                   for project,(v,f) in selected.items()
-                  if "minecraft-comes-alive" in project or "minecraft-comes-alive" in f.get("filename","").lower()]
+                  if "minecraft-comes-alive" in f.get("filename","").lower()]
     if len(mca_versions)!=1 or not mca_versions[0][1].startswith("7.6.26"):
         raise RuntimeError("Unsafe MCA/Townstead combination: "+repr(mca_versions))
     if not any("townstead-0.7.6" in f["path"].lower() for f in result):
