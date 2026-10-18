@@ -1,0 +1,27 @@
+{
+  "parent": "mcavillage:workshop",
+  "display": {
+    "icon": {
+      "item": "minecraft:redstone_block"
+    },
+    "title": "Энергия для деревни",
+    "description": "Соберите блок редстоуна и подготовьте электросеть с Power Grid.",
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "electric": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:redstone_block"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
