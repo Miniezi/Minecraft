@@ -7,7 +7,7 @@ MINECRAFT="1.20.1"
 FORGE="47.4.10"
 NAME="MCA-Ultimate-Life-Friends-1.20.1.mrpack"
 BASE="https://api.modrinth.com/v2"
-CORE=["minecraft-comes-alive-reborn","mca-conversations","mca-quests","townstead","architectury-api"]
+CORE=["minecraft-comes-alive-reborn","mca-conversations","mca-quests","townstead","architectury-api","capitals-a-monarchy-mod-for-mca-reborn"]
 EXTRAS=[
  "farmers-delight","handcrafted","supplementaries","serene-seasons","waystones","jade","jei",
  "xaeros-minimap","xaeros-world-map","embeddium","bountiful","ftb-quests","ftb-library","ftb-teams",
@@ -25,6 +25,12 @@ def api(path):
     with urllib.request.urlopen(req,timeout=35) as response:return json.load(response)
 
 def choose(project):
+    # MCA Capitals 1.1.1 targets MCA Reborn 7.6.26; newer releases may target 7.7.x.
+    if project=="capitals-a-monarchy-mod-for-mca-reborn":
+        v=api("/version/Tftzk0Qn")
+        if MINECRAFT not in v.get("game_versions",[]) or "forge" not in v.get("loaders",[]):
+            raise ValueError("Pinned MCA Capitals release is incompatible")
+        return v
     query=urllib.parse.urlencode({"loaders":json.dumps(["forge"]),"game_versions":json.dumps([MINECRAFT])})
     versions=api("/project/"+urllib.parse.quote(project,safe="")+"/version?"+query)
     versions=[v for v in versions if v.get("version_type")=="release" and "forge" in v.get("loaders",[]) and MINECRAFT in v.get("game_versions",[])]
