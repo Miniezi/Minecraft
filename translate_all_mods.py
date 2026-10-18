@@ -11,12 +11,12 @@ from pathlib import Path
 from scripts.translate_quests import translated, matches, chunks
 
 NAMESPACES = {
-    "mca", "mcaconversations", "mcaquests", "mcacapitals",
+    "mca", "townstead", "mcaconversations", "mcaquests", "mcacapitals",
     "mcacrime", "mcareputation", "blueprints", "prefab",
     "powergrid", "effortlessbuilding",
 }
 TARGET_FILENAMES = (
-    "minecraft-comes-alive", "mcaconversations", "mcaquests", "mcacapitals",
+    "minecraft-comes-alive", "townstead", "mcaconversations", "mcaquests", "mcacapitals",
     "mcacrime", "mcareputation", "blueprintsmod", "prefab",
     "powergrid", "effortlessbuilding"
 )
@@ -85,7 +85,7 @@ def main():
     upstream_ru.setdefault("mcaquests",{}).update(quest_values)
     count=0
     # Dialogue first: the screenshots show unlocalized MCA Conversations lines & village screens.
-    priority=("mcaconversations","mcareputation","mcacrime","mcacapitals","mca","mcaquests",
+    priority=("townstead","mcaconversations","mcareputation","mcacrime","mcacapitals","mca","mcaquests",
               "blueprints","prefab","effortlessbuilding","powergrid")
     for namespace in priority:
         en=upstream_en.get(namespace,{})
