@@ -72,7 +72,12 @@ def build(output,lean=False,strict_extras=False):
         fname=file["filename"]
         if fname!=Path(fname).name:raise ValueError("Unsafe JAR filename")
         path="mods/"+fname
-        if path in paths:raise ValueError("Duplicate JAR filename "+fname)
+        if path in paths:
+            # Modrinth can identify the same dependency both by slug and by project ID.
+            previous=next((e for e in result if e["path"]==path),None)
+            if previous and previous["hashes"]["sha512"]==file["hashes"]["sha512"]:
+                continue
+            raise ValueError("Filename conflict with different content: "+fname)
         paths.add(path)
         sides=api("/project/"+urllib.parse.quote(project,safe=""))
         entry={"path":path,"hashes":{"sha1":file["hashes"]["sha1"],"sha512":file["hashes"]["sha512"]},"downloads":[file["url"]],"fileSize":file["size"]}
