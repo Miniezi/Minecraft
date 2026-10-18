@@ -22,7 +22,7 @@ EXTRAS=[
  "create-bells-and-whistles","create-stuff-additions","create-enchantment-industry",
  "create-ore-excavation","create-diesel-generators","create-industry",
  "engineers-decor","industrial-foregoing",
- "ct-overhaul-village","prefab","effortless-building","building-gadgets"
+ "ct-overhaul-village","prefab","effortless-building","prefabricated-structures"
 ]
 
 def api(path):
