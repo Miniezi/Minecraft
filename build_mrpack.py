@@ -216,7 +216,37 @@ def build(output,lean=False,strict_extras=False,townstead=False):
     index={"formatVersion":1,"game":"minecraft","versionId":"1.0.0","name":"MCA Ultimate Life — Friends Edition","summary":"Produced by MRPACK Builder; multiplayer requires testing","files":sorted(result,key=lambda f:f["path"]),"dependencies":{"minecraft":MINECRAFT,"forge":FORGE}}
     with zipfile.ZipFile(output,"w",zipfile.ZIP_DEFLATED) as archive:
         archive.writestr("modrinth.index.json",json.dumps(index,indent=2,ensure_ascii=False))
-        archive.writestr("overrides/README.txt","This is generated output from MRPACK Builder. Test with two players and a dedicated Forge server before long-term use.\n")
+        archive.writestr("overrides/README.txt", """MCA INDUSTRIAL VILLAGES RU — ATMOSPHERE UPDATE
+
+Minecraft 1.20.1 / Forge 47.4.10 / Prism Launcher.
+
+VISUAL SETUP
+1. Start the instance once. Configure Video Settings > Shaders if Oculus
+   was installed. Shaderpacks are NOT bundled; without shaders this pack
+   remains fully playable.
+2. Low/medium GPU: keep shaders off, use moderate render distance and
+   lower particles before adding visual effects.
+3. Strong GPU: enable a shaderpack separately and raise graphics settings
+   gradually. Check RAM use and FPS before entering old worlds.
+4. Optional Sound Physics Remastered adds reverb and positional ambience;
+   adjust volumes in Sounds to avoid overwhelming village conversations.
+5. Better Third Person provides a clearer camera for walking around towns.
+
+GAMEPLAY SETUP
+1. Create machines form the workshop backbone.
+2. Immersive Engineering generators can feed FE-compatible devices.
+3. Create Power Grid wires use a dedicated FE inverter for cross-mod
+   electricity; directly joining two unlike cables does not work.
+4. MCA conversations, quests, village projects and Capitals are included.
+5. Chipped is deliberately excluded from custom Russian translation.
+
+BACKUPS
+Use a NEW Prism instance and BACK UP worlds before replacing a pack.
+Not every optional visual mod is available on every mod platform; see
+the .mod-list.txt build log for exact installed versions.
+The metadata and Java addon are checked in CI, but the game has not been
+fully run or stress-tested with the new visuals.
+""")
     with zipfile.ZipFile(output,"a",zipfile.ZIP_DEFLATED) as archive:
         ru=Path(__file__).parent/"localization"/"mcaquests_ru_ru.json"
         localization=json.loads(ru.read_text(encoding="utf-8"))
