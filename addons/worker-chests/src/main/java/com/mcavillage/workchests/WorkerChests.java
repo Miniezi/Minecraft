@@ -37,6 +37,56 @@ public final class WorkerChests {
     private static final String DIMENSION = "mcaworkchestsDimension";
     private static final String OWNER = "mcaworkchestsOwner";
     private static final String HELD = "mcaworkchestsHeld";
+    private static final String NEED_FOOD = "mcaworkchestsFoodNeed";
+    private static final String NEED_COMFORT = "mcaworkchestsComfortNeed";
+    private static final String FOOD_RESERVE = "mcaworkchestsFoodReserve";
+    private static final String LAST_NEEDS = "mcaworkchestsLastNeeds";
+    private static final int RESERVE_LIMIT = 12;
+    private static final int DEPOSIT_FOOD_MIN = 16;
+    private static boolean edible(Item item) {
+        return item == Items.BREAD || item == Items.APPLE || item == Items.CARROT
+            || item == Items.POTATO || item == Items.BEETROOT || item == Items.MELON_SLICE;
+    }
+    // Standalone needs: deliberately NOT claimed to be Townstead hunger or MCA mood.
+    private static void updateNeeds(Mob worker, ServerLevel level, CompoundTag data) {
+        long now=level.getGameTime(), previous=data.contains(LAST_NEEDS) ? data.getLong(LAST_NEEDS) : now;
+        long elapsed=Math.max(0,Math.min(now-previous,24000L));
+        if (elapsed<200) return;
+        data.putLong(LAST_NEEDS,now);
+        int hunger=Math.min(100,data.getInt(NEED_FOOD)+(int)(elapsed/200));
+        int comfort=Math.min(100,data.getInt(NEED_COMFORT)+(int)(elapsed/400));
+        if (level.isRainingAt(worker.blockPosition())) comfort=Math.min(100,comfort+2);
+        if (worker.getHealth()<worker.getMaxHealth()*0.5F) comfort=Math.min(100,comfort+2);
+        int reserve=data.getInt(FOOD_RESERVE);
+        if (hunger>=65 && reserve>0) {
+            reserve--;
+            hunger=Math.max(0,hunger-45);
+            comfort=Math.max(0,comfort-10);
+            data.putInt(FOOD_RESERVE,reserve);
+        }
+        data.putInt(NEED_FOOD,hunger);
+        data.putInt(NEED_COMFORT,comfort);
+    }
+    private static int foodInChest(Container storage) {
+        int sum=0;
+        for(int i=0;i<storage.getContainerSize();i++){
+            ItemStack item=storage.getItem(i);
+            if (edible(item.getItem())) sum+=item.getCount();
+        }
+        return sum;
+    }
+    private static int reserveFromCollected(CompoundTag data,ItemStack acquired,Container storage){
+        if (!edible(acquired.getItem())) return 0;
+        int hunger=data.getInt(NEED_FOOD);
+        int comfort=data.getInt(NEED_COMFORT);
+        int desired=hunger>=45?12:(comfort>=70?8:4);
+        int owned=data.getInt(FOOD_RESERVE);
+        // Do not hoard while the village store is short of food, except in emergencies.
+        if(foodInChest(storage)<DEPOSIT_FOOD_MIN && hunger<80) desired=Math.min(desired,2);
+        int reserved=Math.min(acquired.getCount(),Math.max(0,Math.min(RESERVE_LIMIT,desired)-owned));
+        if(reserved>0)data.putInt(FOOD_RESERVE,owned+reserved);
+        return reserved;
+    }
     public WorkerChests() { MinecraftForge.EVENT_BUS.register(this); }
 
     private static boolean villager(Entity e) {
@@ -131,6 +181,7 @@ public final class WorkerChests {
         if (!(worker.level() instanceof ServerLevel level)) return;
         if (worker.tickCount % 30 != 0) return;
         CompoundTag data=worker.getPersistentData();
+        updateNeeds(worker,level,data);
         if (!data.contains(CHEST) || !level.dimension().location().toString().equals(data.getString(DIMENSION))) return;
         BlockPos chestPos=BlockPos.of(data.getLong(CHEST));
         if (worker.blockPosition().distSqr(chestPos)>1024 || !level.isLoaded(chestPos)) return;
@@ -159,7 +210,10 @@ public final class WorkerChests {
         }
         ItemStack acquired=item.getItem().copy();
         if (acquired.isEmpty()) return;
-        data.put(HELD,acquired.save(new CompoundTag()));
+        int reserve=reserveFromCollected(data,acquired,storage);
+        acquired.shrink(reserve);
+        if (!acquired.isEmpty()) data.put(HELD,acquired.save(new CompoundTag()));
+        // Items are transferred to persistent personal food reserve or the work chest.
         item.discard();
     }
 }
