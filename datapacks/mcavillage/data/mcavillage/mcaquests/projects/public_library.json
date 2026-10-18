@@ -1,0 +1,86 @@
+{
+  "format_version": 1,
+  "id": "mcavillage:public_library",
+  "scope": "village",
+  "sponsor": {
+    "professions": [
+      "minecraft:librarian",
+      "minecraft:cartographer"
+    ],
+    "on_death": "transfer"
+  },
+  "title": {
+    "text": "Народная библиотека"
+  },
+  "category": "culture",
+  "reputation": {
+    "on_phase_complete": 2,
+    "on_project_complete": 10
+  },
+  "phases": [
+    {
+      "key": "collection",
+      "dialogue": {
+        "offer": {
+          "text": "Деревне нужны знания для молодых мастеров."
+        },
+        "in_progress": {
+          "text": "Собираем книги и бумагу для будущей библиотеки."
+        }
+      },
+      "objectives": [
+        {
+          "type": "mcaquests:donate_item",
+          "item": "minecraft:book",
+          "count": 48
+        },
+        {
+          "type": "mcaquests:donate_item",
+          "item": "minecraft:paper",
+          "count": 96
+        }
+      ],
+      "rewards": [
+        {
+          "reward": {
+            "type": "mcaquests:xp",
+            "amount": 45
+          },
+          "target": "contributors"
+        }
+      ]
+    },
+    {
+      "key": "furnishing",
+      "dialogue": {
+        "offer": {
+          "text": "Книги собраны. Теперь построим читальный зал."
+        },
+        "in_progress": {
+          "text": "Шкафы и свет сделают зал уютным."
+        }
+      },
+      "objectives": [
+        {
+          "type": "mcaquests:donate_item",
+          "item": "minecraft:bookshelf",
+          "count": 12
+        },
+        {
+          "type": "mcaquests:donate_item",
+          "item": "minecraft:lantern",
+          "count": 8
+        }
+      ],
+      "rewards": [
+        {
+          "reward": {
+            "type": "mcaquests:village_reputation",
+            "amount": 10
+          },
+          "target": "sponsor_village"
+        }
+      ]
+    }
+  ]
+}
