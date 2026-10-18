@@ -1,0 +1,27 @@
+{
+  "parent": "mcavillage:electricity",
+  "display": {
+    "icon": {
+      "item": "minecraft:redstone_lamp"
+    },
+    "title": "Освещённые улицы",
+    "description": "Подготовьте краснокаменные лампы для освещения поселения.",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "stock": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:redstone_lamp"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
