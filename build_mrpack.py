@@ -124,6 +124,12 @@ def build(output,lean=False,strict_extras=False):
     with zipfile.ZipFile(output,"a",zipfile.ZIP_DEFLATED) as archive:
         ru=Path(__file__).parent/"localization"/"mcaquests_ru_ru.json"
         localization=json.loads(ru.read_text(encoding="utf-8"))
+        generated=Path(__file__).parent/"localization"/"mcaquests_ru_ru_generated.json"
+        if generated.exists():
+            translations=json.loads(generated.read_text(encoding="utf-8"))
+            translations.update(localization)  # manually reviewed strings win
+            localization=translations
+        print("Quest localization:",len(localization),"Russian strings")
         memory=io.BytesIO()
         with zipfile.ZipFile(memory,"w",zipfile.ZIP_DEFLATED) as pack:
             pack.writestr("pack.mcmeta",json.dumps({"pack":{"pack_format":15,"description":"MCA Quests Russian partial translation"}},ensure_ascii=False))
