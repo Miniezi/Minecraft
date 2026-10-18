@@ -117,6 +117,21 @@ def build(output,lean=False,strict_extras=False):
     except Exception as exc:
         if strict_extras:raise
         logs.append("SKIPPED MCA Crime: "+str(exc))
+    # MCA: Reputation 0.6.1 GPL-3.0 from the CurseForge CDN for published file 9023819.
+    # Only include if the real archive can be retrieved and checksummed at build time.
+    reputation_url="https://mediafilez.forgecdn.net/files/9023/819/mcareputation-0.6.1.jar"
+    try:
+        req=urllib.request.Request(reputation_url,headers={"User-Agent":"Mozilla/5.0 MCA-MRPACK-Builder"})
+        with urllib.request.urlopen(req,timeout=35) as response: reputation_bytes=response.read()
+        if not reputation_bytes.startswith(b"PK") or len(reputation_bytes)<10000:
+            raise ValueError("Invalid Reputation jar")
+        result.append({"path":"mods/mcareputation-0.6.1.jar",
+          "hashes":{"sha1":hashlib.sha1(reputation_bytes).hexdigest(),"sha512":hashlib.sha512(reputation_bytes).hexdigest()},
+          "downloads":[reputation_url],"fileSize":len(reputation_bytes)})
+        logs.append("MCA Reputation -> 0.6.1 (CurseForge file 9023819)")
+    except Exception as exc:
+        if strict_extras:raise
+        logs.append("SKIPPED MCA Reputation: "+str(exc))
     index={"formatVersion":1,"game":"minecraft","versionId":"1.0.0","name":"MCA Ultimate Life — Friends Edition","summary":"Produced by MRPACK Builder; multiplayer requires testing","files":sorted(result,key=lambda f:f["path"]),"dependencies":{"minecraft":MINECRAFT,"forge":FORGE}}
     with zipfile.ZipFile(output,"w",zipfile.ZIP_DEFLATED) as archive:
         archive.writestr("modrinth.index.json",json.dumps(index,indent=2,ensure_ascii=False))
