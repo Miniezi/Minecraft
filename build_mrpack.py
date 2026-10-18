@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """MRPACK BUILDER (not a ready-made modpack). Uses live Modrinth metadata."""
-import argparse, json, sys, urllib.parse, urllib.request, zipfile, hashlib, io
+import argparse, json, sys, urllib.parse, urllib.request, zipfile, hashlib, io, os
 from pathlib import Path
 
 MINECRAFT="1.20.1"
@@ -174,6 +174,19 @@ def build(output,lean=False,strict_extras=False):
             pack.writestr("pack.mcmeta",json.dumps({"pack":{"pack_format":15,"description":"MCA Quests Russian partial translation"}},ensure_ascii=False))
             pack.writestr("assets/mcaquests/lang/ru_ru.json",json.dumps(localization,ensure_ascii=False,indent=2))
         archive.writestr("overrides/resourcepacks/MCA-Quests-Russian-UI.zip",memory.getvalue())
+        # Bundled custom addon is our own open source code compiled in GitHub CI.
+        # Include a local override JAR instead of pretending it is hosted on Modrinth.
+        addon_dir=Path(__file__).parent/"addons"/"worker-chests"/"build"/"libs"
+        addon_jars=sorted(addon_dir.glob("mca-worker-chests-*.jar")) if addon_dir.exists() else []
+        addon_jars=[p for p in addon_jars if not any(x in p.name for x in ("-sources","-dev","-javadoc"))]
+        if os.environ.get("MRPACK_REQUIRE_WORKER_CHESTS")=="1" and len(addon_jars)!=1:
+            raise RuntimeError("Missing compiled worker-chests JAR; run gradle build first")
+        if len(addon_jars)==1:
+            archive.writestr("overrides/mods/"+addon_jars[0].name,addon_jars[0].read_bytes())
+            print("Bundled custom addon:",addon_jars[0].name)
+        elif addon_jars:
+            raise RuntimeError("More than one worker-chests JAR found")
+
         # Paxi loads community village project datapacks into every world.
         project_directory=Path(__file__).parent/"datapacks"/"mcavillage"/"data"/"mcavillage"/"mcaquests"/"projects"
         if not project_directory.exists():raise RuntimeError("Missing village project definitions")
