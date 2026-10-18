@@ -29,5 +29,16 @@ def main():
         tmp.write_bytes(blob)
         os.replace(tmp,dest)
         print("Installed",relative)
+    # Copy shared village Paxi datapacks from the same MRPACK. Never install client resourcepacks.
+    with zipfile.ZipFile(args.mrpack) as pack:
+        prefix="overrides/config/paxi/datapacks/"
+        for filename in pack.namelist():
+            if not filename.startswith(prefix) or not filename.endswith(".zip"):continue
+            relative=Path(filename[len("overrides/"):])
+            if ".." in relative.parts:raise ValueError("Unsafe datapack path")
+            destination=server/relative
+            destination.parent.mkdir(parents=True,exist_ok=True)
+            destination.write_bytes(pack.read(filename))
+            print("Installed shared village datapack:",relative)
     print("Finished. Remove obsolete JAR duplicates; install Forge server and Java 17 separately.")
 if __name__=="__main__":main()
