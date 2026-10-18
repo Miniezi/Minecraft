@@ -277,6 +277,10 @@ fully run or stress-tested with the new visuals.
         # Paxi loads community village project datapacks into every world.
         project_directory=Path(__file__).parent/"datapacks"/"mcavillage"/"data"/"mcavillage"/"mcaquests"/"projects"
         if not project_directory.exists():raise RuntimeError("Missing village project definitions")
+        required_projects={"festival","granary","industrial_revolution","watch","street_lights","public_library","trade_routes","emergency_clinic"}
+        found_projects={p.stem for p in project_directory.glob("*.json")}
+        if not required_projects.issubset(found_projects):
+            raise RuntimeError("Missing village projects: "+str(required_projects-found_projects))
         project_memory=io.BytesIO()
         with zipfile.ZipFile(project_memory,"w",zipfile.ZIP_DEFLATED) as datapack:
             datapack.writestr("pack.mcmeta",json.dumps({"pack":{"pack_format":15,"description":"MCA: совместные проекты деревни"}} ,ensure_ascii=False))
