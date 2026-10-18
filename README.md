@@ -101,3 +101,13 @@ The Worker Chests source now models **standalone food need and comfort demand** 
 - This is an intentionally limited fallback, **not** a verified integration with MCA/Townstead internal need APIs. A future adapter should read the relevant real hunger, thirst, energy and mood signals via their documented API and consume actual held food safely.
 
 **Known issue:** The original item-collection AI needs in-game testing for pathfinding, unloaded entities, protected item drops and interruptions. Do not claim autonomous work is production ready based solely on compilation.
+
+
+## Better villages and fast housing (October 2026)
+
+- **ChoiceTheorem's Overhauled Village (CTOV)** adds biome-specific village architecture and outposts. The matching Forge 1.20.1 release is resolved with Modrinth metadata. **Lithostitched** is a dependency for current CTOV builds. World-gen changes normally apply to newly generated chunks only. Existing world villages do not automatically rebuild.
+- **Prefab** instantly creates predefined houses and functional structures using craftable blueprints. Forge 1.20.1 version 1.10.0.1 is available. This is the first choice for rapidly establishing MCA homes.
+- **Effortless Building** supports mirror, array, and mass-block placement in survival as well as creative. It is the tool for *custom* fast building, whereas Prefab gives instant predefined houses.
+- **Blueprints – Prefabricated Structures** adds more quick-build structures, subject to the availability check in the build report.
+- **Important:** Towns and Towers, Repurposed Structures, YUNG's Better Villages, and CTOV can overlap. Check the actual generated mod list, test one new world and inspect village diversity, generation speed and NPC spawning before relying on the combination. CTOV does not automatically guarantee MCA villagers in every new building; compatibility may depend on structure/pool configuration.
+- **Multiplayer:** all structure generation/building mods must be installed on the dedicated server too (except explicitly client-only UI). Instant-build tools may change terrain or many blocks at once, so take world backups.
