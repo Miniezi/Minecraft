@@ -39,8 +39,8 @@ jobs:
         env:
           MRPACK_REQUIRE_WORKER_CHESTS: '1'
       - name: Add Russian translations for MCA dialogues and other mod interfaces
-        run: python translate_all_mods.py --seconds 190
-        timeout-minutes: 6
+        run: python translate_all_mods.py --seconds 330
+        timeout-minutes: 8
       - name: Verify manifest structure
         run: |
           python - <<'PY'
