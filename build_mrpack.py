@@ -107,6 +107,16 @@ def build(output,lean=False,strict_extras=False):
             if not dependency:raise ValueError("Missing dependency ID of "+project)
             if pinned and (MINECRAFT not in pinned.get("game_versions",[]) or "forge" not in pinned.get("loaders",[])):
                 raise ValueError("Incompatible pinned dependency of "+project)
+            # MCA Quests 1.7.x and Conversations 1.8.x officially support MCA [7.6,8).
+            # Some Modrinth version metadata still pins the dev MCA 7.6.26 version.
+            # Honor the declared compatibility range for ONLY these two projects.
+            parent_filename=selected[project][1]["filename"].lower()
+            if dependency=="1W98a849" and (parent_filename.startswith("mcaquests-") or parent_filename.startswith("mcaconversations-")):
+                installed=selected.get("1W98a849")
+                if installed and installed[0].get("version_number","").startswith("7.7.1"):
+                    logs.append("ACCEPTED supported MCA [7.6,8) for "+parent_filename+
+                                " instead of stale Modrinth pinned dev version")
+                    continue
             add(dependency,True,pinned)
     for parent,project,vid in incompat:
         canonical=aliases.get(project,project)
