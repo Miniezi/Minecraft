@@ -1,0 +1,86 @@
+{
+  "format_version": 1,
+  "id": "mcavillage:trade_routes",
+  "scope": "village",
+  "sponsor": {
+    "professions": [
+      "minecraft:cartographer",
+      "minecraft:farmer"
+    ],
+    "on_death": "transfer"
+  },
+  "title": {
+    "text": "Торговые пути"
+  },
+  "category": "economy",
+  "reputation": {
+    "on_phase_complete": 2,
+    "on_project_complete": 10
+  },
+  "phases": [
+    {
+      "key": "supplies",
+      "dialogue": {
+        "offer": {
+          "text": "Соседние поселения ждут наших товаров."
+        },
+        "in_progress": {
+          "text": "Подготовим товары и складские сундуки."
+        }
+      },
+      "objectives": [
+        {
+          "type": "mcaquests:donate_item",
+          "item": "minecraft:bread",
+          "count": 64
+        },
+        {
+          "type": "mcaquests:donate_item",
+          "item": "minecraft:chest",
+          "count": 12
+        }
+      ],
+      "rewards": [
+        {
+          "reward": {
+            "type": "mcaquests:xp",
+            "amount": 40
+          },
+          "target": "contributors"
+        }
+      ]
+    },
+    {
+      "key": "roads",
+      "dialogue": {
+        "offer": {
+          "text": "Товары готовы — построим безопасные торговые маршруты."
+        },
+        "in_progress": {
+          "text": "Не хватает рельсов и древесины для доставки грузов."
+        }
+      },
+      "objectives": [
+        {
+          "type": "mcaquests:donate_item",
+          "item": "minecraft:rail",
+          "count": 64
+        },
+        {
+          "type": "mcaquests:donate_item",
+          "item": "minecraft:oak_planks",
+          "count": 128
+        }
+      ],
+      "rewards": [
+        {
+          "reward": {
+            "type": "mcaquests:village_reputation",
+            "amount": 12
+          },
+          "target": "sponsor_village"
+        }
+      ]
+    }
+  ]
+}
