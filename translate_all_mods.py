@@ -22,12 +22,14 @@ TARGET_FILENAMES = (
 )
 PLACEHOLDER = re.compile(r"%(?:\\d+\\$)?[-+#0,.(\\d]*[a-zA-Z%]|\\{\\d+\\}")
 RESOURCE_NAME="MCA-Expanded-Russian-Language.zip"
+SKIP_NAMESPACES={"chipped"}
+SKIP_JARS=("chipped-",)
 
 def jar_entries(jar):
     en,ru={},{}
     for name in jar.namelist():
         parts=name.split("/")
-        if len(parts)!=4 or parts[0]!="assets" or parts[2]!="lang" or not re.fullmatch(r"[a-z0-9_.-]+",parts[1]):
+        if len(parts)!=4 or parts[0]!="assets" or parts[2]!="lang" or (parts[1] in SKIP_NAMESPACES or not re.fullmatch(r"[a-z0-9_.-]+",parts[1])):
             continue
         if parts[3] not in ("en_us.json","ru_ru.json"):continue
         try:
@@ -67,7 +69,7 @@ def main():
     upstream_en,upstream_ru={},{}
     for entry in manifest["files"]:
         name=entry["path"].split("/")[-1].lower()
-        if not name.endswith(".jar"):continue
+        if not name.endswith(".jar") or any(name.startswith(prefix) for prefix in SKIP_JARS):continue
         try:
             content=safe_download(entry["downloads"][0],max_bytes=110_000_000)
             with zipfile.ZipFile(io.BytesIO(content)) as jar:
@@ -92,12 +94,15 @@ def main():
             with zipfile.ZipFile(io.BytesIO(archive.read(existing))) as previous:
                 for name in previous.namelist():
                     parts=name.split("/")
-                    if len(parts)==4 and parts[0]=="assets" and parts[2]=="lang" and parts[3]=="ru_ru.json":
+                    if len(parts)==4 and parts[0]=="assets" and parts[2]=="lang" and parts[3]=="ru_ru.json" and parts[1] not in SKIP_NAMESPACES:
                         try:
                             previous_values=json.loads(previous.read(name))
                             upstream_ru.setdefault(parts[1],{}).update(previous_values)
                         except (ValueError,KeyError):
                             pass
+    for namespace in SKIP_NAMESPACES:
+        upstream_en.pop(namespace,None)
+        upstream_ru.pop(namespace,None)
     count=0
     # Dialogue first: the screenshots show unlocalized MCA Conversations lines & village screens.
     priority=("mcaconversations","mcareputation","mcacrime","mcacapitals","mca","mcaquests",
