@@ -1,0 +1,104 @@
+{
+  "format_version": 1,
+  "id": "mcavillage:industrial_revolution",
+  "scope": "village",
+  "sponsor": {
+    "professions": [
+      "minecraft:toolsmith",
+      "minecraft:armorer",
+      "minecraft:mason"
+    ],
+    "on_death": "transfer"
+  },
+  "title": {
+    "text": "Индустриализация деревни"
+  },
+  "category": "community",
+  "reputation": {
+    "on_phase_complete": 3,
+    "on_project_complete": 15
+  },
+  "phases": [
+    {
+      "key": "workshop",
+      "dialogue": {
+        "offer": {
+          "text": "Нашей деревне пора перейти от ручного труда к машинам. Начнём с механической мастерской!"
+        },
+        "in_progress": {
+          "text": "Нам нужны сплавы и материалы для первых механизмов."
+        }
+      },
+      "objectives": [
+        {
+          "type": "mcaquests:donate_item",
+          "item": "create:andesite_alloy",
+          "count": 64
+        },
+        {
+          "type": "mcaquests:donate_item",
+          "item": "minecraft:iron_ingot",
+          "count": 96
+        },
+        {
+          "type": "mcaquests:donate_item",
+          "item": "minecraft:bricks",
+          "count": 128
+        }
+      ],
+      "rewards": [
+        {
+          "reward": {
+            "type": "mcaquests:currency",
+            "difficulty": "hard"
+          },
+          "target": "contributors"
+        }
+      ]
+    },
+    {
+      "key": "engineering",
+      "dialogue": {
+        "offer": {
+          "text": "Механическая мастерская готова! Теперь построим инженерный цех с новыми проводами и деталями."
+        },
+        "in_progress": {
+          "text": "Без точных деталей и железных компонентов мы не сможем обеспечить производство."
+        }
+      },
+      "objectives": [
+        {
+          "type": "mcaquests:donate_item",
+          "item": "create:precision_mechanism",
+          "count": 8
+        },
+        {
+          "type": "mcaquests:donate_item",
+          "item": "immersiveengineering:component_iron",
+          "count": 16
+        },
+        {
+          "type": "mcaquests:donate_item",
+          "item": "minecraft:copper_ingot",
+          "count": 64
+        }
+      ],
+      "rewards": [
+        {
+          "reward": {
+            "type": "mcaquests:village_reputation",
+            "amount": 12
+          },
+          "target": "sponsor_village"
+        },
+        {
+          "reward": {
+            "type": "mcaquests:hearts_with_participants",
+            "amount": 20
+          },
+          "target": "all_participants"
+        }
+      ]
+    }
+  ]
+}
