@@ -1,0 +1,39 @@
+name: Build MRPACK Builder Output
+on:
+  workflow_dispatch:
+  push:
+    branches: [minecraft]
+    paths:
+      - build_mrpack.py
+      - install_server_mods.py
+      - .github/workflows/build-mrpack.yml
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Generate .mrpack
+        run: python build_mrpack.py
+      - name: Verify manifest structure
+        run: |
+          python - <<'PY'
+          import json,zipfile
+          with zipfile.ZipFile('MCA-Ultimate-Life-Friends-1.20.1.mrpack') as z:
+              index=json.loads(z.read('modrinth.index.json'))
+          assert index['formatVersion']==1
+          assert index['dependencies']['minecraft']=='1.20.1'
+          assert index['dependencies']['forge']=='47.4.10'
+          assert index['files']
+          print(len(index['files']),'files')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mrpack-builder-output
+          path: |
+            MCA-Ultimate-Life-Friends-1.20.1.mrpack
+            MCA-Ultimate-Life-Friends-1.20.1.mod-list.txt
