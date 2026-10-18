@@ -29,7 +29,7 @@ def api(path):
     req=urllib.request.Request(BASE+path,headers={"User-Agent":"MCA-MRPACK-Builder/1.0","Accept":"application/json"})
     with urllib.request.urlopen(req,timeout=35) as response:return json.load(response)
 
-def choose(project):
+def choose(project,townstead=False):
     if project=="capitals-a-monarchy-mod-for-mca-reborn":
         version=api("/version/cE7zt4nS")  # official Modrinth 1.3.5 Forge 1.20.1
         if "forge" not in version.get("loaders",[]) or MINECRAFT not in version.get("game_versions",[]):
@@ -48,6 +48,10 @@ def choose(project):
         versions=[v for v in versions if capitals_version(v)>=(1,3,5)]
         if not versions:
             raise ValueError("MCA Conversations/Quests require MCA Capitals >=1.3.5 for Forge 1.20.1")
+    if project=="minecraft-comes-alive-reborn" and townstead:
+        pinned=[v for v in versions if v.get("version_number","").startswith("7.6.26")]
+        if not pinned:raise ValueError("Townstead mode requires MCA 7.6.26")
+        return max(pinned,key=lambda v:v.get("date_published",""))
     if project=="minecraft-comes-alive-reborn":
         # MCA Capitals 1.3.5 requires a pinned MCA 7.7.1 alpha.
         capitals=api("/version/cE7zt4nS")
@@ -63,12 +67,12 @@ def choose(project):
     if not versions:raise ValueError("No Forge 1.20.1 release: "+project)
     return max(versions,key=lambda v:v.get("date_published",""))
 
-def build(output,lean=False,strict_extras=False):
+def build(output,lean=False,strict_extras=False,townstead=False):
     # Canonical Modrinth project IDs prevent slug/id aliases from double-installing mods.
     selected={}; pending=[]; logs=[]; incompat=[]; aliases={}
     def add(project,required=True,version=None):
         try:
-            version=version or choose(project)
+            version=version or choose(project,townstead)
             if MINECRAFT not in version.get("game_versions",[]) or "forge" not in version.get("loaders",[]):
                 raise ValueError("Incompatible game version or loader")
             project_id=version.get("project_id")
@@ -89,7 +93,8 @@ def build(output,lean=False,strict_extras=False):
         except Exception as exc:
             if required or strict_extras:raise ValueError(project+": "+str(exc)) from exc
             logs.append("SKIPPED "+project+": "+str(exc))
-    for project in CORE:add(project)
+    projects=[p for p in CORE if p!="capitals-a-monarchy-mod-for-mca-reborn"]+["townstead"] if townstead else CORE
+    for project in projects:add(project)
     if not lean:
         for project in EXTRAS:add(project,False)
     while pending:
@@ -111,7 +116,7 @@ def build(output,lean=False,strict_extras=False):
             # Some Modrinth version metadata still pins the dev MCA 7.6.26 version.
             # Honor the declared compatibility range for ONLY these two projects.
             parent_filename=selected[project][1]["filename"].lower()
-            if dependency=="1W98a849" and (parent_filename.startswith("mcaquests-") or parent_filename.startswith("mcaconversations-")):
+            if not townstead and dependency=="1W98a849" and (parent_filename.startswith("mcaquests-") or parent_filename.startswith("mcaconversations-")):
                 installed=selected.get("1W98a849")
                 if installed and installed[0].get("version_number","").startswith("7.7.1"):
                     logs.append("ACCEPTED supported MCA [7.6,8) for "+parent_filename+
@@ -194,10 +199,15 @@ def build(output,lean=False,strict_extras=False):
     mca_versions=[(project,v.get("version_number",""),f.get("filename",""))
                   for project,(v,f) in selected.items()
                   if "minecraft-comes-alive" in f.get("filename","").lower()]
-    if len(mca_versions)!=1 or not mca_versions[0][1].startswith("7.7.1"):
+    if len(mca_versions)!=1 or not mca_versions[0][1].startswith("7.6.26" if townstead else "7.7.1"):
         raise RuntimeError("MCA Capitals 1.3.5 requires MCA 7.7.1: "+repr(mca_versions))
-    if any("townstead" in f["path"].lower() for f in result):
+    if not townstead and any("townstead" in f["path"].lower() for f in result):
         raise RuntimeError("Townstead 0.7.6 cannot load with MCA 7.7.1")
+    if townstead:
+        if not any("townstead-0.7.6" in f["path"].lower() for f in result):
+            raise RuntimeError("Townstead 0.7.6 missing from Townstead profile")
+        if any("mcacapitals" in f["path"].lower() for f in result):
+            raise RuntimeError("MCA Capitals cannot join MCA 7.6.26 Townstead profile")
     index={"formatVersion":1,"game":"minecraft","versionId":"1.0.0","name":"MCA Ultimate Life — Friends Edition","summary":"Produced by MRPACK Builder; multiplayer requires testing","files":sorted(result,key=lambda f:f["path"]),"dependencies":{"minecraft":MINECRAFT,"forge":FORGE}}
     with zipfile.ZipFile(output,"w",zipfile.ZIP_DEFLATED) as archive:
         archive.writestr("modrinth.index.json",json.dumps(index,indent=2,ensure_ascii=False))
@@ -251,7 +261,8 @@ if __name__=="__main__":
     p=argparse.ArgumentParser(description="Generate an MRPACK from Modrinth")
     p.add_argument("--output",default=NAME)
     p.add_argument("--lean",action="store_true")
+    p.add_argument("--townstead",action="store_true",help="MCA 7.6.26 + Townstead 0.7.6, without MCA Capitals")
     p.add_argument("--strict-extras",action="store_true")
     args=p.parse_args()
-    try:build(args.output,args.lean,args.strict_extras)
+    try:build(args.output,args.lean,args.strict_extras,args.townstead)
     except Exception as exc:print("BUILD FAILED:",exc,file=sys.stderr);sys.exit(1)
