@@ -2,7 +2,7 @@
   "parent": "mcavillage:food",
   "display": {
     "icon": {
-      "item": "minecraft:bed"
+      "item": "minecraft:red_bed"
     },
     "title": "Уютный дом",
     "description": "Приготовьте кровать для долгих ночей и новых жителей.",
