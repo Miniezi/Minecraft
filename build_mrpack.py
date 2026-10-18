@@ -99,6 +99,11 @@ def build(output,lean=False,strict_extras=False):
         entry={"path":path,"hashes":{"sha1":file["hashes"]["sha1"],"sha512":file["hashes"]["sha512"]},"downloads":[file["url"]],"fileSize":file["size"]}
         if sides.get("server_side")=="unsupported":entry["env"]={"client":"required","server":"unsupported"}
         if sides.get("client_side")=="unsupported":entry["env"]={"client":"unsupported","server":"required"}
+        # Some Modrinth projects label purely client UI mods as server-optional.
+        # A dedicated server should not install UI, minimap or recipe viewer JARs.
+        client_only={"embeddium","entityculling","xaeros-minimap","xaeros-world-map","jei","appleskin"}
+        if project in client_only or sides.get("slug") in client_only:
+            entry["env"]={"client":"required","server":"unsupported"}
         result.append(entry)
     # MCA: Crime GPL-3.0 release, sourced from the author's official GitHub Releases.
     # Download at build time so sha1/sha512 in the .mrpack are verified, never guessed.
