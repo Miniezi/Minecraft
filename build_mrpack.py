@@ -106,7 +106,7 @@ def build(output,lean=False,strict_extras=False):
             pack.writestr("pack.mcmeta",json.dumps({"pack":{"pack_format":15,"description":"MCA Quests Russian partial translation"}},ensure_ascii=False))
             pack.writestr("assets/mcaquests/lang/ru_ru.json",json.dumps(localization,ensure_ascii=False,indent=2))
         archive.writestr("overrides/resourcepacks/MCA-Quests-Russian-UI.zip",memory.getvalue())
-        archive.writestr("overrides/options.txt",'lang:ru_ru\\nresourcePacks:["vanilla","file/MCA-Quests-Russian-UI.zip"]\\n')
+        archive.writestr("overrides/options.txt",'lang:ru_ru\nresourcePacks:["vanilla","file/MCA-Quests-Russian-UI.zip"]\n')
     Path(output).with_suffix(".mod-list.txt").write_text("\n".join(logs)+"\n",encoding="utf-8")
     print("Generated:",output,"entries:",len(result))
     print("\n".join(logs))
