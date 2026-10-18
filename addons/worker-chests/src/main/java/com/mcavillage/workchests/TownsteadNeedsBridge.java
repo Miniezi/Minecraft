@@ -41,7 +41,7 @@ public final class TownsteadNeedsBridge {
             boolean collapsed=(Boolean)invoke(needs,"collapsed");
             // Mood: 0.7.x snapshots do not expose a universal MCA mood score.
             return new State(hunger,thirst,fatigue,collapsed,0,true);
-        } catch(ReflectiveOperationException | LinkageError | IllegalArgumentException e) {
+        } catch(Exception | LinkageError e) {
             return new State(0,0,0,false,0,false);
         }
     }
