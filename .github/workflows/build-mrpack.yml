@@ -71,7 +71,7 @@ jobs:
           with zipfile.ZipFile('MCA-Ultimate-Life-Friends-1.20.1.mrpack') as source:
               import io
               with zipfile.ZipFile(io.BytesIO(source.read('overrides/config/paxi/datapacks/MCA-Shared-Village-Projects-RU.zip'))) as worldpack:
-                  for milestone in ('root','food','market','workshop','electricity'):
+                  for milestone in ('root','food','market','workshop','electricity','agriculture','livestock','hospitality','education','defense','infrastructure','automation','illumination','navigation','industry','prestige','harvest'):
                       name='data/mcavillage/advancements/'+milestone+'.json'
                       assert name in worldpack.namelist(), 'Missing village advancement: '+name
                       advancement=json.loads(worldpack.read(name))
