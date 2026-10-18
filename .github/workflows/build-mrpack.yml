@@ -69,6 +69,9 @@ jobs:
           assert any(n.startswith('overrides/mods/mca-worker-chests') and n.endswith('.jar') for n in z.namelist())
           assert any('ImmersiveEngineering' in f['path'] for f in index['files'])
           assert 'overrides/resourcepacks/MCA-Expanded-Russian-Language.zip' in z.namelist()
+          import io
+          with zipfile.ZipFile(io.BytesIO(z.read('overrides/resourcepacks/MCA-Expanded-Russian-Language.zip'))) as locales:
+              assert not any(n.startswith('assets/chipped/') for n in locales.namelist()), 'Chipped must not be translated'
           assert index['files']
           paths=[item['path'].lower() for item in index['files']]
           assert len(paths)==len(set(paths)), 'Duplicate files in MRPACK'
