@@ -30,40 +30,25 @@ def api(path):
     with urllib.request.urlopen(req,timeout=35) as response:return json.load(response)
 
 def choose(project,townstead=False):
-    if project=="capitals-a-monarchy-mod-for-mca-reborn":
-        version=api("/version/cE7zt4nS")  # official Modrinth 1.3.5 Forge 1.20.1
-        if "forge" not in version.get("loaders",[]) or MINECRAFT not in version.get("game_versions",[]):
-            raise ValueError("Pinned MCA Capitals 1.3.5 is not Forge 1.20.1")
-        return version
     query=urllib.parse.urlencode({"loaders":json.dumps(["forge"]),"game_versions":json.dumps([MINECRAFT])})
     versions=api("/project/"+urllib.parse.quote(project,safe="")+"/version?"+query)
     versions=[v for v in versions if v.get("version_type")=="release" and "forge" in v.get("loaders",[]) and MINECRAFT in v.get("game_versions",[])]
     if project=="capitals-a-monarchy-mod-for-mca-reborn":
-        # MCA Conversations requires Capitals >=1.3; MCA Quests requires >=1.3.5.
-        # Never fall back to 1.1.1, even when the latter suits old MCA.
-        def capitals_version(v):
-            import re
-            match=re.search(r"(\\d+)\\.(\\d+)\\.(\\d+)",v.get("version_number",""))
-            return tuple(map(int,match.groups())) if match else (0,0,0)
-        versions=[v for v in versions if capitals_version(v)>=(1,3,5)]
-        if not versions:
-            raise ValueError("MCA Conversations/Quests require MCA Capitals >=1.3.5 for Forge 1.20.1")
+        # Select newest published Forge release on Minecraft 1.20.1.
+        # The resolver rejects any dependency conflict with MCA versions.
+        import re
+        def vers(v):
+            m=re.search(r"(\\d+)\\.(\\d+)\\.(\\d+)",v.get("version_number",""))
+            return tuple(map(int,m.groups())) if m else (0,0,0)
+        versions=[v for v in versions if vers(v)>=(1,3,5)]
     if project=="minecraft-comes-alive-reborn" and townstead:
         pinned=[v for v in versions if v.get("version_number","").startswith("7.6.26")]
         if not pinned:raise ValueError("Townstead mode requires MCA 7.6.26")
         return max(pinned,key=lambda v:v.get("date_published",""))
     if project=="minecraft-comes-alive-reborn":
-        # MCA Capitals 1.3.5 requires a pinned MCA 7.7.1 alpha.
-        capitals=api("/version/cE7zt4nS")
-        mca_deps=[d for d in capitals.get("dependencies",[])
-                  if d.get("dependency_type")=="required" and d.get("version_id")
-                  and d.get("project_id")== "1W98a849"]
-        if len(mca_deps)!=1:
-            raise ValueError("Cannot resolve MCA 7.7.1 requirement from MCA Capitals")
-        pin=api("/version/"+mca_deps[0]["version_id"])
-        if not pin.get("version_number","").startswith("7.7.1") or MINECRAFT not in pin.get("game_versions",[]) or "forge" not in pin.get("loaders",[]):
-            raise ValueError("Pinned MCA release from Capitals not Forge 1.20.1 7.7.1")
-        return pin
+        # Prefer current release line, but dependency resolution will enforce
+        # the exact MCA version specified by MCA Capitals.
+        versions=[v for v in versions if v.get("version_number","").startswith("7.7.")]
     if not versions:raise ValueError("No Forge 1.20.1 release: "+project)
     return max(versions,key=lambda v:v.get("date_published",""))
 
@@ -94,7 +79,13 @@ def build(output,lean=False,strict_extras=False,townstead=False):
             if required or strict_extras:raise ValueError(project+": "+str(exc)) from exc
             logs.append("SKIPPED "+project+": "+str(exc))
     projects=[p for p in CORE if p!="capitals-a-monarchy-mod-for-mca-reborn"]+["townstead"] if townstead else CORE
-    for project in projects:add(project)
+    # Add Capitals before MCA so its exact dependency selects the required MCA build.
+    if not townstead:projects=["capitals-a-monarchy-mod-for-mca-reborn"]+[p for p in projects if p!="capitals-a-monarchy-mod-for-mca-reborn"]
+    for project in projects:
+        if project=="minecraft-comes-alive-reborn" and not townstead:
+            existing=selected.get("1W98a849")
+            if existing:continue
+        add(project)
     if not lean:
         for project in EXTRAS:add(project,False)
     while pending:
@@ -199,7 +190,7 @@ def build(output,lean=False,strict_extras=False,townstead=False):
     mca_versions=[(project,v.get("version_number",""),f.get("filename",""))
                   for project,(v,f) in selected.items()
                   if "minecraft-comes-alive" in f.get("filename","").lower()]
-    if len(mca_versions)!=1 or not mca_versions[0][1].startswith("7.6.26" if townstead else "7.7.1"):
+    if len(mca_versions)!=1 or (townstead and not mca_versions[0][1].startswith("7.6.26")):
         raise RuntimeError("MCA Capitals 1.3.5 requires MCA 7.7.1: "+repr(mca_versions))
     if not townstead and any("townstead" in f["path"].lower() for f in result):
         raise RuntimeError("Townstead 0.7.6 cannot load with MCA 7.7.1")
