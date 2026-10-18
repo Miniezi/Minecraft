@@ -20,8 +20,8 @@ jobs:
         with:
           python-version: '3.12'
       - name: Translate quest narrative to Russian (best-effort)
-        run: python scripts/translate_quests.py --seconds 200
-        timeout-minutes: 5
+        run: python scripts/translate_quests.py --seconds 365
+        timeout-minutes: 8
       - name: Generate .mrpack
         run: python build_mrpack.py
       - name: Verify manifest structure
@@ -33,6 +33,10 @@ jobs:
           assert index['formatVersion']==1
           assert index['dependencies']['minecraft']=='1.20.1'
           assert index['dependencies']['forge']=='47.4.10'
+          assert len(index['files']) >= 50
+          assert any('mcacapitals' in f['path'] for f in index['files'])
+          assert any('mcacrime' in f['path'] for f in index['files'])
+          assert 'overrides/config/paxi/datapacks/MCA-Shared-Village-Projects-RU.zip' in z.namelist()
           assert index['files']
           print(len(index['files']),'files')
           PY
