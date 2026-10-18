@@ -1,0 +1,92 @@
+{
+  "format_version": 1,
+  "id": "mcavillage:watch",
+  "scope": "village",
+  "sponsor": {
+    "professions": [
+      "mca:guard"
+    ],
+    "on_death": "transfer"
+  },
+  "title": {
+    "text": "Ночная стража"
+  },
+  "category": "defense",
+  "reputation": {
+    "on_phase_complete": 3,
+    "on_project_complete": 12
+  },
+  "phases": [
+    {
+      "key": "weapons",
+      "dialogue": {
+        "offer": {
+          "text": "Мы не сможем защитить жителей без снаряжения. Помоги вооружить стражу!"
+        },
+        "in_progress": {
+          "text": "Сталь и стрелы нужны каждому дозорному."
+        }
+      },
+      "objectives": [
+        {
+          "type": "mcaquests:donate_item",
+          "item": "minecraft:iron_ingot",
+          "count": 64
+        },
+        {
+          "type": "mcaquests:donate_item",
+          "item": "minecraft:arrow",
+          "count": 128
+        }
+      ],
+      "rewards": [
+        {
+          "reward": {
+            "type": "mcaquests:currency",
+            "difficulty": "hard"
+          },
+          "target": "contributors"
+        }
+      ]
+    },
+    {
+      "key": "defenses",
+      "dialogue": {
+        "offer": {
+          "text": "Осталось укрепить посты и запастись щитами."
+        },
+        "in_progress": {
+          "text": "Вся деревня надеется на нашу оборону."
+        }
+      },
+      "objectives": [
+        {
+          "type": "mcaquests:donate_item",
+          "item": "minecraft:cobblestone",
+          "count": 192
+        },
+        {
+          "type": "mcaquests:donate_item",
+          "item": "minecraft:shield",
+          "count": 6
+        }
+      ],
+      "rewards": [
+        {
+          "reward": {
+            "type": "mcaquests:hearts_with_participants",
+            "amount": 18
+          },
+          "target": "all_participants"
+        },
+        {
+          "reward": {
+            "type": "mcaquests:village_reputation",
+            "amount": 10
+          },
+          "target": "sponsor_village"
+        }
+      ]
+    }
+  ]
+}
