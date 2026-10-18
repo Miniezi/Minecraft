@@ -111,3 +111,12 @@ The Worker Chests source now models **standalone food need and comfort demand** 
 - **Blueprints – Prefabricated Structures** adds more quick-build structures, subject to the availability check in the build report.
 - **Important:** Towns and Towers, Repurposed Structures, YUNG's Better Villages, and CTOV can overlap. Check the actual generated mod list, test one new world and inspect village diversity, generation speed and NPC spawning before relying on the combination. CTOV does not automatically guarantee MCA villagers in every new building; compatibility may depend on structure/pool configuration.
 - **Multiplayer:** all structure generation/building mods must be installed on the dedicated server too (except explicitly client-only UI). Instant-build tools may change terrain or many blocks at once, so take world backups.
+
+
+## Village electrical grid — Create: Power Grid
+
+This preset now includes **Create: Power Grid** for visually laid-out poles, cables, connectors, electric motors, lamps, electrical machines and power distribution. **It can accept power from other technology generators:** the built-in **FE inverter** converts Forge Energy (FE) into its electrical grid; device connectors carry FE to compatible consumers. This is the recommended simple route to mix energy from Immersive Engineering, Create: New Age and other FE-capable machines.
+
+Quick start: build a FE-producing generator -> attach the Power Grid **FE inverter** as described in the mod's Ponder/JEI -> connect Power Grid wires -> connect a Power Grid machine, lamp or motor. Configure the FE inverter and connector according to the mod's documentation; ordinary FE cables from other mods are not the same as Power Grid's electrical wires. Inverter input/outputs and safety ratings matter. The Power Grid model simulates actual voltage/current; it is not a no-configuration FE cable mod. It is suitable for a power station next to the village, supplying industrial workshops and lights.
+
+This connects the industrial settlement thematically. It does **not** automatically connect NPC Townstead needs or let villagers build wires themselves. Multiplayer server and client must use matching versions. Verify the generated mod list includes the power-grid project and its dependencies before installing.
