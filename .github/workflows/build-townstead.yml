@@ -1,0 +1,85 @@
+name: Build MCA Townstead Compatibility Edition
+on:
+  workflow_dispatch:
+  push:
+    branches: [mrpack-builder]
+    paths:
+      - build_mrpack.py
+      - '.github/workflows/build-townstead.yml'
+      - translate_all_mods.py
+      - 'localization/**'
+      - 'scripts/**'
+      - 'addons/worker-chests/**'
+      - install_server_mods.py
+      - .github/workflows/build-mrpack.yml
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.8'
+      - name: Compile custom worker chest Forge addon
+        working-directory: addons/worker-chests
+        run: gradle build --no-daemon
+      - name: Translate quest narrative to Russian (best-effort)
+        run: python scripts/translate_quests.py --seconds 365
+        timeout-minutes: 8
+      - name: Generate .mrpack
+        run: python build_mrpack.py --townstead --output MCA-Townstead-Villages-RU-1.20.1.mrpack
+        env:
+          MRPACK_REQUIRE_WORKER_CHESTS: '1'
+      - name: Add Russian translations for MCA dialogues and other mod interfaces
+        run: python translate_all_mods.py --seconds 330 --pack MCA-Townstead-Villages-RU-1.20.1.mrpack
+        timeout-minutes: 8
+      - name: Verify manifest structure
+        run: |
+          python - <<'PY'
+          import json,zipfile
+          with zipfile.ZipFile('MCA-Townstead-Villages-RU-1.20.1.mrpack') as z:
+              index=json.loads(z.read('modrinth.index.json'))
+          assert index['formatVersion']==1
+          assert index['dependencies']['minecraft']=='1.20.1'
+          assert index['dependencies']['forge']=='47.4.10'
+          assert len(index['files']) >= 50
+          assert not any('mcacapitals' in f['path'] for f in index['files'])
+          assert any('mcacrime' in f['path'] for f in index['files'])
+          assert 'overrides/config/paxi/datapacks/MCA-Shared-Village-Projects-RU.zip' in z.namelist()
+          assert any(n.startswith('overrides/mods/mca-worker-chests') and n.endswith('.jar') for n in z.namelist())
+          assert any('ImmersiveEngineering' in f['path'] for f in index['files'])
+          assert 'overrides/resourcepacks/MCA-Expanded-Russian-Language.zip' in z.namelist()
+          assert index['files']
+          paths=[item['path'].lower() for item in index['files']]
+          assert len(paths)==len(set(paths)), 'Duplicate files in MRPACK'
+          required={
+            'mca-7.6.26': 'minecraft-comes-alive-7.6.26',
+            'architectury': 'architectury',
+            'geckolib': 'geckolib',
+            'patchouli': 'patchouli',
+            'paxi': 'paxi',
+            'create': 'mods/create-',
+            'power-grid': 'powergrid',
+            'mca-quests': 'mcaquests',
+          }
+          for name,fragment in required.items():
+              assert any(fragment in path for path in paths), 'Missing required mod: '+name
+          assert not any('minecraft-comes-alive-7.7' in p for p in paths)
+          assert any('townstead-0.7.6' in p for p in paths), 'Townstead 0.7.6 required'
+          print('Validated',len(paths),'mods and required MCA/Forge libraries')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mrpack-townstead-output
+          path: |
+            MCA-Ultimate-Life-Friends-1.20.1.mrpack
+            MCA-Townstead-Villages-RU-1.20.1.mod-list.txt
