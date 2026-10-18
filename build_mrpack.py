@@ -83,8 +83,14 @@ def build(output,lean=False,strict_extras=False,townstead=False):
     if not townstead:projects=["capitals-a-monarchy-mod-for-mca-reborn"]+[p for p in projects if p!="capitals-a-monarchy-mod-for-mca-reborn"]
     for project in projects:
         if project=="minecraft-comes-alive-reborn" and not townstead:
-            existing=selected.get("1W98a849")
-            if existing:continue
+            if "1W98a849" in selected:continue
+            # Pin MCA to the actual MCA version requested by the selected Capitals release.
+            capitals=next((v for v,_ in selected.values() if any("mcacapitals" in f["filename"].lower() for f in v["files"])),None)
+            if capitals:
+                dep=next((d for d in capitals.get("dependencies",[]) if d.get("project_id")=="1W98a849" and d.get("version_id") and d.get("dependency_type")=="required"),None)
+                if dep:
+                    add(project,True,api("/version/"+dep["version_id"]))
+                    continue
         add(project)
     if not lean:
         for project in EXTRAS:add(project,False)
