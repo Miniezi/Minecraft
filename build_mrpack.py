@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """MRPACK BUILDER (not a ready-made modpack). Uses live Modrinth metadata."""
-import argparse, json, sys, urllib.parse, urllib.request, zipfile, hashlib
+import argparse, json, sys, urllib.parse, urllib.request, zipfile, hashlib, io
 from pathlib import Path
 
 MINECRAFT="1.20.1"
@@ -8,7 +8,17 @@ FORGE="47.4.10"
 NAME="MCA-Ultimate-Life-Friends-1.20.1.mrpack"
 BASE="https://api.modrinth.com/v2"
 CORE=["minecraft-comes-alive-reborn","mca-conversations","mca-quests","townstead","architectury-api"]
-EXTRAS=["farmers-delight","handcrafted","supplementaries","serene-seasons","waystones","jade","jei","xaeros-minimap","xaeros-world-map","embeddium"]
+EXTRAS=[
+ "farmers-delight","handcrafted","supplementaries","serene-seasons","waystones","jade","jei",
+ "xaeros-minimap","xaeros-world-map","embeddium","bountiful","ftb-quests","ftb-library","ftb-teams",
+ "chipped","another-furniture","decorative-blocks","macaws-doors","macaws-windows",
+ "macaws-roofs","macaws-furniture","macaws-bridges","macaws-fences-and-walls",
+ "comforts","carry-on","guard-villagers","naturalist",
+ "yungs-better-villages","repurposed-structures","towns-and-towers",
+ "lets-do-vinery","lets-do-bakery","lets-do-farm-charm",
+ "create","create-deco","create-steam-n-rails",
+ "lootr","corpse","appleskin","ferrite-core","modernfix","entityculling","spark"
+]
 
 def api(path):
     req=urllib.request.Request(BASE+path,headers={"User-Agent":"MCA-MRPACK-Builder/1.0","Accept":"application/json"})
@@ -88,6 +98,15 @@ def build(output,lean=False,strict_extras=False):
     with zipfile.ZipFile(output,"w",zipfile.ZIP_DEFLATED) as archive:
         archive.writestr("modrinth.index.json",json.dumps(index,indent=2,ensure_ascii=False))
         archive.writestr("overrides/README.txt","This is generated output from MRPACK Builder. Test with two players and a dedicated Forge server before long-term use.\n")
+    with zipfile.ZipFile(output,"a",zipfile.ZIP_DEFLATED) as archive:
+        ru=Path(__file__).parent/"localization"/"mcaquests_ru_ru.json"
+        localization=json.loads(ru.read_text(encoding="utf-8"))
+        memory=io.BytesIO()
+        with zipfile.ZipFile(memory,"w",zipfile.ZIP_DEFLATED) as pack:
+            pack.writestr("pack.mcmeta",json.dumps({"pack":{"pack_format":15,"description":"MCA Quests Russian partial translation"}},ensure_ascii=False))
+            pack.writestr("assets/mcaquests/lang/ru_ru.json",json.dumps(localization,ensure_ascii=False,indent=2))
+        archive.writestr("overrides/resourcepacks/MCA-Quests-Russian-UI.zip",memory.getvalue())
+        archive.writestr("overrides/options.txt",'lang:ru_ru\\nresourcePacks:["vanilla","file/MCA-Quests-Russian-UI.zip"]\\n')
     Path(output).with_suffix(".mod-list.txt").write_text("\n".join(logs)+"\n",encoding="utf-8")
     print("Generated:",output,"entries:",len(result))
     print("\n".join(logs))
