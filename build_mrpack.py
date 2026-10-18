@@ -30,6 +30,11 @@ def api(path):
     with urllib.request.urlopen(req,timeout=35) as response:return json.load(response)
 
 def choose(project):
+    if project=="capitals-a-monarchy-mod-for-mca-reborn":
+        version=api("/version/cE7zt4nS")  # official Modrinth 1.3.5 Forge 1.20.1
+        if "forge" not in version.get("loaders",[]) or MINECRAFT not in version.get("game_versions",[]):
+            raise ValueError("Pinned MCA Capitals 1.3.5 is not Forge 1.20.1")
+        return version
     query=urllib.parse.urlencode({"loaders":json.dumps(["forge"]),"game_versions":json.dumps([MINECRAFT])})
     versions=api("/project/"+urllib.parse.quote(project,safe="")+"/version?"+query)
     versions=[v for v in versions if v.get("version_type")=="release" and "forge" in v.get("loaders",[]) and MINECRAFT in v.get("game_versions",[])]
