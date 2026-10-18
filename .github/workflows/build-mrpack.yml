@@ -68,6 +68,14 @@ jobs:
           assert any('mcacapitals' in f['path'] for f in index['files'])
           assert any('mcacrime' in f['path'] for f in index['files'])
           assert 'overrides/config/paxi/datapacks/MCA-Shared-Village-Projects-RU.zip' in z.namelist()
+          with zipfile.ZipFile('MCA-Ultimate-Life-Friends-1.20.1.mrpack') as source:
+              import io
+              with zipfile.ZipFile(io.BytesIO(source.read('overrides/config/paxi/datapacks/MCA-Shared-Village-Projects-RU.zip'))) as worldpack:
+                  for milestone in ('root','food','market','workshop','electricity'):
+                      name='data/mcavillage/advancements/'+milestone+'.json'
+                      assert name in worldpack.namelist(), 'Missing village advancement: '+name
+                      advancement=json.loads(worldpack.read(name))
+                      assert advancement['criteria'] and advancement['display']
           assert any(n.startswith('overrides/mods/mca-worker-chests') and n.endswith('.jar') for n in z.namelist())
           assert any('ImmersiveEngineering' in f['path'] for f in index['files'])
           assert 'overrides/resourcepacks/MCA-Expanded-Russian-Language.zip' in z.namelist()
