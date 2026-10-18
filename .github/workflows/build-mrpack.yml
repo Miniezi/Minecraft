@@ -2,9 +2,10 @@ name: Build MRPACK Builder Output
 on:
   workflow_dispatch:
   push:
-    branches: [minecraft]
+    branches: [mrpack-builder]
     paths:
       - build_mrpack.py
+      - 'localization/**'
       - install_server_mods.py
       - .github/workflows/build-mrpack.yml
 permissions:
