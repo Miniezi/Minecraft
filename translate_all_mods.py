@@ -107,24 +107,27 @@ def main():
             except Exception as exc:
                 print("Translation batch issue:",str(exc)[:100],flush=True)
         print("Namespace",namespace,"keys",len(ru),"missing",sum(k not in ru for k in en),flush=True)
-    with zipfile.ZipFile(pack_path,"a",compression=zipfile.ZIP_DEFLATED) as pack:
-        mem=io.BytesIO()
-        with zipfile.ZipFile(mem,"w",zipfile.ZIP_DEFLATED) as res:
-            res.writestr("pack.mcmeta",json.dumps({"pack":{"pack_format":15,
-                 "description":"MCA Ultimate RU: доперевод интерфейса и диалогов"}} ,ensure_ascii=False))
-            for namespace,values in upstream_ru.items():
-                if values:
-                    res.writestr("assets/"+namespace+"/lang/ru_ru.json",json.dumps(values,ensure_ascii=False,indent=2))
-        pack.writestr("overrides/resourcepacks/"+RESOURCE_NAME,mem.getvalue())
-        options=existing_options
-        # The new layer comes after the existing quests pack and overrides it where appropriate.
-        if 'resourcePacks:' in options:
-            options=options.replace('resourcePacks:["vanilla","file/MCA-Quests-Russian-UI.zip"]',
-                'resourcePacks:["vanilla","file/MCA-Quests-Russian-UI.zip","file/'+RESOURCE_NAME+'"]')
-        else:
-            options+='\\nresourcePacks:["vanilla","file/'+RESOURCE_NAME+'"]\\n'
-        # ZIP permits duplicate names but readers usually prefer the last copy. Build is an append-only patch.
-        pack.writestr("overrides/options.txt",options)
+    mem=io.BytesIO()
+    with zipfile.ZipFile(mem,"w",zipfile.ZIP_DEFLATED) as res:
+        res.writestr("pack.mcmeta",json.dumps({"pack":{"pack_format":15,
+             "description":"MCA Ultimate RU: доперевод интерфейса и диалогов"}} ,ensure_ascii=False))
+        for namespace,values in upstream_ru.items():
+            if values:
+                res.writestr("assets/"+namespace+"/lang/ru_ru.json",json.dumps(values,ensure_ascii=False,indent=2))
+    options=existing_options
+    options=options.replace('resourcePacks:["vanilla","file/MCA-Quests-Russian-UI.zip"]',
+        'resourcePacks:["vanilla","file/MCA-Quests-Russian-UI.zip","file/'+RESOURCE_NAME+'"]')
+    if RESOURCE_NAME not in options:
+        options+='\\nresourcePacks:["vanilla","file/'+RESOURCE_NAME+'"]\\n'
+    tmp=pack_path.with_suffix(".tmp")
+    with zipfile.ZipFile(pack_path,"r") as source,zipfile.ZipFile(tmp,"w",zipfile.ZIP_DEFLATED) as destination:
+        for entry in source.infolist():
+            if entry.filename in ("overrides/options.txt","overrides/resourcepacks/"+RESOURCE_NAME):
+                continue
+            destination.writestr(entry,source.read(entry.filename))
+        destination.writestr("overrides/resourcepacks/"+RESOURCE_NAME,mem.getvalue())
+        destination.writestr("overrides/options.txt",options)
+    tmp.replace(pack_path)
     print("COMPLETED LOCALE PACK namespaces",len(upstream_ru),"machine keys",count,
           "total Russian keys",sum(map(len,upstream_ru.values())),flush=True)
 
