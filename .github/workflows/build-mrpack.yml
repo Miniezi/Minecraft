@@ -7,6 +7,7 @@ on:
       - build_mrpack.py
       - 'localization/**'
       - 'scripts/**'
+      - 'addons/worker-chests/**'
       - install_server_mods.py
       - .github/workflows/build-mrpack.yml
 permissions:
@@ -19,11 +20,23 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.8'
+      - name: Compile custom worker chest Forge addon
+        working-directory: addons/worker-chests
+        run: gradle build --no-daemon
       - name: Translate quest narrative to Russian (best-effort)
         run: python scripts/translate_quests.py --seconds 365
         timeout-minutes: 8
       - name: Generate .mrpack
         run: python build_mrpack.py
+        env:
+          MRPACK_REQUIRE_WORKER_CHESTS: '1'
       - name: Verify manifest structure
         run: |
           python - <<'PY'
@@ -37,6 +50,8 @@ jobs:
           assert any('mcacapitals' in f['path'] for f in index['files'])
           assert any('mcacrime' in f['path'] for f in index['files'])
           assert 'overrides/config/paxi/datapacks/MCA-Shared-Village-Projects-RU.zip' in z.namelist()
+          assert any(n.startswith('overrides/mods/mca-worker-chests') and n.endswith('.jar') for n in z.namelist())
+          assert any('ImmersiveEngineering' in f['path'] for f in index['files'])
           assert index['files']
           print(len(index['files']),'files')
           PY
