@@ -22,6 +22,7 @@ EXTRAS=[
  "create-bells-and-whistles","create-stuff-additions","create-enchantment-industry",
  "create-ore-excavation","create-diesel-generators","create-industry",
  "engineers-decor","industrial-foregoing",
+ "oculus","sound-physics-remastered","ambient-sounds","fallingleaves","better-third-person",
  "ct-overhaul-village","prefab","effortless-building","prefabricated-structures"
 ]
 
