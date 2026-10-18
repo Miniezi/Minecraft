@@ -44,6 +44,9 @@ jobs:
       - name: Translate remaining MCA and technical GUI strings
         run: python translate_all_mods.py --seconds 180
         timeout-minutes: 5
+      - name: Translate remaining languages (third pass)
+        run: python translate_all_mods.py --seconds 300
+        timeout-minutes: 7
       - name: Verify manifest structure
         run: |
           python - <<'PY'
@@ -85,3 +88,4 @@ jobs:
           path: |
             MCA-Ultimate-Life-Friends-1.20.1.mrpack
             MCA-Ultimate-Life-Friends-1.20.1.mod-list.txt
+            localization-coverage.json
