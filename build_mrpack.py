@@ -30,15 +30,19 @@ def api(path):
     with urllib.request.urlopen(req,timeout=35) as response:return json.load(response)
 
 def choose(project):
-    # MCA Capitals 1.1.1 targets MCA Reborn 7.6.26; newer releases may target 7.7.x.
-    if project=="capitals-a-monarchy-mod-for-mca-reborn":
-        v=api("/version/Tftzk0Qn")
-        if MINECRAFT not in v.get("game_versions",[]) or "forge" not in v.get("loaders",[]):
-            raise ValueError("Pinned MCA Capitals release is incompatible")
-        return v
     query=urllib.parse.urlencode({"loaders":json.dumps(["forge"]),"game_versions":json.dumps([MINECRAFT])})
     versions=api("/project/"+urllib.parse.quote(project,safe="")+"/version?"+query)
     versions=[v for v in versions if v.get("version_type")=="release" and "forge" in v.get("loaders",[]) and MINECRAFT in v.get("game_versions",[])]
+    if project=="capitals-a-monarchy-mod-for-mca-reborn":
+        # MCA Conversations requires Capitals >=1.3; MCA Quests requires >=1.3.5.
+        # Never fall back to 1.1.1, even when the latter suits old MCA.
+        def capitals_version(v):
+            import re
+            match=re.search(r"(\\d+)\\.(\\d+)\\.(\\d+)",v.get("version_number",""))
+            return tuple(map(int,match.groups())) if match else (0,0,0)
+        versions=[v for v in versions if capitals_version(v)>=(1,3,5)]
+        if not versions:
+            raise ValueError("MCA Conversations/Quests require MCA Capitals >=1.3.5 for Forge 1.20.1")
     if project=="minecraft-comes-alive-reborn":
         pinned=[v for v in versions if v.get("version_number","").startswith("7.6.26")]
         if not pinned:
