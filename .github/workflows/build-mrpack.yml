@@ -47,6 +47,12 @@ jobs:
       - name: Translate remaining languages (third pass)
         run: python translate_all_mods.py --seconds 300
         timeout-minutes: 7
+      - name: Translate more unlocalized mods (fourth pass)
+        run: python translate_all_mods.py --seconds 280
+        timeout-minutes: 6
+      - name: Translate remaining items (fifth pass)
+        run: python translate_all_mods.py --seconds 280
+        timeout-minutes: 6
       - name: Verify manifest structure
         run: |
           python - <<'PY'
