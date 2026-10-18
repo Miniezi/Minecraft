@@ -109,7 +109,7 @@ def main():
         missing=[(k,v) for k,v in en.items() if k not in ru and v.strip() and len(v)<2000]
         missing.sort(key=lambda pair:(not any(t in pair[0].lower() for t in
                       ("dialog","greet","conversation","reput","journal","quest","title","gui")),pair[0]))
-        for batch in chunks(missing,800):
+        for batch in chunks(missing,1500):
             if time.monotonic()-start>args.seconds:break
             text="🟩".join(v.replace("\\n"," ⏎ ") for _,v in batch)
             try:
@@ -144,8 +144,10 @@ def main():
         destination.writestr("overrides/resourcepacks/"+RESOURCE_NAME,mem.getvalue())
         destination.writestr("overrides/options.txt",options)
     tmp.replace(pack_path)
-    missing_total=sum(sum(k not in upstream_ru.get(ns,{}) for k in vals) for ns,vals in upstream_en.items())
-    Path("localization-coverage.json").write_text(json.dumps({"mod_files":len(manifest["files"]),"english_namespaces":len(upstream_en),"untranslated_keys":missing_total,"russian_keys":sum(map(len,upstream_ru.values()))},indent=2),encoding="utf-8")
+    coverage={ns:{"english":len(values),"russian":sum(k in upstream_ru.get(ns,{}) for k in values),"missing":sum(k not in upstream_ru.get(ns,{}) for k in values)}
+              for ns,values in upstream_en.items()}
+    missing_total=sum(stat["missing"] for stat in coverage.values())
+    Path("localization-coverage.json").write_text(json.dumps({"mod_files":len(manifest["files"]),"english_namespaces":len(upstream_en),"untranslated_keys":missing_total,"russian_keys":sum(map(len,upstream_ru.values())),"per_namespace":coverage},indent=2),encoding="utf-8")
     print("COVERAGE untranslated keys",missing_total,flush=True)
     print("COMPLETED LOCALE PACK namespaces",len(upstream_ru),"machine keys",count,
           "total Russian keys",sum(map(len,upstream_ru.values())),flush=True)
