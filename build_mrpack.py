@@ -40,11 +40,10 @@ def choose(project):
     versions=api("/project/"+urllib.parse.quote(project,safe="")+"/version?"+query)
     versions=[v for v in versions if v.get("version_type")=="release" and "forge" in v.get("loaders",[]) and MINECRAFT in v.get("game_versions",[])]
     if project=="minecraft-comes-alive-reborn":
-        pinned=[v for v in versions if "7.6.26" in v.get("version_number","")]
-        if pinned:versions=pinned
-        else:
-            stable=[v for v in versions if v.get("version_number","").startswith("7.6.")]
-            if stable:versions=stable
+        pinned=[v for v in versions if v.get("version_number","").startswith("7.6.26")]
+        if not pinned:
+            raise ValueError("Townstead 0.7.6 requires MCA Reborn 7.6.26 (legacy forge.net.mca); exact release not found")
+        versions=pinned
     if not versions:raise ValueError("No Forge 1.20.1 release: "+project)
     return max(versions,key=lambda v:v.get("date_published",""))
 
@@ -157,6 +156,14 @@ def build(output,lean=False,strict_extras=False):
     except Exception as exc:
         # Industry preset is incomplete without its namesake mod.
         raise RuntimeError("Immersive Engineering must be downloadable: "+str(exc)) from exc
+    # Fail closed: Townstead 0.7.6 crashes when MCA Reborn uses the 7.7.x package layout.
+    mca_versions=[(project,v.get("version_number",""),f.get("filename",""))
+                  for project,(v,f) in selected.items()
+                  if "minecraft-comes-alive" in project or "minecraft-comes-alive" in f.get("filename","").lower()]
+    if len(mca_versions)!=1 or not mca_versions[0][1].startswith("7.6.26"):
+        raise RuntimeError("Unsafe MCA/Townstead combination: "+repr(mca_versions))
+    if not any("townstead-0.7.6" in f["path"].lower() for f in result):
+        raise RuntimeError("Expected Townstead 0.7.6; update compatibility guard before changing it")
     index={"formatVersion":1,"game":"minecraft","versionId":"1.0.0","name":"MCA Ultimate Life — Friends Edition","summary":"Produced by MRPACK Builder; multiplayer requires testing","files":sorted(result,key=lambda f:f["path"]),"dependencies":{"minecraft":MINECRAFT,"forge":FORGE}}
     with zipfile.ZipFile(output,"w",zipfile.ZIP_DEFLATED) as archive:
         archive.writestr("modrinth.index.json",json.dumps(index,indent=2,ensure_ascii=False))
