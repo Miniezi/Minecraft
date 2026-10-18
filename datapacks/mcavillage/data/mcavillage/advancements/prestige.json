@@ -1,0 +1,27 @@
+{
+  "parent": "mcavillage:education",
+  "display": {
+    "icon": {
+      "item": "minecraft:golden_apple"
+    },
+    "title": "Золотой век",
+    "description": "Добудьте золотое яблоко как символ процветания деревни.",
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "stock": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:golden_apple"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
