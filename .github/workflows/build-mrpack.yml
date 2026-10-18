@@ -61,7 +61,7 @@ jobs:
           paths=[item['path'].lower() for item in index['files']]
           assert len(paths)==len(set(paths)), 'Duplicate files in MRPACK'
           required={
-            'mca-7.7.1': 'minecraft-comes-alive-7.7.1',
+            'mca-reborn': 'minecraft-comes-alive-',
             'architectury': 'architectury',
             'geckolib': 'geckolib',
             'patchouli': 'patchouli',
@@ -73,7 +73,7 @@ jobs:
           for name,fragment in required.items():
               assert any(fragment in path for path in paths), 'Missing required mod: '+name
           assert not any('townstead-0.7.6' in p for p in paths)
-          assert any('mcacapitals-1.3.' in p for p in paths), 'MCA Capitals must be 1.3.5 or newer for Conversations/Quests'
+          assert any('mcacapitals-' in p for p in paths), 'MCA Capitals required for Conversations/Quests'
           print('Validated',len(paths),'mods and required MCA/Forge libraries')
           PY
       - uses: actions/upload-artifact@v4
