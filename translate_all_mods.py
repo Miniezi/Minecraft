@@ -27,7 +27,7 @@ def jar_entries(jar):
     en,ru={},{}
     for name in jar.namelist():
         parts=name.split("/")
-        if len(parts)!=4 or parts[0]!="assets" or parts[2]!="lang" or parts[1] not in NAMESPACES:
+        if len(parts)!=4 or parts[0]!="assets" or parts[2]!="lang" or not re.fullmatch(r"[a-z0-9_.-]+",parts[1]):
             continue
         if parts[3] not in ("en_us.json","ru_ru.json"):continue
         try:
@@ -57,6 +57,7 @@ def main():
     parser=argparse.ArgumentParser()
     parser.add_argument("--pack",default="MCA-Ultimate-Life-Friends-1.20.1.mrpack")
     parser.add_argument("--seconds",type=int,default=185)
+    parser.add_argument("--skip-existing-russian",action="store_true",help="Only translate keys not already provided by the mods")
     args=parser.parse_args()
     pack_path=Path(args.pack)
     start=time.monotonic()
@@ -66,9 +67,9 @@ def main():
     upstream_en,upstream_ru={},{}
     for entry in manifest["files"]:
         name=entry["path"].split("/")[-1].lower()
-        if not any(part in name for part in TARGET_FILENAMES):continue
+        if not name.endswith(".jar"):continue
         try:
-            content=safe_download(entry["downloads"][0])
+            content=safe_download(entry["downloads"][0],max_bytes=110_000_000)
             with zipfile.ZipFile(io.BytesIO(content)) as jar:
                 en,ru=jar_entries(jar)
             for namespace,values in en.items():upstream_en.setdefault(namespace,{}).update(values)
@@ -99,12 +100,13 @@ def main():
                             pass
     count=0
     # Dialogue first: the screenshots show unlocalized MCA Conversations lines & village screens.
-    priority=("townstead","mcaconversations","mcareputation","mcacrime","mcacapitals","mca","mcaquests",
-              "blueprints","prefab","effortlessbuilding","powergrid")
+    priority=("mcaconversations","mcareputation","mcacrime","mcacapitals","mca","mcaquests",
+              "powergrid","create","immersiveengineering","prefab","effortlessbuilding")
+    priority=priority+tuple(sorted(ns for ns in upstream_en if ns not in priority))
     for namespace in priority:
         en=upstream_en.get(namespace,{})
         ru=upstream_ru.setdefault(namespace,{})
-        missing=[(k,v) for k,v in en.items() if k not in ru and v.strip()]
+        missing=[(k,v) for k,v in en.items() if k not in ru and v.strip() and len(v)<2000]
         missing.sort(key=lambda pair:(not any(t in pair[0].lower() for t in
                       ("dialog","greet","conversation","reput","journal","quest","title","gui")),pair[0]))
         for batch in chunks(missing,800):
@@ -142,6 +144,9 @@ def main():
         destination.writestr("overrides/resourcepacks/"+RESOURCE_NAME,mem.getvalue())
         destination.writestr("overrides/options.txt",options)
     tmp.replace(pack_path)
+    missing_total=sum(sum(k not in upstream_ru.get(ns,{}) for k in vals) for ns,vals in upstream_en.items())
+    Path("localization-coverage.json").write_text(json.dumps({"mod_files":len(manifest["files"]),"english_namespaces":len(upstream_en),"untranslated_keys":missing_total,"russian_keys":sum(map(len,upstream_ru.values()))},indent=2),encoding="utf-8")
+    print("COVERAGE untranslated keys",missing_total,flush=True)
     print("COMPLETED LOCALE PACK namespaces",len(upstream_ru),"machine keys",count,
           "total Russian keys",sum(map(len,upstream_ru.values())),flush=True)
 
