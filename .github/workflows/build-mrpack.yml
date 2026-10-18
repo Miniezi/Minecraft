@@ -41,6 +41,9 @@ jobs:
       - name: Add Russian translations for MCA dialogues and other mod interfaces
         run: python translate_all_mods.py --seconds 330
         timeout-minutes: 8
+      - name: Translate remaining MCA and technical GUI strings
+        run: python translate_all_mods.py --seconds 180
+        timeout-minutes: 5
       - name: Verify manifest structure
         run: |
           python - <<'PY'
