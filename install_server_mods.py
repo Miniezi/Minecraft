@@ -40,5 +40,16 @@ def main():
             destination.parent.mkdir(parents=True,exist_ok=True)
             destination.write_bytes(pack.read(filename))
             print("Installed shared village datapack:",relative)
+    # Custom Forge mods embedded as local MRPACK overrides must also be on dedicated server.
+    with zipfile.ZipFile(args.mrpack) as pack:
+        for name in pack.namelist():
+            if not name.startswith("overrides/mods/") or not name.endswith(".jar"):continue
+            local=Path(name[len("overrides/"):])
+            if len(local.parts)!=2 or local.parts[0]!="mods" or ".." in local.parts:
+                raise ValueError("Unsafe embedded JAR path")
+            dest=server/local
+            dest.parent.mkdir(parents=True,exist_ok=True)
+            dest.write_bytes(pack.read(name))
+            print("Installed custom Forge addon:",local)
     print("Finished. Remove obsolete JAR duplicates; install Forge server and Java 17 separately.")
 if __name__=="__main__":main()
