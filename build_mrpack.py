@@ -17,7 +17,11 @@ EXTRAS=[
  "yungs-better-villages","repurposed-structures","towns-and-towers",
  "lets-do-vinery","lets-do-bakery","lets-do-farm-charm",
  "create","create-deco","create-steam-n-rails",
- "lootr","corpse","appleskin","ferrite-core","modernfix","entityculling","spark"
+ "lootr","corpse","appleskin","ferrite-core","modernfix","entityculling","spark",
+ "immersive-engineering","create-new-age","createaddition","immersive-aircraft",
+ "create-bells-and-whistles","create-stuff-additions","create-enchantment-industry",
+ "create-ore-excavation","create-diesel-generators","create-industry",
+ "engineers-decor","industrial-foregoing"
 ]
 
 def api(path):
