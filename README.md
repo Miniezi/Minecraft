@@ -28,3 +28,13 @@ The project is a **MRPACK BUILDER**, not a packaged, tested modpack. The generat
 4. Preserve Modrinth pack format, real hashes, dependency checks, and client/server distinctions.
 5. Do not commit third-party JARs without redistribution permission.
 6. Add real multiplayer integration tests before calling output fully compatible.
+
+## Expanded village-oriented preset (October 2026)
+
+Default build attempts ~40 additional Forge 1.20.1 projects covering bounty boards, village world generation, professions, decorations, food, quests and travel. Some are intentionally optional and are skipped when Modrinth cannot resolve them; the generated `.mod-list.txt` reports this. No invented versions.
+
+**Russian localization:** `localization/mcaquests_ru_ru.json` contains **150 manually authored translations** for MCA: Quests interface, objectives, deliveries, village projects and rewards. It is bundled inside `overrides/resourcepacks/MCA-Quests-Russian-UI.zip` and enabled for new Prism instances by `options.txt`. It is **not a complete translation of the hundreds of quest stories, dialogues or all other MCA mods**. English remains for untranslated keys.
+
+**MCA addon limitation:** Reputation, Crime and Capitals are listed on CurseForge, but the builder intentionally does not forge unsigned third-party download URLs or redistribute JARs. Those components require a separately verified installation/metadata integration before being automatically included. On a shared server, everybody must have matching client+server mods.
+
+The Quest module supports multiplayer shared village projects. Use `/mcaquests project list` and `/mcaquests validate` on a test server. For a lasting shared settlement, run a dedicated Forge server, back up the world and test saving/restarting with at least two connected clients.
