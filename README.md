@@ -129,3 +129,17 @@ Townstead 0.7.6 is deliberately **not included** in the MCA 7.7.1 + MCA Capitals
 ## Expanded Russian resource pack
 
 `translate_all_mods.py` runs after the quests translation and main builder. It examines the pinned mod JARs' `assets/<namespace>/lang/en_us.json` and `ru_ru.json`, preserves upstream Russian strings, and machine-translates missing strings when placeholders stay valid. It packages `MCA-Expanded-Russian-Language.zip` and enables it for new Prism instances. This covers supported lang JSON keys; mod-authored hard-coded text cannot be reliably replaced using a resource pack. Review machine translations before distributing them as polished Russian localization. Run the builder workflow and check its log for actual per-namespace coverage.
+
+## Townstead compatibility edition (separate from Capitals edition)
+
+The `--townstead` build profile uses **MCA Reborn 7.6.26 + Townstead 0.7.6**, together with MCA Quests, MCA Conversations, infrastructure, Create/IE/Power Grid and experimental worker chests. It intentionally omits **MCA Capitals**, because Capitals >=1.3.5 depends on MCA 7.7.1. This is the only tested-by-manifest combination available from *published* releases; launching Minecraft with these mods still needs a separate real client/server integration test.
+
+Build:
+```bash
+python scripts/translate_quests.py --seconds 365
+python build_mrpack.py --townstead --output MCA-Townstead-Villages-RU-1.20.1.mrpack
+python translate_all_mods.py --seconds 330 --pack MCA-Townstead-Villages-RU-1.20.1.mrpack
+```
+CI workflow: `.github/workflows/build-townstead.yml`; artifact `mrpack-townstead-output`.
+
+Keep worlds separately backed up when moving between profiles. Removing Capitals or changing MCA backwards can affect world data and NPC relationships. **Do not update to MCA 7.7.x in Townstead mode**, and do not add Townstead 0.7.6 to the Capitals mode. An official 0.7.7-modern/0.8 Townstead release may later allow combining them.
