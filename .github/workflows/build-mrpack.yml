@@ -62,6 +62,7 @@ jobs:
             'patchouli': 'patchouli',
             'paxi': 'paxi',
             'create': 'mods/create-',
+            'power-grid': 'powergrid',
             'mca-quests': 'mcaquests',
           }
           for name,fragment in required.items():
