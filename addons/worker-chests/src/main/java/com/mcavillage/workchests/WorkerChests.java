@@ -75,14 +75,17 @@ public final class WorkerChests {
         }
         return sum;
     }
-    private static int reserveFromCollected(CompoundTag data,ItemStack acquired,Container storage){
+    private static int reserveFromCollected(Mob storageOwner,CompoundTag data,ItemStack acquired,Container storage){
         if (!edible(acquired.getItem())) return 0;
+        TownsteadNeedsBridge.State real=TownsteadNeedsBridge.read((Mob)storageOwner);
         int hunger=data.getInt(NEED_FOOD);
         int comfort=data.getInt(NEED_COMFORT);
-        int desired=hunger>=45?12:(comfort>=70?8:4);
+        int desired=real.available()
+          ? (real.hunger()<=35?12:(real.thirst()<=30||real.fatigue()>=65?8:4))
+          : (hunger>=45?12:(comfort>=70?8:4));
         int owned=data.getInt(FOOD_RESERVE);
         // Do not hoard while the village store is short of food, except in emergencies.
-        if(foodInChest(storage)<DEPOSIT_FOOD_MIN && hunger<80) desired=Math.min(desired,2);
+        if(foodInChest(storage)<DEPOSIT_FOOD_MIN && (real.available()?real.hunger()>20:hunger<80)) desired=Math.min(desired,2);
         int reserved=Math.min(acquired.getCount(),Math.max(0,Math.min(RESERVE_LIMIT,desired)-owned));
         if(reserved>0)data.putInt(FOOD_RESERVE,owned+reserved);
         return reserved;
@@ -210,7 +213,7 @@ public final class WorkerChests {
         }
         ItemStack acquired=item.getItem().copy();
         if (acquired.isEmpty()) return;
-        int reserve=reserveFromCollected(data,acquired,storage);
+        int reserve=reserveFromCollected(worker,data,acquired,storage);
         acquired.shrink(reserve);
         if (!acquired.isEmpty()) data.put(HELD,acquired.save(new CompoundTag()));
         // Items are transferred to persistent personal food reserve or the work chest.
