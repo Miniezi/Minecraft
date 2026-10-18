@@ -1,0 +1,86 @@
+{
+  "format_version": 1,
+  "id": "mcavillage:street_lights",
+  "scope": "village",
+  "sponsor": {
+    "professions": [
+      "minecraft:toolsmith",
+      "minecraft:cleric"
+    ],
+    "on_death": "transfer"
+  },
+  "title": {
+    "text": "Уличное освещение"
+  },
+  "category": "infrastructure",
+  "reputation": {
+    "on_phase_complete": 2,
+    "on_project_complete": 10
+  },
+  "phases": [
+    {
+      "key": "materials",
+      "dialogue": {
+        "offer": {
+          "text": "Темнота на улицах мешает семьям возвращаться домой."
+        },
+        "in_progress": {
+          "text": "Собираем фонари и опоры для освещения дороги."
+        }
+      },
+      "objectives": [
+        {
+          "type": "mcaquests:donate_item",
+          "item": "minecraft:lantern",
+          "count": 24
+        },
+        {
+          "type": "mcaquests:donate_item",
+          "item": "minecraft:iron_ingot",
+          "count": 48
+        }
+      ],
+      "rewards": [
+        {
+          "reward": {
+            "type": "mcaquests:xp",
+            "amount": 50
+          },
+          "target": "contributors"
+        }
+      ]
+    },
+    {
+      "key": "wiring",
+      "dialogue": {
+        "offer": {
+          "text": "Фонари готовы! Проведём освещение к каждому кварталу."
+        },
+        "in_progress": {
+          "text": "Для прочных опор и деталей нужны дополнительные материалы."
+        }
+      },
+      "objectives": [
+        {
+          "type": "mcaquests:donate_item",
+          "item": "minecraft:copper_ingot",
+          "count": 64
+        },
+        {
+          "type": "mcaquests:donate_item",
+          "item": "minecraft:redstone",
+          "count": 64
+        }
+      ],
+      "rewards": [
+        {
+          "reward": {
+            "type": "mcaquests:village_reputation",
+            "amount": 9
+          },
+          "target": "sponsor_village"
+        }
+      ]
+    }
+  ]
+}
