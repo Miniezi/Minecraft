@@ -67,3 +67,26 @@ Use `/datapack list` to inspect Paxi's community datapack, `/mcaquests project l
 - Some optional mods are skipped when no matching Modrinth release is available; consult `.mod-list.txt`.
 - A full Russian translation of every MCA module is not included. Machine-generated text may contain awkward phrasing.
 - Built-in quest definitions and custom projects require validation on a real Forge server.
+
+## Industrial / steampunk expansion
+
+Build preset additionally requests Immersive Engineering 10.2.0-183 (required, checksummed from official CurseForge file 6206989), Create New Age, Create Crafts & Additions, Create Diesel Generators, Create Enchantment Industry, Immersive Aircraft and others. Some optional modules are skipped if no Forge 1.20.1 Modrinth build exists. A new **Industry for the Village** cooperative project requires Create and Immersive Engineering components. This connects machines to village progression through resource donations; it does **not** make NPCs operate real multiblock machines autonomously.
+
+## Custom Forge addon: MCA Worker Chests (experimental)
+
+Source: `addons/worker-chests/`; build with `gradle build` using Gradle 8.8 and Java 17. The `build-mrpack.yml` workflow compiles the addon and embeds the resulting JAR inside `overrides/mods/`. No external redistribution is necessary; this mod's source code is ours. The dedicated server installer also copies embedded addon JARs.
+
+**How to bind a chest**
+1. Sneak + right-click an MCA NPC (or vanilla villager) with a **stick**.
+2. Stand next to an ordinary chest within 16 blocks of the NPC, sneak + right-click it with the same stick.
+3. The NPC will attempt to navigate toward dropped *farm items* within six blocks, pick them up and deliver them to its assigned chest.
+4. The chest must be loaded and reachable; the NPC must stay nearby. Workers may need help with navigation. Avoid double chests and protected inventories in first tests.
+
+Limitations:
+- Source compiles against Forge 1.20.1, but actual MCA entity behavior in a multiplayer world is **not yet tested**.
+- Currently supports **one chest per NPC** and collection of agricultural drops only; it does not automatically operate Immersive Engineering or Create machinery.
+- Assignment is stored on the entity and chest NBT, and the code does not expose a separate GUI or role-based permission system yet.
+- The initial release has no chunk loaders. Workers only work in loaded chunks.
+- Further tests needed for item loss on interruption, chest destruction, entity death, claims and third-party inventory mods.
+
+For other AI agents: the source must be compiled and validated independently before describing this addon as stable. The work-chest feature is **experimental**.
