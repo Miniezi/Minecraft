@@ -1,0 +1,27 @@
+{
+  "parent": "mcavillage:market",
+  "display": {
+    "icon": {
+      "item": "minecraft:compass"
+    },
+    "title": "Карта торговых путей",
+    "description": "Создайте компас для путешествий между поселениями.",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "stock": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:compass"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
