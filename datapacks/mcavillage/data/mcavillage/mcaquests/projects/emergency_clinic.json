@@ -1,0 +1,86 @@
+{
+  "format_version": 1,
+  "id": "mcavillage:emergency_clinic",
+  "scope": "village",
+  "sponsor": {
+    "professions": [
+      "minecraft:cleric",
+      "minecraft:farmer"
+    ],
+    "on_death": "transfer"
+  },
+  "title": {
+    "text": "Лечебница"
+  },
+  "category": "community",
+  "reputation": {
+    "on_phase_complete": 2,
+    "on_project_complete": 10
+  },
+  "phases": [
+    {
+      "key": "medicines",
+      "dialogue": {
+        "offer": {
+          "text": "Жителям понадобится место для лечения после трудных дней."
+        },
+        "in_progress": {
+          "text": "Заготовим лекарственные материалы и пищу."
+        }
+      },
+      "objectives": [
+        {
+          "type": "mcaquests:donate_item",
+          "item": "minecraft:glistering_melon_slice",
+          "count": 16
+        },
+        {
+          "type": "mcaquests:donate_item",
+          "item": "minecraft:honey_bottle",
+          "count": 12
+        }
+      ],
+      "rewards": [
+        {
+          "reward": {
+            "type": "mcaquests:xp",
+            "amount": 55
+          },
+          "target": "contributors"
+        }
+      ]
+    },
+    {
+      "key": "beds",
+      "dialogue": {
+        "offer": {
+          "text": "Лекарства собраны. Оборудуем комнату отдыха."
+        },
+        "in_progress": {
+          "text": "Для лечебницы нужны кровати и свет."
+        }
+      },
+      "objectives": [
+        {
+          "type": "mcaquests:donate_item",
+          "item": "minecraft:white_bed",
+          "count": 6
+        },
+        {
+          "type": "mcaquests:donate_item",
+          "item": "minecraft:lantern",
+          "count": 8
+        }
+      ],
+      "rewards": [
+        {
+          "reward": {
+            "type": "mcaquests:village_reputation",
+            "amount": 11
+          },
+          "target": "sponsor_village"
+        }
+      ]
+    }
+  ]
+}
