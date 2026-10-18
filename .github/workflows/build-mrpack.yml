@@ -70,7 +70,7 @@ jobs:
           assert any('ImmersiveEngineering' in f['path'] for f in index['files'])
           assert 'overrides/resourcepacks/MCA-Expanded-Russian-Language.zip' in z.namelist()
           import io
-          with zipfile.ZipFile(io.BytesIO(z.read('overrides/resourcepacks/MCA-Expanded-Russian-Language.zip'))) as locales:
+          with zipfile.ZipFile('MCA-Ultimate-Life-Friends-1.20.1.mrpack') as source, zipfile.ZipFile(io.BytesIO(source.read('overrides/resourcepacks/MCA-Expanded-Russian-Language.zip'))) as locales:
               assert not any(n.startswith('assets/chipped/') for n in locales.namelist()), 'Chipped must not be translated'
           assert index['files']
           paths=[item['path'].lower() for item in index['files']]
