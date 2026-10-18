@@ -285,6 +285,18 @@ fully run or stress-tested with the new visuals.
                 if project_data.get("scope")!="village" or not project_data.get("phases"):
                     raise RuntimeError("Invalid shared village project: "+project_file.name)
                 datapack.writestr("data/mcavillage/mcaquests/projects/"+project_file.name,json.dumps(project_data,ensure_ascii=False,indent=2))
+            # Visible Russian progression tab for ordinary survival gameplay.
+            advancements_dir=Path(__file__).parent/"datapacks"/"mcavillage"/"data"/"mcavillage"/"advancements"
+            required_advancements={"root","food","market","workshop","electricity"}
+            present={p.stem for p in advancements_dir.glob("*.json")}
+            if not required_advancements.issubset(present):
+                raise RuntimeError("Missing village progression milestones: "+str(required_advancements-present))
+            for advancement_file in sorted(advancements_dir.glob("*.json")):
+                advancement=json.loads(advancement_file.read_text(encoding="utf-8"))
+                if not advancement.get("criteria") or not advancement.get("display"):
+                    raise RuntimeError("Invalid advancement "+advancement_file.name)
+                datapack.writestr("data/mcavillage/advancements/"+advancement_file.name,
+                                  json.dumps(advancement,ensure_ascii=False,indent=2))
         archive.writestr("overrides/config/paxi/datapacks/MCA-Shared-Village-Projects-RU.zip",project_memory.getvalue())
 
         archive.writestr("overrides/options.txt",'lang:ru_ru\nresourcePacks:["vanilla","file/MCA-Quests-Russian-UI.zip"]\n')
