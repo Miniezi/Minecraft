@@ -5,6 +5,7 @@ on:
     branches: [mrpack-builder]
     paths:
       - build_mrpack.py
+      - translate_all_mods.py
       - 'localization/**'
       - 'scripts/**'
       - 'addons/worker-chests/**'
@@ -37,6 +38,9 @@ jobs:
         run: python build_mrpack.py
         env:
           MRPACK_REQUIRE_WORKER_CHESTS: '1'
+      - name: Add Russian translations for MCA dialogues and other mod interfaces
+        run: python translate_all_mods.py --seconds 190
+        timeout-minutes: 6
       - name: Verify manifest structure
         run: |
           python - <<'PY'
@@ -52,6 +56,7 @@ jobs:
           assert 'overrides/config/paxi/datapacks/MCA-Shared-Village-Projects-RU.zip' in z.namelist()
           assert any(n.startswith('overrides/mods/mca-worker-chests') and n.endswith('.jar') for n in z.namelist())
           assert any('ImmersiveEngineering' in f['path'] for f in index['files'])
+          assert 'overrides/resourcepacks/MCA-Expanded-Russian-Language.zip' in z.namelist()
           assert index['files']
           paths=[item['path'].lower() for item in index['files']]
           assert len(paths)==len(set(paths)), 'Duplicate files in MRPACK'
