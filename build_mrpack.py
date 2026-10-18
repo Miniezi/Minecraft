@@ -32,7 +32,7 @@ def api(path):
 def choose(project,townstead=False):
     query=urllib.parse.urlencode({"loaders":json.dumps(["forge"]),"game_versions":json.dumps([MINECRAFT])})
     versions=api("/project/"+urllib.parse.quote(project,safe="")+"/version?"+query)
-    versions=[v for v in versions if v.get("version_type")=="release" and "forge" in v.get("loaders",[]) and MINECRAFT in v.get("game_versions",[])]
+    versions=[v for v in versions if (v.get("version_type")=="release" or project in ("capitals-a-monarchy-mod-for-mca-reborn","minecraft-comes-alive-reborn")) and "forge" in v.get("loaders",[]) and MINECRAFT in v.get("game_versions",[])]
     if project=="capitals-a-monarchy-mod-for-mca-reborn":
         # Select newest published Forge release on Minecraft 1.20.1.
         # The resolver rejects any dependency conflict with MCA versions.
