@@ -35,3 +35,16 @@ Implemented in the custom `mcaworkchests` Forge addon:
 - **All status texts currently display in Russian.** A future version should move hardcoded messages to a translation JSON for accessibility and English optionality.
 
 CI: experimental Forge compilation and main MRPACK workflow are triggered automatically by source updates. Do not claim the new features are in a tested .mrpack until those runs pass. Next big upgrade: proper translated GUI with controls, item filter/blacklist for worker collections, live integration smoke tests, and visual textures/icons.
+
+## RPG skill tree — initial implementation (October 2026)
+
+New independent custom Forge gameplay system in `VillageSkills.java`:
+- **Charisma** — interact with MCA villagers and vanilla villagers; can unlock a short regeneration effect while socializing.
+- **Stealth** — gain experience while moving carefully in sneak mode; unlock damage reduction while crouching.
+- **Endurance** — develop through sprinting; unlock survival support and a movement speed perk.
+- **Craft** — gain XP through crafting; potential bonus vanilla XP.
+- **Engineering** — gain XP through mining and construction preparation; potential bonus vanilla XP.
+
+Each path has 20 levels, 3 talent ranks unlocked at skill levels 2/5/9, and a per-player NBT save persisted across death. Use `/skills` to inspect and `/skills unlock charisma|stealth|endurance|craft|engineering` to unlock perks. This initial build is a **Russian text-based interactive tree in Minecraft chat**, *not yet a custom rendered GUI*, and isn't represented as native MCA relationship changes. Future: clickable chat widgets, proper full-screen skill menu, JSON-configurable XP rules, anti-farm balance, tighter integration with MCA reputation and Create machine usage.
+
+Verification: wait for experimental addon Forge compilation run and integration CI. Do not label it fully in-game tested.
