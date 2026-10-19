@@ -1,3 +1,5 @@
+> **Current status (2026-10-19):** The custom RPG skill system has been removed from the main branch (`VillageSkills.java` deleted in commit `89991d0`). The skill-tree sections below are retained as historical development notes only; `/skills`, skill XP, perks and bonuses are no longer included in new builds.
+
 # Development roadmap — MCA Industrial Villages
 
 ## Current large upgrade (October 2026)
