@@ -5,6 +5,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.commands.Commands;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -82,8 +84,9 @@ public final class VillageSkills {
             say(p,"§e"+RU[i]+" §f"+lv+"/20 §7| опыт "+root.getInt(id+"_xp")+
                   "/"+threshold(lv)+" §7| таланты "+rank+"/3");
             if(rank<3) {
-                say(p,"§8  Следующий: "+PERKS[rank]+" (ур. "+REQUIRE[rank]+") — "+
-                       "/skills unlock "+id);
+                p.sendSystemMessage(Component.literal("  §a[Открыть талант] §7"+PERKS[rank]+" — нужен ур. "+REQUIRE[rank])
+                    .withStyle(style->style.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,"/skills unlock "+id))
+                       .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,Component.literal("Нажми, чтобы открыть "+RU[i])))));
             }
         }
         say(p,"§7Уровни: общайся с жителями, крадись, исследуй, создавай и строй.");
