@@ -40,9 +40,9 @@ public final class VillageSkills {
     private static final String[][] PERK_HINTS={
         {"Общение восстанавливает здоровье","Продлённое восстановление","Максимальное восстановление"},
         {"-8% урона при скрытности","-16% урона при скрытности","-24% урона при скрытности"},
-        {"-8% урона при низком здоровье","Ускорение при беге","Мастер выносливости"},
-        {"Шанс дополнительного опыта при крафте","Опытный ремесленник","Мастер ремесла"},
-        {"Шанс дополнительного опыта при добыче","Опытный инженер","Мастер инженерии"}
+        {"-8% урона при низком здоровье","Скорость I при беге","Скорость II при беге"},
+        {"4% шанс +1 опыта при крафте","8% шанс +1 опыта при крафте","12% шанс +1 опыта при крафте"},
+        {"4% шанс +1 опыта при добыче","8% шанс +1 опыта при добыче","12% шанс +1 опыта при добыче"}
     };
     private static final int MAX_LEVEL=20;
     private VillageSkills(){}
@@ -148,14 +148,16 @@ public final class VillageSkills {
     public static void breakBlock(BlockEvent.BreakEvent e){
         if(!(e.getPlayer() instanceof ServerPlayer p))return;
         addXp(p,"engineering",3,30);
-        if(rank(data(p),"engineering")>=1 && p.getRandom().nextFloat()<0.04F)
+        int engineering=rank(data(p),"engineering");
+        if(engineering>0 && p.getRandom().nextFloat()<0.04F*engineering)
             p.giveExperiencePoints(1);
     }
     @SubscribeEvent
     public static void craft(PlayerEvent.ItemCraftedEvent e){
         if(!(e.getEntity() instanceof ServerPlayer p))return;
         addXp(p,"craft",4,25);
-        if(rank(data(p),"craft")>=1 && p.getRandom().nextFloat()<0.04F)
+        int craftRank=rank(data(p),"craft");
+        if(craftRank>0 && p.getRandom().nextFloat()<0.04F*craftRank)
             p.giveExperiencePoints(1);
     }
     @SubscribeEvent
@@ -166,8 +168,9 @@ public final class VillageSkills {
             addXp(p,"stealth",3,80);
         if(p.isSprinting() && p.getDeltaMovement().horizontalDistanceSqr()>0.01)
             addXp(p,"endurance",3,80);
-        if(rank(data(p),"endurance")>=2 && p.isSprinting())
-            p.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED,110,0,true,false));
+        int endurance=rank(data(p),"endurance");
+        if(endurance>=2 && p.isSprinting())
+            p.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED,110,endurance>=3?1:0,true,false));
     }
     @SubscribeEvent
     public static void hurt(LivingHurtEvent e){
