@@ -37,6 +37,9 @@ public final class WorkerChests {
     private static final String DIMENSION = "mcaworkchestsDimension";
     private static final String OWNER = "mcaworkchestsOwner";
     private static final String HELD = "mcaworkchestsHeld";
+    private static final String PAUSED = "mcaworkchestsPaused";
+    private static final String DELIVERED = "mcaworkchestsDelivered";
+    private static final String COLLECTIONS = "mcaworkchestsCollections";
     private static final String NEED_FOOD = "mcaworkchestsFoodNeed";
     private static final String NEED_COMFORT = "mcaworkchestsComfortNeed";
     private static final String FOOD_RESERVE = "mcaworkchestsFoodReserve";
@@ -147,6 +150,60 @@ public final class WorkerChests {
         event.setCanceled(true);
     }
 
+
+    // Shift + book on a villager shows a compact Russian worker status card.
+    @SubscribeEvent
+    public void inspectWorker(PlayerInteractEvent.EntityInteract event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        if (!player.isShiftKeyDown() || !event.getItemStack().is(Items.BOOK) || !villager(event.getTarget())) return;
+        CompoundTag data=event.getTarget().getPersistentData();
+        boolean assigned=data.contains(CHEST);
+        player.sendSystemMessage(Component.literal("§6◆ Работник §7— "+event.getTarget().getName().getString()));
+        player.sendSystemMessage(Component.literal("§eСундук: §f"+(assigned?BlockPos.of(data.getLong(CHEST)).toShortString():"не назначен")
+              +" §8| §eРежим: §f"+(data.getBoolean(PAUSED)?"отдых":"сбор")));
+        player.sendSystemMessage(Component.literal("§eГолод: §f"+data.getInt(NEED_FOOD)+"/100 §8| §eУсталость: §f"
+              +data.getInt(NEED_COMFORT)+"/100 §8| §eЗапас еды: §f"+data.getInt(FOOD_RESERVE)));
+        player.sendSystemMessage(Component.literal("§eДоставлено: §f"+data.getLong(DELIVERED)
+              +" §8| §eСборов: §f"+data.getLong(COLLECTIONS)));
+        player.sendSystemMessage(Component.literal("§7Shift+ПКМ книгой по сундуку — управление; палкой — назначение."));
+        event.setCancellationResult(InteractionResult.SUCCESS);
+        event.setCanceled(true);
+    }
+
+    // Book = inspect, redstone torch = switch worker between work and rest.
+    // Both interactions require explicit sneaking so normal chest use is unchanged.
+    @SubscribeEvent
+    public void manageChest(PlayerInteractEvent.RightClickBlock event) {
+        if (!(event.getEntity() instanceof ServerPlayer player) || !player.isShiftKeyDown()) return;
+        boolean inspect=event.getItemStack().is(Items.BOOK);
+        boolean toggle=event.getItemStack().is(Items.REDSTONE_TORCH);
+        if (!inspect && !toggle) return;
+        BlockEntity be=player.level().getBlockEntity(event.getPos());
+        if (!(be instanceof Container) || !be.getPersistentData().hasUUID(OWNER)) return;
+        Entity worker=player.serverLevel().getEntity(be.getPersistentData().getUUID(OWNER));
+        if (worker==null || !villager(worker)) {
+            message(player,"Работник не загружен. Подойди ближе к жителю.");
+            return;
+        }
+        CompoundTag data=worker.getPersistentData();
+        if (!data.contains(CHEST) || !event.getPos().equals(BlockPos.of(data.getLong(CHEST)))
+                || !player.serverLevel().dimension().location().toString().equals(data.getString(DIMENSION))) {
+            message(player,"Привязка сундука устарела. Назначь работника заново.");
+            return;
+        }
+        if (toggle) {
+            boolean paused=!data.getBoolean(PAUSED);
+            data.putBoolean(PAUSED,paused);
+            message(player,paused?"Работник отдыхает: сбор приостановлен.":"Работник вернулся к сбору.");
+        } else {
+            message(player,"Работник: "+worker.getName().getString()+" | "
+                    +(data.getBoolean(PAUSED)?"отдых":"сбор")+" | доставлено "+data.getLong(DELIVERED)
+                    +" | еды "+data.getInt(FOOD_RESERVE));
+        }
+        event.setCancellationResult(InteractionResult.SUCCESS);
+        event.setCanceled(true);
+    }
+
     private static boolean crop(Item item) {
         return item == Items.WHEAT || item == Items.WHEAT_SEEDS
             || item == Items.CARROT || item == Items.POTATO || item == Items.BEETROOT
@@ -185,7 +242,7 @@ public final class WorkerChests {
         if (worker.tickCount % 30 != 0) return;
         CompoundTag data=worker.getPersistentData();
         updateNeeds(worker,level,data);
-        if (!data.contains(CHEST) || !level.dimension().location().toString().equals(data.getString(DIMENSION))) return;
+        if (data.getBoolean(PAUSED) || !data.contains(CHEST) || !level.dimension().location().toString().equals(data.getString(DIMENSION))) return;
         BlockPos chestPos=BlockPos.of(data.getLong(CHEST));
         if (worker.blockPosition().distSqr(chestPos)>1024 || !level.isLoaded(chestPos)) return;
         BlockEntity be=level.getBlockEntity(chestPos);
@@ -199,6 +256,7 @@ public final class WorkerChests {
                 return;
             }
             ItemStack rest=store(storage,held);
+            data.putLong(DELIVERED,data.getLong(DELIVERED)+held.getCount()-rest.getCount());
             if (rest.isEmpty()) data.remove(HELD);
             else data.put(HELD,rest.save(new CompoundTag()));
             return;
@@ -217,6 +275,7 @@ public final class WorkerChests {
         acquired.shrink(reserve);
         if (!acquired.isEmpty()) data.put(HELD,acquired.save(new CompoundTag()));
         // Items are transferred to persistent personal food reserve or the work chest.
+        data.putLong(COLLECTIONS,data.getLong(COLLECTIONS)+1);
         item.discard();
     }
 }
