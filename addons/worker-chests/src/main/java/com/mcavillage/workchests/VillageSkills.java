@@ -4,6 +4,10 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.Commands;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.HoverEvent;
@@ -32,17 +36,19 @@ import net.minecraftforge.registries.ForgeRegistries;
 @Mod.EventBusSubscriber(modid=WorkerChests.MODID)
 public final class VillageSkills {
     private static final String ROOT="mcaworkchestsRpg";
-    private static final String[] IDS={"charisma","stealth","endurance","craft","engineering"};
-    private static final String[] RU={"Харизма","Скрытность","Выносливость","Ремесло","Инженерия"};
+    private static final String[] IDS={"charisma","stealth","endurance","craft","engineering","exploration","agriculture"};
+    private static final String[] RU={"Харизма","Скрытность","Выносливость","Ремесло","Инженерия","Исследование","Земледелие"};
     private static final String[] PERKS={"Базовый талант","Профессионал","Мастер"};
     private static final int[] REQUIRE={2,5,9};
-    private static final String[] HINTS={"Общение с жителями и восстановление","Тихое движение и защита","Бег, скорость и живучесть","Создание предметов и опыт","Добыча блоков и технический опыт"};
+    private static final String[] HINTS={"Общение с жителями и восстановление","Тихое движение и защита","Бег, скорость и живучесть","Создание предметов и опыт","Добыча блоков и технический опыт","Открытие новых биомов и экспедиции","Урожай и деревенское хозяйство"};
     private static final String[][] PERK_HINTS={
         {"Общение восстанавливает здоровье","Продлённое восстановление","Максимальное восстановление"},
         {"-8% урона при скрытности","-16% урона при скрытности","-24% урона при скрытности"},
         {"-8% урона при низком здоровье","Скорость I при беге","Скорость II при беге"},
         {"4% шанс +1 опыта при крафте","8% шанс +1 опыта при крафте","12% шанс +1 опыта при крафте"},
-        {"4% шанс +1 опыта при добыче","8% шанс +1 опыта при добыче","12% шанс +1 опыта при добыче"}
+        {"4% шанс +1 опыта при добыче","8% шанс +1 опыта при добыче","12% шанс +1 опыта при добыче"},
+        {"Удача I в экспедиции","Ночное зрение под землёй","Удача II в экспедиции"},
+        {"4% шанс +1 опыта за урожай","8% шанс +1 опыта за урожай","12% шанс +1 опыта за урожай"}
     };
     private static final int MAX_LEVEL=20;
     private VillageSkills(){}
@@ -147,6 +153,12 @@ public final class VillageSkills {
     @SubscribeEvent
     public static void breakBlock(BlockEvent.BreakEvent e){
         if(!(e.getPlayer() instanceof ServerPlayer p))return;
+        if(e.getState().getBlock() instanceof CropBlock crop && crop.isMaxAge(e.getState())) {
+            addXp(p,"agriculture",8,20);
+            int farmRank=rank(data(p),"agriculture");
+            if(farmRank>0 && p.getRandom().nextFloat()<0.04F*farmRank)p.giveExperiencePoints(1);
+            return;
+        }
         addXp(p,"engineering",3,30);
         int engineering=rank(data(p),"engineering");
         if(engineering>0 && p.getRandom().nextFloat()<0.04F*engineering)
@@ -164,6 +176,23 @@ public final class VillageSkills {
     public static void tick(TickEvent.PlayerTickEvent e){
         if(e.phase!=TickEvent.Phase.END || !(e.player instanceof ServerPlayer p))return;
         if(p.tickCount%100!=0)return;
+        // Only genuinely new biomes grant exploration XP (maximum 128 unique entries).
+        CompoundTag progression=data(p);
+        String biome=p.serverLevel().getBiome(p.blockPosition()).unwrapKey()
+                .map(key->key.location().toString()).orElse("unknown");
+        ListTag discovered=progression.getList("exploration_biomes",Tag.TAG_STRING);
+        boolean seen=false;
+        for(int i=0;i<discovered.size();i++)if(discovered.getString(i).equals(biome)){seen=true;break;}
+        if(!seen && discovered.size()<128 && !biome.equals("unknown")){
+            discovered.add(StringTag.valueOf(biome));
+            progression.put("exploration_biomes",discovered);
+            addXp(p,"exploration",24,0);
+            say(p,"§b✦ Исследован новый биом: §f"+biome+" §7("+discovered.size()+"/128)");
+        }
+        int exploring=rank(progression,"exploration");
+        if(exploring>=1)p.addEffect(new MobEffectInstance(MobEffects.LUCK,110,exploring>=3?1:0,true,false));
+        if(exploring>=2 && p.getBlockY()<45)
+            p.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION,230,0,true,false));
         if(p.isCrouching() && p.getDeltaMovement().horizontalDistanceSqr()>0.0004)
             addXp(p,"stealth",3,80);
         if(p.isSprinting() && p.getDeltaMovement().horizontalDistanceSqr()>0.01)
