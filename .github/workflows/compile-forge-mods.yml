@@ -1,0 +1,33 @@
+name: Compile Forge mods
+on:
+  workflow_dispatch:
+  push:
+    branches: [mrpack-builder]
+    paths:
+      - 'компилятор модов/**'
+      - '.github/workflows/compile-forge-mods.yml'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: компилятор модов
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.8'
+      - name: Build Forge mod
+        run: gradle build --no-daemon --stacktrace
+      - name: Upload JAR
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mca-tinkers-compat-forge-1.20.1
+          path: компилятор модов/build/libs/*.jar
+          if-no-files-found: error
