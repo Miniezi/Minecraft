@@ -15,12 +15,17 @@ minecraft {
     }
 }
 repositories { maven { url = 'https://maven.minecraftforge.net' }; mavenCentral() }
-dependencies { minecraft 'net.minecraftforge:forge:1.20.1-47.4.10' }
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.20.1-47.4.10'
+    compileOnly 'org.spongepowered:mixin:0.8.5'
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+}
 tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8'; options.release = 17 }
 tasks.named('jar', Jar) {
     manifest.attributes(['Specification-Title':'mca-tinkers-compat',
                          'Specification-Version':'1',
                          'Implementation-Title':project.name,
-                         'Implementation-Version':project.version])
+                         'Implementation-Version':project.version,
+                         'MixinConfigs':'mcatinkerscompat.mixins.json'])
     finalizedBy 'reobfJar'
 }
