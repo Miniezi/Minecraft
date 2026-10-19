@@ -1,0 +1,26 @@
+plugins {
+    id 'java'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+}
+group = 'io.github.mcatinkers'
+version = '0.1.0-alpha'
+base { archivesName = 'mca-tinkers-compat' }
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+minecraft {
+    mappings channel: 'official', version: '1.20.1'
+    copyIdeResources = true
+    runs {
+        client { workingDirectory project.file('run'); mods { mcatinkerscompat { source sourceSets.main } } }
+        server { workingDirectory project.file('run'); mods { mcatinkerscompat { source sourceSets.main } } }
+    }
+}
+repositories { maven { url = 'https://maven.minecraftforge.net' }; mavenCentral() }
+dependencies { minecraft 'net.minecraftforge:forge:1.20.1-47.4.10' }
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8'; options.release = 17 }
+tasks.named('jar', Jar) {
+    manifest.attributes(['Specification-Title':'mca-tinkers-compat',
+                         'Specification-Version':'1',
+                         'Implementation-Title':project.name,
+                         'Implementation-Version':project.version])
+    finalizedBy 'reobfJar'
+}
