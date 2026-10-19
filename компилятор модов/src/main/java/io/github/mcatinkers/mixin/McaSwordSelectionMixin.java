@@ -4,51 +4,49 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SwordItem;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
+import org.spongepowered.asm.mixin.injection.Redirect;
 import java.util.Optional;
 
 /**
- * MCA's InventoryUtils.getBestSword only accepts SwordItem, while Tinkers
- * modular weapons are not necessarily subclasses of SwordItem.
- * Preserve vanilla selection, but include TConstruct melee weapons.
+ * Patches the concrete MCA EquipmentTask call site, not the InventoryUtils
+ * interface. Includes standard sword items plus modular Tinkers weapons.
  */
-@Mixin(targets = "forge.net.mca.util.InventoryUtils", remap = false)
+@Mixin(targets = "forge.net.mca.entity.ai.brain.tasks.EquipmentTask", remap = false)
 public abstract class McaSwordSelectionMixin {
-    @Inject(method = "getBestSword", at = @At("RETURN"), cancellable = true, remap = false)
-    static void mcatinkers$findModularSword(Container inventory,
-           CallbackInfoReturnable<Optional<ItemStack>> cir) {
-        ItemStack chosen = cir.getReturnValue().orElse(ItemStack.EMPTY);
-        double best = damage(chosen);
+    @Redirect(method = "equipBestWeapon",
+              at = @At(value = "INVOKE",
+                target = "Lforge/net/mca/util/InventoryUtils;getBestSword(Lnet/minecraft/world/Container;)Ljava/util/Optional;"),
+              remap = false)
+    private Optional<ItemStack> mcatinkers$findModularSword(Container inventory) {
+        ItemStack chosen = ItemStack.EMPTY;
+        double best = Double.NEGATIVE_INFINITY;
         for (int i = 0; i < inventory.getContainerSize(); i++) {
             ItemStack stack = inventory.getItem(i);
-            if (!isTinkersMelee(stack)) continue;
+            if (stack.isEmpty() || !(stack.getItem() instanceof SwordItem) && !isTinkersMelee(stack)) continue;
             double score = damage(stack);
             if (chosen.isEmpty() || score > best) {
                 chosen = stack;
                 best = score;
             }
         }
-        if (!chosen.isEmpty()) cir.setReturnValue(Optional.of(chosen));
+        return chosen.isEmpty() ? Optional.empty() : Optional.of(chosen);
     }
 
-    static boolean isTinkersMelee(ItemStack stack) {
-        if (stack.isEmpty()) return false;
+    private static boolean isTinkersMelee(ItemStack stack) {
         ResourceLocation id = ForgeRegistries.ITEMS.getKey(stack.getItem());
         if (id == null || !id.getNamespace().equals("tconstruct")) return false;
-        String path = id.getPath();
-        return path.equals("sword") || path.equals("dagger") ||
-               path.equals("cleaver") || path.equals("battlesign") ||
-               path.equals("flint_and_brick");
+        String name = id.getPath();
+        return name.equals("sword") || name.equals("dagger") ||
+               name.equals("cleaver") || name.equals("battlesign") ||
+               name.equals("flint_and_brick");
     }
 
-    static double damage(ItemStack stack) {
-        if (stack.isEmpty()) return Double.NEGATIVE_INFINITY;
+    private static double damage(ItemStack stack) {
         final double[] total = {0d};
         stack.getAttributeModifiers(EquipmentSlot.MAINHAND)
             .get(Attributes.ATTACK_DAMAGE)
