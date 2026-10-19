@@ -1,0 +1,25 @@
+name: Build MCA With User Mods
+on:
+  push:
+    branches: [mrpack-builder]
+    paths: ['scripts/build_user_mods_mrpack.py', '.github/workflows/build-user-mods.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build all-in-one user mods MRPACK
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/build_user_mods_mrpack.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mca-full-user-mods-mrpack
+          path: MCA-Industrial-Villages-RU-All-Mods-1.20.1.mrpack
