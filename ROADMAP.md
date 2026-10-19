@@ -24,3 +24,14 @@ Advancement triggers represent survival progression *through possessing items* (
 ## Build policy
 
 Preserve the previous verified .mrpack. Do not import worlds automatically, do not include Townstead in the Capitals profile, do not translate Chipped. Run focused checks first and release a new pack only after CI succeeds.
+
+## Worker-chests gameplay update (19 October 2026)
+
+Implemented in the custom `mcaworkchests` Forge addon:
+- **Worker status cards:** sneak/right-click an MCA villager with a **book** to inspect assigned chest, food reserve, custom hunger/comfort indicators, collected batches, delivered item count, and active/rest status.
+- **Chest-side management:** sneak/right-click a linked chest with a **book** to inspect, or with a **redstone torch** to toggle between working and rest. Normal right-click without sneaking still opens the container.
+- **Persistent counters:** delivered items and successful pickups saved in worker persistent NBT data. These measure work done by this addon, not MCA friendship or job stats.
+- **Bed recovery:** workers ordered to rest regain custom comfort, especially near a bed. Checks occur only during throttled needs updates.
+- **All status texts currently display in Russian.** A future version should move hardcoded messages to a translation JSON for accessibility and English optionality.
+
+CI: experimental Forge compilation and main MRPACK workflow are triggered automatically by source updates. Do not claim the new features are in a tested .mrpack until those runs pass. Next big upgrade: proper translated GUI with controls, item filter/blacklist for worker collections, live integration smoke tests, and visual textures/icons.
