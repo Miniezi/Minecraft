@@ -152,7 +152,27 @@ public final class WorkerChests {
         CompoundTag workerData = worker.getPersistentData();
         workerData.putLong(CHEST, pos.asLong());
         workerData.putString(DIMENSION, level.dimension().location().toString());
-        workerData.remove(HELD);
+        // Never erase a carried harvest: reassignment while transporting is rejected.
+        if(workerData.contains(HELD) && !ItemStack.of(workerData.getCompound(HELD)).isEmpty()) {
+            message(player,"Работник несёт урожай. Дождись доставки перед сменой склада.");
+            return;
+        }
+        if(be.getPersistentData().hasUUID(OWNER) && !selected.equals(be.getPersistentData().getUUID(OWNER))) {
+            message(player,"Этот склад уже принадлежит другому работнику.");
+            return;
+        }
+        // Release the previously owned container, if available in this dimension.
+        if(workerData.contains(CHEST) && level.dimension().location().toString().equals(workerData.getString(DIMENSION))) {
+            BlockPos oldPos=BlockPos.of(workerData.getLong(CHEST));
+            if(!oldPos.equals(pos) && level.isLoaded(oldPos)) {
+                BlockEntity old=level.getBlockEntity(oldPos);
+                if(old!=null && old.getPersistentData().hasUUID(OWNER)
+                     && selected.equals(old.getPersistentData().getUUID(OWNER))) {
+                    old.getPersistentData().remove(OWNER);
+                    old.setChanged();
+                }
+            }
+        }
         be.getPersistentData().putUUID(OWNER, selected);
         be.setChanged();
         message(player, "Сундук закреплён за жителем! Он может собирать урожай с земли.");
@@ -227,13 +247,15 @@ public final class WorkerChests {
         for (int i = 0; i < storage.getContainerSize() && !rest.isEmpty(); i++) {
             ItemStack slot = storage.getItem(i);
             if (!slot.isEmpty() && ItemStack.isSameItemSameTags(rest,slot)) {
-                int transfer=Math.min(storage.getMaxStackSize()-slot.getCount(),rest.getCount());
+                if (!storage.canPlaceItem(i,rest)) continue;
+                int cap=Math.min(storage.getMaxStackSize(),slot.getMaxStackSize());
+                int transfer=Math.min(cap-slot.getCount(),rest.getCount());
                 if (transfer>0) { slot.grow(transfer);rest.shrink(transfer);storage.setItem(i,slot); }
             }
         }
         for (int i = 0; i < storage.getContainerSize() && !rest.isEmpty(); i++) {
-            if (storage.getItem(i).isEmpty()) {
-                int count=Math.min(rest.getMaxStackSize(),rest.getCount());
+            if (storage.getItem(i).isEmpty() && storage.canPlaceItem(i,rest)) {
+                int count=Math.min(Math.min(rest.getMaxStackSize(),storage.getMaxStackSize()),rest.getCount());
                 ItemStack piece=rest.copy();piece.setCount(count);
                 storage.setItem(i,piece);rest.shrink(count);
             }
