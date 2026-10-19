@@ -36,6 +36,14 @@ public final class VillageSkills {
     private static final String[] RU={"Харизма","Скрытность","Выносливость","Ремесло","Инженерия"};
     private static final String[] PERKS={"Базовый талант","Профессионал","Мастер"};
     private static final int[] REQUIRE={2,5,9};
+    private static final String[] HINTS={"Общение с жителями и восстановление","Тихое движение и защита","Бег, скорость и живучесть","Создание предметов и опыт","Добыча блоков и технический опыт"};
+    private static final String[][] PERK_HINTS={
+        {"Общение восстанавливает здоровье","Продлённое восстановление","Максимальное восстановление"},
+        {"-8% урона при скрытности","-16% урона при скрытности","-24% урона при скрытности"},
+        {"-8% урона при низком здоровье","Ускорение при беге","Мастер выносливости"},
+        {"Шанс дополнительного опыта при крафте","Опытный ремесленник","Мастер ремесла"},
+        {"Шанс дополнительного опыта при добыче","Опытный инженер","Мастер инженерии"}
+    };
     private static final int MAX_LEVEL=20;
     private VillageSkills(){}
 
@@ -81,16 +89,20 @@ public final class VillageSkills {
         for(int i=0;i<IDS.length;i++){
             String id=IDS[i];
             int lv=level(root,id),rank=rank(root,id);
-            say(p,"§e"+RU[i]+" §f"+lv+"/20 §7| опыт "+root.getInt(id+"_xp")+
-                  "/"+threshold(lv)+" §7| таланты "+rank+"/3");
+            int earned=root.getInt(id+"_xp"), needed=threshold(lv);
+            int filled=lv>=MAX_LEVEL?12:Math.min(12,(12*earned)/needed);
+            String bar="§a"+"▰".repeat(filled)+"§8"+"▱".repeat(12-filled);
+            say(p,"§e"+RU[i]+" §f"+lv+"/20 §7| таланты "+rank+"/3");
+            say(p,"  "+bar+" §7"+earned+"/"+needed+" §8— "+HINTS[i]);
             if(rank<3) {
                 final String skillName=RU[i];
-                p.sendSystemMessage(Component.literal("  §a[Открыть талант] §7"+PERKS[rank]+" — нужен ур. "+REQUIRE[rank])
+                final String perkInfo=PERK_HINTS[i][rank];
+                p.sendSystemMessage(Component.literal("  §a[Открыть талант] §7"+PERKS[rank]+" (ур. "+REQUIRE[rank]+") §8— "+perkInfo)
                     .withStyle(style->style.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,"/skills unlock "+id))
                        .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,Component.literal("Нажми, чтобы открыть "+skillName)))));
             }
         }
-        say(p,"§7Уровни: общайся с жителями, крадись, исследуй, создавай и строй.");
+        say(p,"§7Опыт навыков отдельный от обычного XP. Нажимай зелёные таланты.");
     }
     private static int unlock(ServerPlayer p,String id){
         int i=index(id);
