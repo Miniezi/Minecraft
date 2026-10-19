@@ -88,6 +88,20 @@ public final class WorkerChests {
         }
         return sum;
     }
+    // Workers may use one item from communal food surplus, but never empty the pantry.
+    private static void replenishFood(Container storage,CompoundTag data) {
+        if(data.getInt(FOOD_RESERVE)>0 || data.getInt(NEED_FOOD)<70) return;
+        if(foodInChest(storage)<=DEPOSIT_FOOD_MIN) return;
+        for(int i=0;i<storage.getContainerSize();i++) {
+            ItemStack stack=storage.getItem(i);
+            if(!stack.isEmpty() && edible(stack.getItem()) && storage.canTakeItem(storage,i,stack)) {
+                stack.shrink(1);
+                storage.setChanged();
+                data.putInt(FOOD_RESERVE,1);
+                return;
+            }
+        }
+    }
     private static int reserveFromCollected(Mob storageOwner,CompoundTag data,ItemStack acquired,Container storage){
         if (!edible(acquired.getItem())) return 0;
         TownsteadNeedsBridge.State real=TownsteadNeedsBridge.read((Mob)storageOwner);
@@ -274,12 +288,14 @@ public final class WorkerChests {
         if (worker.tickCount % 30 != 0) return;
         CompoundTag data=worker.getPersistentData();
         updateNeeds(worker,level,data);
-        if (data.getBoolean(PAUSED) || !data.contains(CHEST) || !level.dimension().location().toString().equals(data.getString(DIMENSION))) return;
+        if (!data.contains(CHEST) || !level.dimension().location().toString().equals(data.getString(DIMENSION))) return;
         BlockPos chestPos=BlockPos.of(data.getLong(CHEST));
         if (worker.blockPosition().distSqr(chestPos)>1024 || !level.isLoaded(chestPos)) return;
         BlockEntity be=level.getBlockEntity(chestPos);
         if (!(be instanceof Container storage) || !be.getPersistentData().hasUUID(OWNER)
                 || !be.getPersistentData().getUUID(OWNER).equals(worker.getUUID())) return;
+        if (worker.blockPosition().distSqr(chestPos)<=36) replenishFood(storage,data);
+        if (data.getBoolean(PAUSED)) return;
         if (data.contains(HELD)) {
             ItemStack held=ItemStack.of(data.getCompound(HELD));
             if (held.isEmpty()) { data.remove(HELD); return; }
