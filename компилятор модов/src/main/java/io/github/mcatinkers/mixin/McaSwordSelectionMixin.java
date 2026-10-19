@@ -19,7 +19,7 @@ import java.util.Optional;
  * Preserve vanilla selection, but include TConstruct melee weapons.
  */
 @Mixin(targets = "forge.net.mca.util.InventoryUtils", remap = false)
-public interface McaSwordSelectionMixin {
+public abstract class McaSwordSelectionMixin {
     @Inject(method = "getBestSword", at = @At("RETURN"), cancellable = true, remap = false)
     static void mcatinkers$findModularSword(Container inventory,
            CallbackInfoReturnable<Optional<ItemStack>> cir) {
