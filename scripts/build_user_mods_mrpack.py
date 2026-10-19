@@ -35,11 +35,10 @@ def find(name,slug):
     for f in v["files"]:
      if f["filename"].lower()==(name+".jar").lower():return f
  return None
-url=f"https://api.github.com/repos/Miniezi/Minecraft/actions/artifacts/{base}/zip"
-with zipfile.ZipFile(io.BytesIO(get(url,True))) as outer:
- name=next(n for n in outer.namelist() if n.endswith(".mrpack"))
- basebytes=outer.read(name)
-z=zipfile.ZipFile(io.BytesIO(basebytes))
+import glob
+files=glob.glob("*.mrpack")
+assert files, "No base MRPACK in working directory"
+z=zipfile.ZipFile(files[0])
 data=json.loads(z.read("modrinth.index.json"))
 data["files"]=[f for f in data["files"] if not f["path"].lower().startswith("mods/jei-")]
 missing=[]
