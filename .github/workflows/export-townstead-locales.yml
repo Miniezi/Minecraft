@@ -1,0 +1,27 @@
+name: Export Townstead 0.7.6 Locale References
+on:
+  workflow_dispatch:
+  push:
+    branches: [mrpack-builder]
+    paths: ['.github/workflows/export-townstead-locales.yml']
+permissions:
+  contents: read
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download pinned upstream source
+        run: |
+          curl -fL --retry 3 -o source.zip https://codeload.github.com/AetherianArtificer/Townstead/zip/refs/tags/0.7.6
+          python - <<'PY'
+          import zipfile, os
+          with zipfile.ZipFile('source.zip') as z:
+            for n in z.namelist():
+              if (n.endswith('/lang/en_us.json') or n.endswith('/lang/ru_ru.json')) and ('/src/main/resources/' in n or n.count('/')<6):
+                os.makedirs('locale-refs/'+os.path.dirname(n),exist_ok=True)
+                with open('locale-refs/'+n,'wb') as f:f.write(z.read(n))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: townstead-0-7-6-locales
+          path: locale-refs/
