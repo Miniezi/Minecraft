@@ -84,9 +84,10 @@ public final class VillageSkills {
             say(p,"§e"+RU[i]+" §f"+lv+"/20 §7| опыт "+root.getInt(id+"_xp")+
                   "/"+threshold(lv)+" §7| таланты "+rank+"/3");
             if(rank<3) {
+                final String skillName=RU[i];
                 p.sendSystemMessage(Component.literal("  §a[Открыть талант] §7"+PERKS[rank]+" — нужен ур. "+REQUIRE[rank])
                     .withStyle(style->style.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,"/skills unlock "+id))
-                       .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,Component.literal("Нажми, чтобы открыть "+RU[i])))));
+                       .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,Component.literal("Нажми, чтобы открыть "+skillName)))));
             }
         }
         say(p,"§7Уровни: общайся с жителями, крадись, исследуй, создавай и строй.");
