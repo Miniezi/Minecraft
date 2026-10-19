@@ -1,0 +1,32 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="MIT"
+[[mods]]
+modId="mcatinkerscompat"
+version="0.1.0-alpha"
+displayName="MCA Tinkers Compatibility (starter)"
+description="Initial compatibility scaffolding and MCA gift entries. Equipment, job AI and Tinkers fishing integration are not implemented."
+[[dependencies.mcatinkerscompat]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.20.1,1.20.2)"
+ordering="NONE"
+side="BOTH"
+[[dependencies.mcatinkerscompat]]
+modId="forge"
+mandatory=true
+versionRange="[47.4.10,)"
+ordering="NONE"
+side="BOTH"
+[[dependencies.mcatinkerscompat]]
+modId="mca"
+mandatory=true
+versionRange="[7.6,)"
+ordering="AFTER"
+side="BOTH"
+[[dependencies.mcatinkerscompat]]
+modId="tconstruct"
+mandatory=true
+versionRange="[3.12,)"
+ordering="AFTER"
+side="BOTH"
