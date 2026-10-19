@@ -163,6 +163,12 @@ def main():
     with zipfile.ZipFile(io.BytesIO(legacy)) as archive:
         quest_values=json.loads(archive.read("assets/mcaquests/lang/ru_ru.json"))
     upstream_ru.setdefault("mcaquests",{}).update(quest_values)
+    # Curated fixes for MCA Reputation's Standing GUI. Apply after JAR locales so
+    # empty, incomplete or machine-translated screens cannot overwrite them.
+    reputation_locale=Path(__file__).parent/"translations"/"mcareputation"/"ru_ru.json"
+    curated_reputation=json.loads(reputation_locale.read_text(encoding="utf-8"))
+    upstream_ru.setdefault("mcareputation",{}).update(curated_reputation)
+
     # Preserve successfully translated keys from a previous pass of this same MRPACK.
     # Additional CI passes can focus on the remaining untranslated strings.
     with zipfile.ZipFile(pack_path) as archive:
