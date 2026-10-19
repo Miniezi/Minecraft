@@ -19,9 +19,9 @@ import java.util.Optional;
  * Preserve vanilla selection, but include TConstruct melee weapons.
  */
 @Mixin(targets = "forge.net.mca.util.InventoryUtils", remap = false)
-public abstract class McaSwordSelectionMixin {
+public interface McaSwordSelectionMixin {
     @Inject(method = "getBestSword", at = @At("RETURN"), cancellable = true, remap = false)
-    private static void mcatinkers$findModularSword(Container inventory,
+    static void mcatinkers$findModularSword(Container inventory,
            CallbackInfoReturnable<Optional<ItemStack>> cir) {
         ItemStack chosen = cir.getReturnValue().orElse(ItemStack.EMPTY);
         double best = damage(chosen);
@@ -37,7 +37,7 @@ public abstract class McaSwordSelectionMixin {
         if (!chosen.isEmpty()) cir.setReturnValue(Optional.of(chosen));
     }
 
-    private static boolean isTinkersMelee(ItemStack stack) {
+    static boolean isTinkersMelee(ItemStack stack) {
         if (stack.isEmpty()) return false;
         ResourceLocation id = ForgeRegistries.ITEMS.getKey(stack.getItem());
         if (id == null || !id.getNamespace().equals("tconstruct")) return false;
@@ -47,7 +47,7 @@ public abstract class McaSwordSelectionMixin {
                path.equals("flint_and_brick");
     }
 
-    private static double damage(ItemStack stack) {
+    static double damage(ItemStack stack) {
         if (stack.isEmpty()) return Double.NEGATIVE_INFINITY;
         final double[] total = {0d};
         stack.getAttributeModifiers(EquipmentSlot.MAINHAND)
