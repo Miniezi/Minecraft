@@ -1,0 +1,998 @@
+index,Статус,Пространство,Ключ,Английский оригинал (все версии),Русский текст сейчас,Источники JAR,Различных английских вариантов
+0,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.open.share/1,You too? Huh. It's less heavy when two people carry it.,,mods/mcaconversations-1.2.0.jar,1
+1,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.open.share/2,"Strange comfort, that. Two cowards make one brave pair.",,mods/mcaconversations-1.2.0.jar,1
+2,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.open.share/3,Then we watch each other's backs. That's how it's meant to work.,,mods/mcaconversations-1.2.0.jar,1
+3,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.open.pledge/1,"...Nobody's said that before. I'm holding you to it, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+4,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.open.pledge/2,Not alone. Right. I'll try to believe that.,,mods/mcaconversations-1.2.0.jar,1
+5,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.open.pledge/3,Careful what you promise. I remember promises.,,mods/mcaconversations-1.2.0.jar,1
+6,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.open.step_back/1,...That's honest. I'd rather that than a promise you'd break.,,mods/mcaconversations-1.2.0.jar,1
+7,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.open.step_back/2,Good. People promise too easily around here. Listening is enough.,,mods/mcaconversations-1.2.0.jar,1
+8,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.open.step_back/3,"No promises. Understood. You still stayed, though.",,mods/mcaconversations-1.2.0.jar,1
+9,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.open.thank/1,Don't thank me. I didn't do anything except stop pretending for a minute.,,mods/mcaconversations-1.2.0.jar,1
+10,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.open.thank/2,"It's not a gift, %1$s. It's just true. Still — aye. You're welcome.",,mods/mcaconversations-1.2.0.jar,1
+11,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.open.thank/3,Trust's a strange thing to be thanked for. I'll take it.,,mods/mcaconversations-1.2.0.jar,1
+12,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.open.means/2,Getting it past my own teeth was the hard part. You just had to not flinch.,,mods/mcaconversations-1.2.0.jar,1
+13,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.open.means/3,"Noticed that, did you. Most don't.",,mods/mcaconversations-1.2.0.jar,1
+14,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.pressed.push/1,"No. NO. You were told, and you asked again. Get away from me.",,mods/mcaconversations-1.2.0.jar,1
+15,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.pressed.push/2,"That's what you are, then. Someone who takes. I won't forget it, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+16,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.pressed.push/3,You cracked it open because you wanted to see. I hope it was worth the look.,,mods/mcaconversations-1.2.0.jar,1
+17,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.pressed.leave/1,Aye. Best you do.,,mods/mcaconversations-1.2.0.jar,1
+18,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.pressed.leave/2,"Go on, then. Before either of us says more.",,mods/mcaconversations-1.2.0.jar,1
+19,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.pressed.leave/3,Right. We'll leave it there.,,mods/mcaconversations-1.2.0.jar,1
+20,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.guarded.respect/1,...Aye. It is mine. Thank you for hearing that the first time.,,mods/mcaconversations-1.2.0.jar,1
+21,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.guarded.respect/2,"Most people push. You didn't. That buys you something, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+22,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.guarded.respect/3,Good. Ask me again in a season and we'll see.,,mods/mcaconversations-1.2.0.jar,1
+23,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.guarded.ask_safer/1,"Now that I can do. Ask me about the crops, or the roof, or the cat.",,mods/mcaconversations-1.2.0.jar,1
+24,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.guarded.ask_safer/2,Something easier. Aye. Let's start there and work up.,,mods/mcaconversations-1.2.0.jar,1
+25,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.guarded.ask_safer/3,"Sensible. Small talk first, %1$s. That's how it's built.",,mods/mcaconversations-1.2.0.jar,1
+26,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.guarded.press/1,I said no. Do you want to hear it a second time?,,mods/mcaconversations-1.2.0.jar,1
+27,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.guarded.press/2,"You'll be wanting my savings next. It's a no, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+28,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.guarded.press/3,Pushing at a locked door only tells me about you.,,mods/mcaconversations-1.2.0.jar,1
+29,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.guarded.leave/1,"Aye. Another time, maybe.",,mods/mcaconversations-1.2.0.jar,1
+30,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.guarded.leave/2,Off you go. No hard feelings.,,mods/mcaconversations-1.2.0.jar,1
+31,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.guarded.leave/3,Right you are. We'll get there or we won't.,,mods/mcaconversations-1.2.0.jar,1
+32,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.scarred.apologize/1,...Took you long enough. It doesn't undo it. But it's something.,,mods/mcaconversations-1.2.0.jar,1
+33,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.scarred.apologize/2,"You were wrong, aye. Saying so out loud costs you something, so — noted.",,mods/mcaconversations-1.2.0.jar,1
+34,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.scarred.apologize/3,"I'll not pretend it never happened, %1$s. But you can stand there.",,mods/mcaconversations-1.2.0.jar,1
+35,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.scarred.give_space/1,Good. That's the only thing left that helps.,,mods/mcaconversations-1.2.0.jar,1
+36,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.scarred.give_space/2,Aye. Space. I'd rather that than another apology.,,mods/mcaconversations-1.2.0.jar,1
+37,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.scarred.give_space/3,"Right. Come back in a week and ask me about the fence, and we'll see where we are.",,mods/mcaconversations-1.2.0.jar,1
+38,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.scarred.leave/1,Mm.,,mods/mcaconversations-1.2.0.jar,1
+39,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.scarred.leave/2,Aye. Go.,,mods/mcaconversations-1.2.0.jar,1
+40,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.scarred.leave/3,That's probably best.,,mods/mcaconversations-1.2.0.jar,1
+41,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.again.apologize/1,It's alright. It's not the sort of thing that gets easier by repetition.,,mods/mcaconversations-1.2.0.jar,1
+42,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.again.apologize/2,No harm. Ask me in a few days and I'll have found new words.,,mods/mcaconversations-1.2.0.jar,1
+43,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.again.apologize/3,"Appreciated, %1$s. Twice in a day is a lot to ask of anyone.",,mods/mcaconversations-1.2.0.jar,1
+44,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.again.press/1,I already showed you that scar. Don't poke it twice in one week.,,mods/mcaconversations-1.2.0.jar,1
+45,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.again.press/2,"Twice? Buy me a drink first, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+46,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.again.press/3,Let it rest. It bites when it's poked fresh.,,mods/mcaconversations-1.2.0.jar,1
+47,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.again.leave/2,Right. Catch me when the week's turned.,,mods/mcaconversations-1.2.0.jar,1
+48,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.again.leave/3,Good. Some things want a gap between them.,,mods/mcaconversations-1.2.0.jar,1
+49,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.toddler.ask/1,It's big. And it doesn't have a face. THAT'S the bad part.,,mods/mcaconversations-1.2.0.jar,1
+50,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.toddler.ask/2,It lives under there. Only at night. It's very rude.,,mods/mcaconversations-1.2.0.jar,1
+51,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.toddler.ask/3,I don't want to say it out loud. It might hear.,,mods/mcaconversations-1.2.0.jar,1
+52,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.toddler.leave/2,Bye! Leave the lamp on?,,mods/mcaconversations-1.2.0.jar,1
+53,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.toddler.leave/3,Bye bye. I'll be brave.,,mods/mcaconversations-1.2.0.jar,1
+54,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.plan.ask_what_helps.plain/1,Honestly? I don't know. Huh. That's a worse answer than I expected to give. Right - next question.,,mods/mcaconversations-1.2.0.jar,1
+55,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.plan.ask_what_helps.plain/2,What would help. Huh. Give me a moment with that one.,,mods/mcaconversations-1.2.0.jar,1
+56,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.plan.ask_what_helps.plain/3,"Not being talked out of it, for a start.",,mods/mcaconversations-1.2.0.jar,1
+57,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.followthrough.recall.stepped_back/3,"No promises from you, %1$s. And here you are anyway, asking.",,mods/mcaconversations-1.2.0.jar,1
+58,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.checkin.rough.ask/1,"Nothing you could put on a list. It's the weight of the ordinary, mostly.",,mods/mcaconversations-1.2.0.jar,1
+59,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.checkin.rough.ask/2,A few things. None of them the sort you can hand to someone else.,,mods/mcaconversations-1.2.0.jar,1
+60,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.checkin.rough.ask/3,Ask me on a better day and I'd say nothing at all. Today — a fair bit.,,mods/mcaconversations-1.2.0.jar,1
+61,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.checkin.rough.dismiss/1,"...I will, yes. Thank you for the vote of confidence.",,mods/mcaconversations-1.2.0.jar,1
+62,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.checkin.rough.dismiss/2,"Always am. That's rather the problem, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+63,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.checkin.rough.dismiss/3,Mm. Suppose asking was the polite part and you've done it.,,mods/mcaconversations-1.2.0.jar,1
+64,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.checkin.rough.give_space/1,That's the kindest version of leaving me alone I've heard.,,mods/mcaconversations-1.2.0.jar,1
+65,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.checkin.good.tease.polite/1,Let them talk. I've had worse rumours.,,mods/mcaconversations-1.2.0.jar,1
+66,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.checkin.good.tease.polite/2,"It'll pass before anyone notices, I expect.",,mods/mcaconversations-1.2.0.jar,1
+67,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.checkin.good.tease.polite/3,Heh. A risk I'll take.,,mods/mcaconversations-1.2.0.jar,1
+68,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.food.normal.followup,"Food's food, but some of it's better.",,mods/mcaconversations-1.2.0.jar,1
+69,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.food.normal.followup.praise,You've got good taste.,,mods/mcaconversations-1.2.0.jar,1
+70,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.food.normal.followup.promise_bring,I'll bring you some.,,mods/mcaconversations-1.2.0.jar,1
+71,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.food.normal.followup.ask_where,Where do you get it?,,mods/mcaconversations-1.2.0.jar,1
+72,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.food.normal.followup.leave,I'll let you get to your supper.,,mods/mcaconversations-1.2.0.jar,1
+73,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.trait.respect/1,"...Thank you. Most people want a reason, or a debate about it.",,mods/mcaconversations-1.2.0.jar,1
+74,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.trait.respect/2,"No fuss. Do you know how rare that is at a village table, %1$s?",,mods/mcaconversations-1.2.0.jar,1
+75,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.trait.respect/3,Aye. It just is. Nice not to have to defend it for once.,,mods/mcaconversations-1.2.0.jar,1
+76,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.trait.offer_alternative/1,...You'd actually do that? Nobody plans around me. Nobody.,,mods/mcaconversations-1.2.0.jar,1
+77,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.trait.offer_alternative/2,That's a kindness with legs on it. Most kindness about this is just words.,,mods/mcaconversations-1.2.0.jar,1
+78,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.trait.offer_alternative/3,"I'll hold you to that, %1$s. And I'll be delighted about it.",,mods/mcaconversations-1.2.0.jar,1
+79,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.trait.share_own/1,Is there? Then you know the look people give you at a feast.,,mods/mcaconversations-1.2.0.jar,1
+80,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.trait.share_own/2,Two of us dodging the same table. Solidarity.,,mods/mcaconversations-1.2.0.jar,1
+81,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.trait.share_own/3,Good. Not good — you know. It's easier having company in it.,,mods/mcaconversations-1.2.0.jar,1
+82,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.normal.share_pref/1,"Plain's underrated. Plain is what you eat every day, and every day counts.",,mods/mcaconversations-1.2.0.jar,1
+83,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.normal.share_pref/2,Then you'd get on with my mother. She thought seasoning was showing off.,,mods/mcaconversations-1.2.0.jar,1
+84,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.normal.share_pref/3,"Nothing wrong with plain, %1$s. Half the village pretends otherwise.",,mods/mcaconversations-1.2.0.jar,1
+85,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.normal.disagree.polite/1,Everyone does. That's half the fun of the subject.,,mods/mcaconversations-1.2.0.jar,1
+86,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.normal.disagree.polite/2,You'd be in good company. The whole village argues about it.,,mods/mcaconversations-1.2.0.jar,1
+87,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.normal.disagree.polite/3,"Fair enough. Wrong, but fair enough.",,mods/mcaconversations-1.2.0.jar,1
+88,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.normal.leave/1,"Aye, off you go before we both get hungry.",,mods/mcaconversations-1.2.0.jar,1
+89,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.normal.leave/2,"Right. Mind the bakery queue at this hour, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+90,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.normal.leave/3,Go on. Eat something for me.,,mods/mcaconversations-1.2.0.jar,1
+91,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.normal.praise/1,"Good taste, she says. I'll be insufferable for a week.",,mods/mcaconversations-1.2.0.jar,1
+92,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.normal.praise/2,"It's the only kind of taste I can afford, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+93,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.normal.praise/3,Hah. Tell that to my mother. She despairs of me.,,mods/mcaconversations-1.2.0.jar,1
+94,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.normal.promise_bring/1,...Would you? That's the nicest thing anyone's offered me this month.,,mods/mcaconversations-1.2.0.jar,1
+95,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.normal.promise_bring/2,"I'll believe it when I'm chewing, %1$s. But I'll believe it.",,mods/mcaconversations-1.2.0.jar,1
+96,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.normal.promise_bring/3,Don't promise food you won't bring. I'll remember.,,mods/mcaconversations-1.2.0.jar,1
+97,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.young.delight/1,It IS! Everyone says it's not but it IS.,,mods/mcaconversations-1.2.0.jar,1
+98,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.young.delight/2,You get it! Nobody gets it!,,mods/mcaconversations-1.2.0.jar,1
+99,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.young.delight/3,Right? RIGHT?,,mods/mcaconversations-1.2.0.jar,1
+100,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.young.ask/1,Everything except the green ones. And the squishy ones.,,mods/mcaconversations-1.2.0.jar,1
+101,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.young.ask/2,Bread. Also bread. And sometimes bread.,,mods/mcaconversations-1.2.0.jar,1
+102,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.young.ask/3,Whatever's still warm when I get there.,,mods/mcaconversations-1.2.0.jar,1
+103,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.young.dismiss/1,It IS proper food!,,mods/mcaconversations-1.2.0.jar,1
+104,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.young.dismiss/2,You sound like my mother.,,mods/mcaconversations-1.2.0.jar,1
+105,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.young.dismiss/3,...Fine. More for me.,,mods/mcaconversations-1.2.0.jar,1
+106,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.young.leave/1,Bye! I'm going to go eat.,,mods/mcaconversations-1.2.0.jar,1
+107,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.again.apologize/1,We did. Doesn't matter — I could talk about supper all day.,,mods/mcaconversations-1.2.0.jar,1
+108,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.again.apologize/2,"Twice is fine for this subject, honestly.",,mods/mcaconversations-1.2.0.jar,1
+109,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.again.apologize/3,No harm. Ask me at mealtime and I'll have new opinions.,,mods/mcaconversations-1.2.0.jar,1
+110,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.again.press/1,"Same as an hour ago, %1$s, and now I'm hungry about it.",,mods/mcaconversations-1.2.0.jar,1
+111,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.again.press/2,You've made me think about bread again. That's on you.,,mods/mcaconversations-1.2.0.jar,1
+112,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.again.press/3,...Bread. It's always bread. Are you satisfied?,,mods/mcaconversations-1.2.0.jar,1
+113,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.again.leave/1,Aye. Go eat something.,,mods/mcaconversations-1.2.0.jar,1
+114,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.again.leave/2,Right you are.,,mods/mcaconversations-1.2.0.jar,1
+115,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.again.leave/3,"Later, then. Preferably at supper.",,mods/mcaconversations-1.2.0.jar,1
+116,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.weather.storm.respond,"Wild sky, anyway.",,mods/mcaconversations-1.2.0.jar,1
+117,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.weather.storm.followup,It'll blow itself out. They always do.,,mods/mcaconversations-1.2.0.jar,1
+118,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.weather.mild.respond,That's the sky we've got.,,mods/mcaconversations-1.2.0.jar,1
+119,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.weather.mild.followup,Weather's weather.,,mods/mcaconversations-1.2.0.jar,1
+120,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.weather.toddler.respond,That's the sky today!,,mods/mcaconversations-1.2.0.jar,1
+121,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.weather.storm.respond.concern,Are you alright out in this?,,mods/mcaconversations-1.2.0.jar,1
+122,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.weather.storm.respond.practical,Anything need bringing in?,,mods/mcaconversations-1.2.0.jar,1
+123,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.weather.storm.respond.dismiss,It's only a bit of thunder.,,mods/mcaconversations-1.2.0.jar,1
+124,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.weather.storm.respond.leave,Get inside. I'll go.,,mods/mcaconversations-1.2.0.jar,1
+125,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.weather.storm.followup.offer_shelter,Come sit it out with me.,,mods/mcaconversations-1.2.0.jar,1
+126,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.weather.storm.followup.stay_awhile,I'll wait it out here with you.,,mods/mcaconversations-1.2.0.jar,1
+127,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.weather.storm.followup.joke,Good weather for staying in bed.,,mods/mcaconversations-1.2.0.jar,1
+128,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.weather.storm.followup.leave,Stay dry.,,mods/mcaconversations-1.2.0.jar,1
+129,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.weather.mild.respond.enjoy,"It's a good one, isn't it.",,mods/mcaconversations-1.2.0.jar,1
+130,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.weather.mild.respond.talk_crops,Is it any use to the fields?,,mods/mcaconversations-1.2.0.jar,1
+131,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.weather.mild.respond.grumble,"I could do with less of it, personally.",,mods/mcaconversations-1.2.0.jar,1
+132,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.weather.mild.respond.leave,I'll make the most of it. Bye.,,mods/mcaconversations-1.2.0.jar,1
+133,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.weather.mild.followup.ask_plans,Doing anything with the day?,,mods/mcaconversations-1.2.0.jar,1
+134,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.weather.mild.followup.cut_short,It's only weather. Anyway.,,mods/mcaconversations-1.2.0.jar,1
+135,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.weather.mild.followup.leave,I'll get on.,,mods/mcaconversations-1.2.0.jar,1
+136,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.weather.toddler.respond.ask,What's your favourite kind of sky?,,mods/mcaconversations-1.2.0.jar,1
+137,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.holiday.ask_tradition/1,"Same as we always have. Garlands, too much food, and someone crying by midnight.",,mods/mcaconversations-1.2.0.jar,1
+138,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.holiday.ask_tradition/2,"The old way, mostly. My mother's way, if I'm honest, and hers before that.",,mods/mcaconversations-1.2.0.jar,1
+139,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.holiday.ask_tradition/3,You stand in the square until someone hands you a drink. It's a robust tradition.,,mods/mcaconversations-1.2.0.jar,1
+140,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.holiday.accept/1,...I will. That's the first time anyone's asked to be counted in.,,mods/mcaconversations-1.2.0.jar,1
+141,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.holiday.accept/2,"A place saved, then. Don't be late — the good bread goes early.",,mods/mcaconversations-1.2.0.jar,1
+142,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.holiday.accept/3,"Done. And you'll be introduced to everyone, so brace yourself, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+143,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.holiday.decline/1,Fair enough. It'll come round again — they always do.,,mods/mcaconversations-1.2.0.jar,1
+144,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.holiday.decline/2,"Another year, then. I'll save you a story instead of a seat.",,mods/mcaconversations-1.2.0.jar,1
+145,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.holiday.decline/3,No matter. It's the asking that counts more than the coming.,,mods/mcaconversations-1.2.0.jar,1
+146,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.holiday.leave/1,Aye — there's a great deal to do before dusk.,,mods/mcaconversations-1.2.0.jar,1
+147,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.holiday.leave/2,Go on. Come by the square later if you change your mind.,,mods/mcaconversations-1.2.0.jar,1
+148,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.holiday.leave/3,"Right you are. Happy day to you, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+149,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.holiday.share_tradition/1,Did you? Tell me — I collect other people's versions of this day.,,mods/mcaconversations-1.2.0.jar,1
+150,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.holiday.share_tradition/2,"Everywhere does it slightly wrong except here, obviously. Go on, though.",,mods/mcaconversations-1.2.0.jar,1
+151,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.holiday.share_tradition/3,That's the good thing about the festivals. Everyone brings their own.,,mods/mcaconversations-1.2.0.jar,1
+152,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.holiday.compliment/1,"We do, don't we. One day a season where nobody's counting the cost.",,mods/mcaconversations-1.2.0.jar,1
+153,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.holiday.compliment/2,It's the one thing this village agrees on. Enjoy it while it lasts.,,mods/mcaconversations-1.2.0.jar,1
+154,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.holiday.compliment/3,Kind of you to say. We work at it more than we let on.,,mods/mcaconversations-1.2.0.jar,1
+155,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.holiday.grumble.landed/1,It IS. Someone had to say it. Garlands don't hang themselves.,,mods/mcaconversations-1.2.0.jar,1
+156,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.holiday.grumble.landed/2,Ha! Every year I swear I'll do less and every year there's more.,,mods/mcaconversations-1.2.0.jar,1
+157,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.holiday.grumble.landed/3,A great deal of fuss for one evening. Worth it. Barely.,,mods/mcaconversations-1.2.0.jar,1
+158,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.holiday.grumble.flat/1,"...It's the one good day, %1$s. Let us have it.",,mods/mcaconversations-1.2.0.jar,1
+159,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.holiday.grumble.flat/2,Fuss is the point. That's what a festival is.,,mods/mcaconversations-1.2.0.jar,1
+160,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.holiday.grumble.flat/3,"Mm. You needn't come, you know.",,mods/mcaconversations-1.2.0.jar,1
+161,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.holiday.grumble.polite/1,"It is. Pleasant fuss, mind.",,mods/mcaconversations-1.2.0.jar,1
+162,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.holiday.grumble.polite/2,"Aye, but the alternative is an ordinary Tuesday.",,mods/mcaconversations-1.2.0.jar,1
+163,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.holiday.grumble.polite/3,"A fair bit, yes. Somebody has to do the hanging.",,mods/mcaconversations-1.2.0.jar,1
+164,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.turn.agree/1,Does it? Huh. I'll take it. That's the first useful thing anyone's said about the weather.,,mods/mcaconversations-1.2.0.jar,1
+165,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.turn.agree/2,"It's the one I complain about least, so probably.",,mods/mcaconversations-1.2.0.jar,1
+166,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.turn.agree/3,"Aye, maybe. Something about it fits the way I work.",,mods/mcaconversations-1.2.0.jar,1
+167,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.turn.ask_favourite/1,"The one just turning, usually. I'm easily persuaded by a change.",,mods/mcaconversations-1.2.0.jar,1
+168,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.turn.ask_favourite/2,Autumn. Everything ripe at once and then the quiet after.,,mods/mcaconversations-1.2.0.jar,1
+169,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.turn.ask_favourite/3,"Whichever one isn't currently happening, if I'm honest.",,mods/mcaconversations-1.2.0.jar,1
+170,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.turn.complain.landed/1,Aye! It goes on too long every single year and nobody admits it.,,mods/mcaconversations-1.2.0.jar,1
+171,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.turn.complain.landed/2,Thank you. Everyone else is being relentlessly cheerful about it.,,mods/mcaconversations-1.2.0.jar,1
+172,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.turn.complain.landed/3,Right there with you. Roll on the next one.,,mods/mcaconversations-1.2.0.jar,1
+173,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.turn.complain.flat/1,"Already? It's barely started, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+174,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.turn.complain.flat/2,There's good in it if you look. I'd rather look.,,mods/mcaconversations-1.2.0.jar,1
+175,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.turn.complain.flat/3,Mm. Wishing a season away wishes the year away with it.,,mods/mcaconversations-1.2.0.jar,1
+176,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.turn.complain.polite/1,You and everyone. It'll turn soon enough.,,mods/mcaconversations-1.2.0.jar,1
+177,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.turn.complain.polite/2,"It has its moments. Few of them, but it has them.",,mods/mcaconversations-1.2.0.jar,1
+178,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.turn.complain.polite/3,"Aye, it drags. They all do by the end.",,mods/mcaconversations-1.2.0.jar,1
+179,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.turn.leave/1,"Aye, the light goes early this time of year. Off you go.",,mods/mcaconversations-1.2.0.jar,1
+180,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.turn.leave/2,"Right you are. Mind the road, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+181,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.turn.leave/3,Go on. The year'll still be turning tomorrow.,,mods/mcaconversations-1.2.0.jar,1
+182,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.turn.share_plan/1,"Oh, tell me — I like knowing what people do with a season.",,mods/mcaconversations-1.2.0.jar,1
+183,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.turn.share_plan/2,That's more of a plan than I've got. Mine is 'keep up'.,,mods/mcaconversations-1.2.0.jar,1
+184,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.turn.look_forward/1,"There is, when you list it out like that. I forget to.",,mods/mcaconversations-1.2.0.jar,1
+185,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.turn.look_forward/2,Aye. I'd stopped counting the good things. Thanks for the reminder.,,mods/mcaconversations-1.2.0.jar,1
+186,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.turn.look_forward/3,"You're a more hopeful sort than I am, %1$s. It's catching.",,mods/mcaconversations-1.2.0.jar,1
+187,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.turn.dismiss/1,...Is it. Then why ask.,,mods/mcaconversations-1.2.0.jar,1
+188,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.turn.dismiss/2,All the same. Right. I'll spare you the rest of my thoughts on it.,,mods/mcaconversations-1.2.0.jar,1
+189,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.season.turn.dismiss/3,"Mm. It isn't, but I'll not argue about weather.",,mods/mcaconversations-1.2.0.jar,1
+190,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.respond.praise/1,...Am I? Twenty years and nobody's said it in those words. Thank you.,,mods/mcaconversations-1.2.0.jar,1
+191,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.respond.praise/2,"You'd be the first to notice. It's the joint people see, never the fitting of it.",,mods/mcaconversations-1.2.0.jar,1
+192,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.respond.praise/3,"I am, as it happens. It's good to be told once in a while, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+193,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.respond.ask_why/1,"Because somebody has to, and because it's mine. That's most of it.",,mods/mcaconversations-1.2.0.jar,1
+194,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.respond.ask_why/2,Why. Hm. ...Because when it's done right it lasts longer than I will. Don't repeat that.,,mods/mcaconversations-1.2.0.jar,1
+195,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.respond.ask_why/3,It's the one thing in the day nobody argues with me about.,,mods/mcaconversations-1.2.0.jar,1
+196,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.respond.challenge.landed/1,"...No. I don't, most days. You're the first to say it out loud.",,mods/mcaconversations-1.2.0.jar,1
+197,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.respond.challenge.landed/2,"Straight to it, then. Fine — no, I don't. Now what?",,mods/mcaconversations-1.2.0.jar,1
+198,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.respond.challenge.landed/3,"Blunt. Correct, but blunt. I'll answer it honestly since you asked honestly.",,mods/mcaconversations-1.2.0.jar,1
+199,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.respond.challenge.flat/1,"...That's a lot to read off a man doing his job, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+200,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.respond.challenge.flat/2,I never said that. You decided it for me.,,mods/mcaconversations-1.2.0.jar,1
+201,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.respond.challenge.flat/3,Some of us just work. It doesn't have to be a wound.,,mods/mcaconversations-1.2.0.jar,1
+202,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.respond.challenge.polite/1,Some days I don't. Most days it's just what I do.,,mods/mcaconversations-1.2.0.jar,1
+203,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.respond.challenge.polite/2,"Enjoy? No. But I'm good at it, and being good at a thing is its own sort of pleasure.",,mods/mcaconversations-1.2.0.jar,1
+204,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.respond.challenge.polite/3,"It pays, and the alternative is a winter I'd rather not think about.",,mods/mcaconversations-1.2.0.jar,1
+205,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.respond.leave/1,Aye. It won't do itself.,,mods/mcaconversations-1.2.0.jar,1
+206,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.respond.leave/2,Right you are. Mind the tools by the door.,,mods/mcaconversations-1.2.0.jar,1
+207,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.respond.leave/3,"Off you go, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+208,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.followup.offer_idea/1,...Huh. That'd work. Where were you three winters ago?,,mods/mcaconversations-1.2.0.jar,1
+209,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.followup.offer_idea/2,I've done it my way so long I stopped looking. Say it again slowly.,,mods/mcaconversations-1.2.0.jar,1
+210,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.followup.offer_idea/3,Not bad. I'll try it and blame you loudly if it goes wrong.,,mods/mcaconversations-1.2.0.jar,1
+211,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.followup.hear_burnout/1,...It is. Huh. Everyone else asks when it'll be finished. Right - where were we.,,mods/mcaconversations-1.2.0.jar,1
+212,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.followup.hear_burnout/2,"Wearing me down. Aye, that's the word for it. I'd not found the word.",,mods/mcaconversations-1.2.0.jar,1
+213,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.followup.hear_burnout/3,"You've been watching, then. It's the work that gets seen, not the man doing it.",,mods/mcaconversations-1.2.0.jar,1
+214,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.followup.belittle/1,"Anyone could. Nobody does. There's a difference, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+215,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.followup.belittle/2,Then take the tools. Go on. I'll watch.,,mods/mcaconversations-1.2.0.jar,1
+216,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.followup.belittle/3,...Right. I'll remember that next time you need something mended.,,mods/mcaconversations-1.2.0.jar,1
+217,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.young.encourage/1,It IS! Nobody counts it but it is.,,mods/mcaconversations-1.2.0.jar,1
+218,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.young.encourage/2,...Thanks. Everyone calls it helping. It's work.,,mods/mcaconversations-1.2.0.jar,1
+219,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.young.encourage/3,You get it. Grown-ups usually don't.,,mods/mcaconversations-1.2.0.jar,1
+220,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.young.ask/1,"My mother, mostly. And a lot of getting it wrong first.",,mods/mcaconversations-1.2.0.jar,1
+221,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.young.ask/2,Nobody! I watched until I worked it out.,,mods/mcaconversations-1.2.0.jar,1
+222,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.young.ask/3,"The smith lets me hold things. That counts as teaching, I reckon.",,mods/mcaconversations-1.2.0.jar,1
+223,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.young.dismiss/1,...It is to me.,,mods/mcaconversations-1.2.0.jar,1
+224,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.young.dismiss/2,Everyone says that until they need it done.,,mods/mcaconversations-1.2.0.jar,1
+225,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.young.dismiss/3,Fine. Forget I mentioned it.,,mods/mcaconversations-1.2.0.jar,1
+226,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.young.leave/3,Okay. I've got things to finish.,,mods/mcaconversations-1.2.0.jar,1
+227,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.again.apologize/1,No harm. I like talking about it more than I let on.,,mods/mcaconversations-1.2.0.jar,1
+228,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.again.apologize/2,"You did ask, aye. My answer keeps.",,mods/mcaconversations-1.2.0.jar,1
+229,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.again.apologize/3,"It's alright, %1$s. It's the only subject I'm expert in.",,mods/mcaconversations-1.2.0.jar,1
+230,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.again.press/1,It's the same trade it was an hour ago.,,mods/mcaconversations-1.2.0.jar,1
+231,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.again.press/2,"Twice? The work hasn't changed, %1$s, and neither have I.",,mods/mcaconversations-1.2.0.jar,1
+232,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.again.press/3,...Fine. Same as before. Now let me get on.,,mods/mcaconversations-1.2.0.jar,1
+233,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.again.leave/1,Aye. Come back when I've something new to show you.,,mods/mcaconversations-1.2.0.jar,1
+234,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.again.leave/2,Right you are.,,mods/mcaconversations-1.2.0.jar,1
+235,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.again.leave/3,Off you go.,,mods/mcaconversations-1.2.0.jar,1
+236,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work_offer.ask_needed/1,Straightforward enough. I'll show you the whole of it if you're in.,,mods/mcaconversations-1.2.0.jar,1
+237,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work_offer.ask_needed/2,Nothing heroic. It's the sort of thing that just needs doing.,,mods/mcaconversations-1.2.0.jar,1
+238,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work_offer.ask_needed/3,"More than I can manage alone, which is why I'm asking.",,mods/mcaconversations-1.2.0.jar,1
+239,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work_offer.ask_terms/1,"Fair question. I'd ask it too. You'll be paid properly, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+240,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work_offer.ask_terms/2,Straight to the terms. Good — I'd rather deal with someone who asks.,,mods/mcaconversations-1.2.0.jar,1
+241,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work_offer.ask_terms/3,Whatever's fair. I'll not have it said I short anyone.,,mods/mcaconversations-1.2.0.jar,1
+242,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work_offer.accept/1,Then let's talk properly about it.,,mods/mcaconversations-1.2.0.jar,1
+243,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work_offer.accept/2,Good. Come here and I'll lay it out.,,mods/mcaconversations-1.2.0.jar,1
+244,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work_offer.accept/3,"That's settled, then. Here's the detail.",,mods/mcaconversations-1.2.0.jar,1
+245,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work_offer.decline/1,No matter. The asking wasn't a debt.,,mods/mcaconversations-1.2.0.jar,1
+246,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work_offer.decline/2,Fair enough. It'll keep till someone's free.,,mods/mcaconversations-1.2.0.jar,1
+247,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work_offer.decline/3,"Understood. Come back if that changes, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+248,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work_offer.refuse_rudely/1,...Right. I'll ask someone with manners.,,mods/mcaconversations-1.2.0.jar,1
+249,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work_offer.refuse_rudely/2,There was no call for that. It was only a job.,,mods/mcaconversations-1.2.0.jar,1
+250,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work_offer.refuse_rudely/3,Noted. I'll not trouble you again.,,mods/mcaconversations-1.2.0.jar,1
+251,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work_offer.leave/1,Take your time. It'll wait a day.,,mods/mcaconversations-1.2.0.jar,1
+252,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work_offer.leave/2,Right you are. Think on it.,,mods/mcaconversations-1.2.0.jar,1
+253,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work_offer.leave/3,"Off you go, then.",,mods/mcaconversations-1.2.0.jar,1
+254,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work_offer.none.offer_anyway/1,"...That's decent of you. There's always something, if you're offering.",,mods/mcaconversations-1.2.0.jar,1
+255,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work_offer.none.offer_anyway/2,"Nothing paid, but I'll not turn down a spare pair of hands.",,mods/mcaconversations-1.2.0.jar,1
+256,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work_offer.none.offer_anyway/3,"You'd help with no job in it? That's rarer than a quest, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+257,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work_offer.none.ask_later/1,Do. Things pile up faster than I'd like.,,mods/mcaconversations-1.2.0.jar,1
+258,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work_offer.none.ask_later/2,"Aye, check back. There's always something by week's end.",,mods/mcaconversations-1.2.0.jar,1
+259,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work_offer.none.ask_later/3,I'll have something for you soon enough.,,mods/mcaconversations-1.2.0.jar,1
+260,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work_offer.none.leave/1,Right you are.,,mods/mcaconversations-1.2.0.jar,1
+261,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work_offer.none.leave/2,"Off you go, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+262,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work_offer.none.leave/3,"Another time, then.",,mods/mcaconversations-1.2.0.jar,1
+263,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.respond.affirm/1,"It is. Small, loud, and mine. I'd not swap it.",,mods/mcaconversations-1.2.0.jar,1
+264,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.respond.affirm/2,"Aye. You'll not hear that said often, but aye.",,mods/mcaconversations-1.2.0.jar,1
+265,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.respond.affirm/3,Good of you to say. Most visitors count the mud and leave.,,mods/mcaconversations-1.2.0.jar,1
+266,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.respond.ask_improve/1,"The well, first. Then the road. Then whoever decided where the pigs go.",,mods/mcaconversations-1.2.0.jar,1
+267,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.respond.ask_improve/2,"Asked as though the answer mattered. ...The road, then. The road, and I'll show you where.",,mods/mcaconversations-1.2.0.jar,1
+268,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.respond.ask_improve/3,"A dozen things. Most of them small, all of them years old.",,mods/mcaconversations-1.2.0.jar,1
+269,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.respond.insult/1,"...It's my home, %1$s. Say that somewhere else.",,mods/mcaconversations-1.2.0.jar,1
+270,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.respond.insult/2,"Miserable. Right. And yet here you are, in it.",,mods/mcaconversations-1.2.0.jar,1
+271,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.respond.insult/3,Everyone here has built something. You've walked through it.,,mods/mcaconversations-1.2.0.jar,1
+272,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.respond.leave/1,Aye. Mind the mud by the well.,,mods/mcaconversations-1.2.0.jar,1
+273,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.respond.leave/2,Off you go. It'll be here.,,mods/mcaconversations-1.2.0.jar,1
+274,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.respond.leave/3,"Right you are, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+275,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.followup.criticise_fairly.landed/1,It could. Somebody had to say it plainly and nobody would.,,mods/mcaconversations-1.2.0.jar,1
+276,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.followup.criticise_fairly.landed/2,"Aye. Badly, in places. You'll not offend me with the truth.",,mods/mcaconversations-1.2.0.jar,1
+277,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.followup.criticise_fairly.landed/3,Finally. I've been saying it at the well for a year.,,mods/mcaconversations-1.2.0.jar,1
+278,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.followup.criticise_fairly.flat/1,"Easy to say, passing through. We're the ones living in it.",,mods/mcaconversations-1.2.0.jar,1
+279,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.followup.criticise_fairly.flat/2,"...Perhaps. It's still ours to criticise, not yours.",,mods/mcaconversations-1.2.0.jar,1
+280,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.followup.criticise_fairly.flat/3,Run it better how? Everyone has a plan until it's their turn.,,mods/mcaconversations-1.2.0.jar,1
+281,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.followup.criticise_fairly.polite/1,Most places could. Ours no worse than most.,,mods/mcaconversations-1.2.0.jar,1
+282,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.followup.criticise_fairly.polite/2,"Aye, probably. Nothing's run as well as it looks from outside.",,mods/mcaconversations-1.2.0.jar,1
+283,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.followup.criticise_fairly.polite/3,There's truth in that. There's truth in most complaints here.,,mods/mcaconversations-1.2.0.jar,1
+284,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.followup.agree/1,Good. Then you've been paying attention.,,mods/mcaconversations-1.2.0.jar,1
+285,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.followup.agree/2,Aye. It's nice to be agreed with about home.,,mods/mcaconversations-1.2.0.jar,1
+286,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.followup.agree/3,Right. Don't tell the mayor I said it.,,mods/mcaconversations-1.2.0.jar,1
+287,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.young.play_along/1,It IS. There's a bell and everything.,,mods/mcaconversations-1.2.0.jar,1
+288,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.young.play_along/2,"Best village. I've only seen the one, but still.",,mods/mcaconversations-1.2.0.jar,1
+289,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.young.play_along/3,You think so too! Good.,,mods/mcaconversations-1.2.0.jar,1
+290,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.young.ask/1,The well. You can shout into it.,,mods/mcaconversations-1.2.0.jar,1
+291,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.young.ask/2,Market day. Everyone's out and nobody's counting where I am.,,mods/mcaconversations-1.2.0.jar,1
+292,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.young.ask/3,"The big tree. It's mine, mostly.",,mods/mcaconversations-1.2.0.jar,1
+293,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.young.dismiss/1,It's NOT dull.,,mods/mcaconversations-1.2.0.jar,1
+294,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.young.dismiss/2,You haven't seen the well.,,mods/mcaconversations-1.2.0.jar,1
+295,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.young.dismiss/3,...It's a bit dull.,,mods/mcaconversations-1.2.0.jar,1
+296,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.young.leave/2,"See you round, %1$s!",,mods/mcaconversations-1.2.0.jar,1
+297,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.again.apologize/1,No harm. I'd talk about this place all day.,,mods/mcaconversations-1.2.0.jar,1
+298,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.again.apologize/2,"You did, aye. It hasn't moved since.",,mods/mcaconversations-1.2.0.jar,1
+299,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.again.press/1,Same village it was this morning.,,mods/mcaconversations-1.2.0.jar,1
+300,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.again.press/2,"It hasn't improved in an hour, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+301,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.again.press/3,...Fine. Still muddy. Still ours.,,mods/mcaconversations-1.2.0.jar,1
+302,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.again.leave/2,Right you are.,,mods/mcaconversations-1.2.0.jar,1
+303,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.again.leave/3,Off you go.,,mods/mcaconversations-1.2.0.jar,1
+304,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.people.respond,That's the neighbours for you.,,mods/mcaconversations-1.2.0.jar,1
+305,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.people.followup,You live alongside them either way.,,mods/mcaconversations-1.2.0.jar,1
+306,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.people.respond.agree,I've noticed the same.,,mods/mcaconversations-1.2.0.jar,1
+307,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.people.respond.defend,"They're not so bad, most of them.",,mods/mcaconversations-1.2.0.jar,1
+308,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.people.respond.ask_example,Give me an example.,,mods/mcaconversations-1.2.0.jar,1
+309,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.people.respond.leave,I'll not stir it.,,mods/mcaconversations-1.2.0.jar,1
+310,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.people.followup.empathise,That sounds exhausting.,,mods/mcaconversations-1.2.0.jar,1
+311,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.people.followup.encourage_repair,Have you tried talking to them?,,mods/mcaconversations-1.2.0.jar,1
+312,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.people.followup.push_gossip,Go on — who's the worst?,,mods/mcaconversations-1.2.0.jar,1
+313,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.news.followup,So that's the village this week.,,mods/mcaconversations-1.2.0.jar,1
+314,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.news.followup.keep_quiet,I'll not repeat any of it.,,mods/mcaconversations-1.2.0.jar,1
+315,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.news.followup.ask_how_they_are,"And how are you, with all that?",,mods/mcaconversations-1.2.0.jar,1
+316,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.news.followup.spread,Everyone should hear about this.,,mods/mcaconversations-1.2.0.jar,1
+317,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.noticed.grieving.respond,It's been a heavy few days here.,,mods/mcaconversations-1.2.0.jar,1
+318,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.noticed.annoyed.respond,You know why.,,mods/mcaconversations-1.2.0.jar,1
+319,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.noticed.elated.respond,Things have been good lately.,,mods/mcaconversations-1.2.0.jar,1
+320,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.noticed.fine.respond,Nothing much to report.,,mods/mcaconversations-1.2.0.jar,1
+321,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.noticed.followup,That's where I'm at.,,mods/mcaconversations-1.2.0.jar,1
+322,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.noticed.grieving.respond.validate,You're allowed to feel that.,,mods/mcaconversations-1.2.0.jar,1
+323,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.noticed.grieving.respond.give_space,I'll not make you talk about it.,,mods/mcaconversations-1.2.0.jar,1
+324,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.noticed.grieving.respond.dismiss,People die. That's life.,,mods/mcaconversations-1.2.0.jar,1
+325,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.noticed.annoyed.respond.apologize,I'm sorry for what I did.,,mods/mcaconversations-1.2.0.jar,1
+326,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.noticed.annoyed.respond.explain,Let me explain myself.,,mods/mcaconversations-1.2.0.jar,1
+327,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.noticed.annoyed.respond.brush_off,You're still on about that?,,mods/mcaconversations-1.2.0.jar,1
+328,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.noticed.annoyed.respond.leave,I'll give you room.,,mods/mcaconversations-1.2.0.jar,1
+329,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.noticed.elated.respond.share_joy,It's good to see you like this.,,mods/mcaconversations-1.2.0.jar,1
+330,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.noticed.elated.respond.ask_more,What's brought this on?,,mods/mcaconversations-1.2.0.jar,1
+331,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.noticed.elated.respond.deflate,Don't get carried away.,,mods/mcaconversations-1.2.0.jar,1
+332,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.noticed.elated.respond.leave,Enjoy it. I'll go.,,mods/mcaconversations-1.2.0.jar,1
+333,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.noticed.fine.respond.glad,Steady's not nothing.,,mods/mcaconversations-1.2.0.jar,1
+334,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.noticed.fine.respond.dig,"Really, though?",,mods/mcaconversations-1.2.0.jar,1
+335,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.noticed.fine.respond.dismiss,Not much of an answer.,,mods/mcaconversations-1.2.0.jar,1
+336,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.noticed.fine.respond.leave,Fair. I'll get on.,,mods/mcaconversations-1.2.0.jar,1
+337,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.noticed.followup.offer_help,Tell me what would help.,,mods/mcaconversations-1.2.0.jar,1
+338,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.noticed.followup.just_be_there,I'll be around.,,mods/mcaconversations-1.2.0.jar,1
+339,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.noticed.followup.change_subject,Let's talk about something else.,,mods/mcaconversations-1.2.0.jar,1
+340,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.noticed.followup.leave,I'll let you be.,,mods/mcaconversations-1.2.0.jar,1
+341,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.people.respond.agree/1,"Then it isn't just me. That's a relief, honestly.",,mods/mcaconversations-1.2.0.jar,1
+342,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.people.respond.agree/2,You've seen it too. Nobody says it out loud around here.,,mods/mcaconversations-1.2.0.jar,1
+343,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.people.respond.agree/3,"Aye. Good neighbours, mostly. Mostly is doing some work in that sentence.",,mods/mcaconversations-1.2.0.jar,1
+344,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.people.respond.defend.flat/1,"You've lived here five minutes, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+345,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.people.respond.defend.flat/2,Easy to defend people who've never crossed you.,,mods/mcaconversations-1.2.0.jar,1
+346,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.people.respond.defend.flat/3,"...Mm. You'll see, given a winter.",,mods/mcaconversations-1.2.0.jar,1
+347,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.people.respond.ask_example/1,You want the specifics. Alright — but this stays here.,,mods/mcaconversations-1.2.0.jar,1
+348,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.people.respond.ask_example/2,"One example. Just one, or we'll be here till dark.",,mods/mcaconversations-1.2.0.jar,1
+349,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.people.respond.ask_example/3,"Ha. How long have you got, %1$s?",,mods/mcaconversations-1.2.0.jar,1
+350,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.people.followup.push_gossip/1,...No. I've said more than I meant to already.,,mods/mcaconversations-1.2.0.jar,1
+351,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.people.followup.push_gossip/2,"I'll not name names to someone who asks like that, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+352,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.people.followup.push_gossip/3,That's not what this was. Let it lie.,,mods/mcaconversations-1.2.0.jar,1
+353,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.rumors.respond.ask_source/1,"...Fair question. Second-hand, if I'm honest. Maybe third.",,mods/mcaconversations-1.2.0.jar,1
+354,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.rumors.respond.ask_source/2,Nobody ever asks that. Which is rather how these things spread.,,mods/mcaconversations-1.2.0.jar,1
+355,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.rumors.respond.ask_source/3,"The well, where else. Which means it's half invented already.",,mods/mcaconversations-1.2.0.jar,1
+356,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.rumors.respond.challenge/1,"...No. It doesn't, does it. I repeated it without thinking.",,mods/mcaconversations-1.2.0.jar,1
+357,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.rumors.respond.challenge/2,You're right to doubt it. I doubted it and said it anyway.,,mods/mcaconversations-1.2.0.jar,1
+358,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.rumors.respond.challenge/3,Reliable's a strong word for anything said near that well.,,mods/mcaconversations-1.2.0.jar,1
+359,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.rumors.respond.listen/1,"Right. Well. There's not much more, when I say it aloud.",,mods/mcaconversations-1.2.0.jar,1
+360,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.rumors.respond.leave/1,"Probably wise, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+361,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.rumors.respond.leave/2,Aye. I shouldn't have started.,,mods/mcaconversations-1.2.0.jar,1
+362,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.rumors.respond.leave/3,Fair. Forget I said anything.,,mods/mcaconversations-1.2.0.jar,1
+363,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.rumors.followup.promise_discretion/1,"...Thank you. That's not nothing, around here.",,mods/mcaconversations-1.2.0.jar,1
+364,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.rumors.followup.promise_discretion/2,It stops with you. Good. I'd rather it had stopped with me.,,mods/mcaconversations-1.2.0.jar,1
+365,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.rumors.followup.promise_discretion/3,"I'll hold you to that, %1$s. People here rarely mean it.",,mods/mcaconversations-1.2.0.jar,1
+366,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.rumors.followup.let_it_go/1,Aye. Best forgotten. I'll try to.,,mods/mcaconversations-1.2.0.jar,1
+367,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.rumors.followup.let_it_go/2,You're right. It doesn't deserve the air.,,mods/mcaconversations-1.2.0.jar,1
+368,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.rumors.followup.let_it_go/3,Good. Let it die at this well and not the next.,,mods/mcaconversations-1.2.0.jar,1
+369,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.rumors.none.relieved/1,It does me too. Quiet weeks are underrated.,,mods/mcaconversations-1.2.0.jar,1
+370,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.rumors.none.relieved/2,Aye. Nothing to repeat means nothing went wrong.,,mods/mcaconversations-1.2.0.jar,1
+371,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.rumors.none.relieved/3,"Good. Long may it stay dull, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+372,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.rumors.none.ask_anyway/1,Nothing worth your time. And I'd tell you if there were.,,mods/mcaconversations-1.2.0.jar,1
+373,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.rumors.none.ask_anyway/2,Not a whisper. Come back after market day.,,mods/mcaconversations-1.2.0.jar,1
+374,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.rumors.none.ask_anyway/3,Truly nothing. It's almost unsettling.,,mods/mcaconversations-1.2.0.jar,1
+375,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.rumors.none.leave/1,Right you are.,,mods/mcaconversations-1.2.0.jar,1
+376,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.rumors.none.leave/2,"Off you go, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+377,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.rumors.none.leave/3,Another time.,,mods/mcaconversations-1.2.0.jar,1
+378,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.mixed.curious/1,Nobody's quite sure. That's half of why it's being talked about.,,mods/mcaconversations-1.2.0.jar,1
+379,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.mixed.curious/2,"Work, most likely. It usually is, round here.",,mods/mcaconversations-1.2.0.jar,1
+380,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.mixed.curious/3,"You'd have to ask them. Nobody has, which is very us.",,mods/mcaconversations-1.2.0.jar,1
+381,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.mixed.skeptical.landed/1,"There is. There always is. You've a good nose, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+382,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.mixed.skeptical.landed/2,Aye — I thought the same and said nothing. Good to hear it said.,,mods/mcaconversations-1.2.0.jar,1
+383,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.mixed.skeptical.flat/1,Maybe there is. It's not ours to dig at.,,mods/mcaconversations-1.2.0.jar,1
+384,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.mixed.skeptical.flat/2,"...Or people just do things, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+385,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.mixed.skeptical.flat/3,That's how half the unkind stories here start.,,mods/mcaconversations-1.2.0.jar,1
+386,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.mixed.leave/1,Aye. You'll hear more soon enough.,,mods/mcaconversations-1.2.0.jar,1
+387,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.mixed.leave/2,"Right you are, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+388,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.mixed.leave/3,Off you go.,,mods/mcaconversations-1.2.0.jar,1
+389,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.followup.keep_quiet/1,...Thank you. That's worth more than you know in a place this size.,,mods/mcaconversations-1.2.0.jar,1
+390,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.followup.keep_quiet/2,"Good. I told you, not the village.",,mods/mcaconversations-1.2.0.jar,1
+391,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.followup.keep_quiet/3,"I'll remember you said that, %1$s. People here rarely do.",,mods/mcaconversations-1.2.0.jar,1
+392,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.followup.ask_how_they_are/1,"...Me? I'm — thank you. I'm alright. And you? You get to answer that too, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+393,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.followup.ask_how_they_are/2,"You asked about me, not the story. That's unusual.",,mods/mcaconversations-1.2.0.jar,1
+394,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.followup.ask_how_they_are/3,"Tired of carrying other people's news, if I'm honest.",,mods/mcaconversations-1.2.0.jar,1
+395,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.followup.leave/1,Aye. Enough of other people's business.,,mods/mcaconversations-1.2.0.jar,1
+396,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.followup.leave/2,Right you are.,,mods/mcaconversations-1.2.0.jar,1
+397,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.followup.leave/3,"Off you go, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+398,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.noticed.annoyed.apologize/1,...Right. That's more than I expected. It helps.,,mods/mcaconversations-1.2.0.jar,1
+399,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.noticed.annoyed.apologize/2,"An actual apology. Huh. Alright — we're not square, but we're closer.",,mods/mcaconversations-1.2.0.jar,1
+400,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.noticed.annoyed.apologize/3,"I'll take it, %1$s. Don't make me need another.",,mods/mcaconversations-1.2.0.jar,1
+401,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.noticed.annoyed.brush_off/1,"Still on about it. Yes. That tends to happen, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+402,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.noticed.annoyed.brush_off/2,You've a short memory for your own behaviour.,,mods/mcaconversations-1.2.0.jar,1
+403,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.noticed.annoyed.brush_off/3,Then we've nothing to discuss. Good day.,,mods/mcaconversations-1.2.0.jar,1
+404,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.noticed.followup.offer_help/1,...Nobody asks it like that. Give me a day and I'll have an answer.,,mods/mcaconversations-1.2.0.jar,1
+405,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.noticed.followup.offer_help/2,What would help. Huh. Nothing dramatic — just what you're doing now.,,mods/mcaconversations-1.2.0.jar,1
+406,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.noticed.followup.offer_help/3,"Company, mostly. You've supplied it, so — done.",,mods/mcaconversations-1.2.0.jar,1
+407,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.noticed.followup.just_be_there/1,That's the useful kind of promise. Thank you.,,mods/mcaconversations-1.2.0.jar,1
+408,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.noticed.followup.just_be_there/2,Around. Aye. That'll do more than advice would.,,mods/mcaconversations-1.2.0.jar,1
+409,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.noticed.followup.just_be_there/3,"Good. I'll hold you to being nearby, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+410,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.noticed.followup.change_subject/1,Please. Anything else at all.,,mods/mcaconversations-1.2.0.jar,1
+411,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.noticed.followup.change_subject/2,"Aye, let's. I've worn that one out.",,mods/mcaconversations-1.2.0.jar,1
+412,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.noticed.followup.change_subject/3,Good idea. Tell me something ordinary.,,mods/mcaconversations-1.2.0.jar,1
+413,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.noticed.followup.leave/2,"Off you go, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+414,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.noticed.followup.leave/3,Right you are.,,mods/mcaconversations-1.2.0.jar,1
+415,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.village.followup.leave,I'll let you get on.,,mods/mcaconversations-1.2.0.jar,1
+416,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.people.followup.leave,Best I stay out of it.,,mods/mcaconversations-1.2.0.jar,1
+417,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.guarded.respect/1,...Thank you. Most want the ending first and lose interest before the middle.,,mods/mcaconversations-1.2.0.jar,1
+418,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.guarded.respect/2,"Aye. You'll get it in pieces, in the order it happened, if you're still about, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+419,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.guarded.respect/3,Good. It's a long story and it's better told to somebody who isn't in a hurry.,,mods/mcaconversations-1.2.0.jar,1
+420,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.guarded.press/1,You want the whole of it before you've been told the first page. It doesn't work that way.,,mods/mcaconversations-1.2.0.jar,1
+421,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.guarded.press/2,"A life isn't a thing you get handed, %1$s. It's a thing you're let into, slowly.",,mods/mcaconversations-1.2.0.jar,1
+422,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.guarded.press/3,"No. Ask me what I did yesterday and I'll answer. Ask me what made me, and we're not there.",,mods/mcaconversations-1.2.0.jar,1
+423,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.guarded.leave/3,"Right you are, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+424,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.again.apologize/1,It's alright. It's a long story and I'd only have started it in the wrong place anyway.,,mods/mcaconversations-1.2.0.jar,1
+425,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.again.apologize/2,"No harm, %1$s. It's not as though the past has gone anywhere since this morning.",,mods/mcaconversations-1.2.0.jar,1
+426,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.again.apologize/3,Happens. I've told bits of it to so many people I lose track of who has which bit.,,mods/mcaconversations-1.2.0.jar,1
+427,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.again.press/1,"Same answer, shorter this time.",,mods/mcaconversations-1.2.0.jar,1
+428,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.again.press/2,"Twice in a day is a lot to ask of a person, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+429,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.again.press/3,...Fine. But you'll get the abridged version.,,mods/mcaconversations-1.2.0.jar,1
+430,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.again.leave/1,Aye. Catch me later in the week.,,mods/mcaconversations-1.2.0.jar,1
+431,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.again.leave/2,Right you are.,,mods/mcaconversations-1.2.0.jar,1
+432,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.young.interested/1,Really? Right — nobody ever asks for the long version.,,mods/mcaconversations-1.2.0.jar,1
+433,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.young.interested/2,You want to hear it properly? Alright!,,mods/mcaconversations-1.2.0.jar,1
+434,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.young.interested/3,"Sit down, then. This takes a minute.",,mods/mcaconversations-1.2.0.jar,1
+435,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.young.encourage/1,...You think so? Most people laugh.,,mods/mcaconversations-1.2.0.jar,1
+436,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.young.encourage/2,It IS worth having. Thanks for saying it.,,mods/mcaconversations-1.2.0.jar,1
+437,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.young.encourage/3,Hm. Alright. Don't make a speech about it or I'll take it back.,,mods/mcaconversations-1.2.0.jar,1
+438,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.young.dismiss/1,...Maybe. But not today.,,mods/mcaconversations-1.2.0.jar,1
+439,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.young.dismiss/2,Everyone says that. Everyone's wrong so far.,,mods/mcaconversations-1.2.0.jar,1
+440,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.hopes.again.apologize/1,"It's alright. Hopes don't change between morning and afternoon, more's the pity.",,mods/mcaconversations-1.2.0.jar,1
+441,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.hopes.again.apologize/2,"No harm, %1$s. Ask me tomorrow and there might even be news.",,mods/mcaconversations-1.2.0.jar,1
+442,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.hopes.again.apologize/3,"Happens. It's a nice thing to be asked about, even twice.",,mods/mcaconversations-1.2.0.jar,1
+443,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.hopes.again.press/1,Same hope. Hopes are slow. That's rather the point of them.,,mods/mcaconversations-1.2.0.jar,1
+444,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.hopes.again.press/2,"Nothing's changed since you last asked, %1$s. That's not a complaint, it's a harvest.",,mods/mcaconversations-1.2.0.jar,1
+445,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.hopes.again.press/3,"...Fine. Still hoping. There, you've had it twice and it's twice as true.",,mods/mcaconversations-1.2.0.jar,1
+446,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.hopes.again.leave/1,Aye. Catch me later in the week.,,mods/mcaconversations-1.2.0.jar,1
+447,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.hopes.again.leave/2,Right you are.,,mods/mcaconversations-1.2.0.jar,1
+448,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.guarded.respect/1,...Thank you. People usually take a 'not yet' as a challenge.,,mods/mcaconversations-1.2.0.jar,1
+449,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.guarded.respect/2,"Aye. Ask me again when we've more winters between us, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+450,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.guarded.respect/3,Good. That's how it stays worth telling later.,,mods/mcaconversations-1.2.0.jar,1
+451,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.guarded.ask_safer/1,Now that I can do. Ask me anything that isn't underneath.,,mods/mcaconversations-1.2.0.jar,1
+452,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.guarded.ask_safer/2,Something lighter. Aye — we'll build up to the rest.,,mods/mcaconversations-1.2.0.jar,1
+453,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.guarded.ask_safer/3,"Sensible, %1$s. The shallow end first.",,mods/mcaconversations-1.2.0.jar,1
+454,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.guarded.press/1,I could. I'm choosing not to. There's a difference.,,mods/mcaconversations-1.2.0.jar,1
+455,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.guarded.press/2,"Pushing at that door tells me more about you than it opens, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+456,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.guarded.press/3,"No. Not for the asking, and not for asking twice.",,mods/mcaconversations-1.2.0.jar,1
+457,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.guarded.leave/2,Off you go. We'll get there or we won't.,,mods/mcaconversations-1.2.0.jar,1
+458,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.guarded.leave/3,"Right you are, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+459,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.respond.ask_which/1,Which part. Nobody asks that — they just want the whole thing at once.,,mods/mcaconversations-1.2.0.jar,1
+460,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.respond.ask_which/2,"...The middle. The bit I usually skip. You've a good instinct, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+461,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.respond.ask_which/3,Good question. Give me a moment to choose honestly.,,mods/mcaconversations-1.2.0.jar,1
+462,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.respond.empathise/1,It wasn't. Thank you for saying so instead of telling me it built character.,,mods/mcaconversations-1.2.0.jar,1
+463,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.respond.empathise/2,No. And most people hear it and change the subject.,,mods/mcaconversations-1.2.0.jar,1
+464,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.respond.empathise/3,"...Aye. It's strange, being allowed to say that out loud.",,mods/mcaconversations-1.2.0.jar,1
+465,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.respond.judge/1,"...I was fourteen, %1$s. What exactly should I have done better?",,mods/mcaconversations-1.2.0.jar,1
+466,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.respond.judge/2,Everyone could have done better. That's what a life is.,,mods/mcaconversations-1.2.0.jar,1
+467,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.respond.judge/3,"I told you that in confidence, not for marking.",,mods/mcaconversations-1.2.0.jar,1
+468,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.respond.leave/1,Aye. It's not a short story and you've things to do.,,mods/mcaconversations-1.2.0.jar,1
+469,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.respond.leave/2,"Go on. Thank you for asking at all, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+470,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.respond.leave/3,Right. That's enough of my history for one day.,,mods/mcaconversations-1.2.0.jar,1
+471,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.resume.ask_chapter.remembered/1,You remembered which part. ...Alright. Here's how it ended.,,mods/mcaconversations-1.2.0.jar,1
+472,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.resume.ask_chapter.remembered/2,You remembered it overnight. Not everyone would. That earns you the rest.,,mods/mcaconversations-1.2.0.jar,1
+473,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.resume.ask_chapter.remembered/3,"The very part I nearly didn't tell you. Fine — the ending, then.",,mods/mcaconversations-1.2.0.jar,1
+474,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.resume.ask_chapter.plain/1,"There's more to it, aye. Where were we?",,mods/mcaconversations-1.2.0.jar,1
+475,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.resume.ask_chapter.plain/2,"I did leave it half-told, didn't I.",,mods/mcaconversations-1.2.0.jar,1
+476,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.resume.ask_chapter.plain/3,The rest isn't as good as the beginning. But you can have it.,,mods/mcaconversations-1.2.0.jar,1
+477,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.resume.ask_now/1,"Where it leaves me. Huh. Better than it left me then, I think.",,mods/mcaconversations-1.2.0.jar,1
+478,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.resume.ask_now/2,"Standing here, mostly. That's the honest answer, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+479,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.resume.ask_now/3,Further along than I was. That's all anyone manages.,,mods/mcaconversations-1.2.0.jar,1
+480,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.resume.brush_off/1,"...It was. And you asked me to tell it, so.",,mods/mcaconversations-1.2.0.jar,1
+481,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.resume.brush_off/2,"Long ago doesn't mean gone, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+482,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.resume.brush_off/3,"Aye. I'll not bring it up again, if that's what you'd prefer.",,mods/mcaconversations-1.2.0.jar,1
+483,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.resume.leave/1,Aye. It'll keep — it has this long.,,mods/mcaconversations-1.2.0.jar,1
+484,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.resume.leave/2,"Go on, %1$s. Thank you for coming back to it.",,mods/mcaconversations-1.2.0.jar,1
+485,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.resume.leave/3,Right you are.,,mods/mcaconversations-1.2.0.jar,1
+486,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.resume.ask_progress.pledged/1,"You said you'd help, and you came back to ask. That counts for a great deal.",,mods/mcaconversations-1.2.0.jar,1
+487,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.resume.ask_progress.pledged/2,"Closer, aye — partly because somebody was going to ask me.",,mods/mcaconversations-1.2.0.jar,1
+488,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.resume.ask_progress.pledged/3,"I've moved on it. I'd not have, if you hadn't offered, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+489,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.resume.ask_progress.plain/1,A little. Slowly. But you asking is more than most do.,,mods/mcaconversations-1.2.0.jar,1
+490,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.resume.ask_progress.plain/2,"Not much. It's still there, though, which is something.",,mods/mcaconversations-1.2.0.jar,1
+491,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.resume.ask_progress.plain/3,"Some days closer, some further. Today, closer.",,mods/mcaconversations-1.2.0.jar,1
+492,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.resume.offer_step/1,"The first step. Nobody breaks it down like that. ...Alright, here it is.",,mods/mcaconversations-1.2.0.jar,1
+493,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.resume.offer_step/2,You'd help with the small dull part? That's the part that never gets done.,,mods/mcaconversations-1.2.0.jar,1
+494,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.resume.offer_step/3,"Right. One step. I can manage one step with company, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+495,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.resume.doubt/1,"...Still, yes. That's rather how wanting something works.",,mods/mcaconversations-1.2.0.jar,1
+496,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.resume.doubt/2,You asked me about it once. I thought you cared.,,mods/mcaconversations-1.2.0.jar,1
+497,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.resume.doubt/3,Aye. Still on about it. I'll keep it to myself in future.,,mods/mcaconversations-1.2.0.jar,1
+498,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.resume.leave/1,I will. Thank you for remembering it at all.,,mods/mcaconversations-1.2.0.jar,1
+499,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.resume.leave/3,Right. Back to the possible things.,,mods/mcaconversations-1.2.0.jar,1
+500,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.respond.accept/1,...Alright. The 'famous' pie I bring to every festival? The trader sells it to me. Every year. I've been thanked for it eleven times.,,mods/mcaconversations-1.2.0.jar,1
+501,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.respond.accept/2,You said that without hesitating. That's why it's you. ...I have never once liked the mayor's speeches. I clap because the baker watches.,,mods/mcaconversations-1.2.0.jar,1
+502,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.respond.accept/3,Right. Once it's out it's out. ...There's a loose brick behind the well. My rainy-day emeralds live under it. Now two of us know where.,,mods/mcaconversations-1.2.0.jar,1
+503,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.respond.ask_why_me/1,Because you've never repeated a thing I've said. I've been counting. ...So: the festival pie. I buy it from the trader. I have never baked one in my life.,,mods/mcaconversations-1.2.0.jar,1
+504,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.respond.ask_why_me/2,"Because you asked why instead of leaning in. That's the answer, %1$s. ...And the answer to the other question is that I clap at the mayor to keep the baker happy.",,mods/mcaconversations-1.2.0.jar,1
+505,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.respond.ask_why_me/3,"Because there's nobody else. Less flattering, but honest. ...Loose brick, behind the well. Everything I've saved is under it. That's the thing.",,mods/mcaconversations-1.2.0.jar,1
+506,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.respond.decline/1,"...That's a kind thing to say to someone about to make a mistake. Right. It stays in, then.",,mods/mcaconversations-1.2.0.jar,1
+507,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.respond.decline/2,"You'd turn it down to protect me from myself. Noted, %1$s. ...It keeps. It's kept this long.",,mods/mcaconversations-1.2.0.jar,1
+508,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.respond.decline/3,Mm. Perhaps you're right. It's waited years; it can wait a while longer.,,mods/mcaconversations-1.2.0.jar,1
+509,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.respond.leave/1,Aye. Perhaps that's wiser.,,mods/mcaconversations-1.2.0.jar,1
+510,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.respond.leave/2,"Right. It's kept this long, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+511,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.respond.leave/3,Off you go. I'll not hold it against you.,,mods/mcaconversations-1.2.0.jar,1
+512,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.followup.promise/1,...Your word. Then I'll sleep tonight for the first time in a while.,,mods/mcaconversations-1.2.0.jar,1
+513,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.followup.promise/2,"I'm holding you to that, %1$s. It's the only thing I've asked of you.",,mods/mcaconversations-1.2.0.jar,1
+514,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.followup.promise/3,"Good. Then it's two of us and no more, ever.",,mods/mcaconversations-1.2.0.jar,1
+515,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.followup.no_promise/3,"I'd rather have your 'I'll try' than someone else's oath, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+516,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.followup.trivialise/1,...That's all it was. To you.,,mods/mcaconversations-1.2.0.jar,1
+517,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.followup.trivialise/2,"I've carried that for eleven years, %1$s, and you weighed it in a breath.",,mods/mcaconversations-1.2.0.jar,1
+518,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.followup.trivialise/3,Forget I said it. Truly — forget it.,,mods/mcaconversations-1.2.0.jar,1
+519,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.resume.ask_who_knows/1,"Nobody. You're the whole list, %1$s. That's why I check the door when I say it.",,mods/mcaconversations-1.2.0.jar,1
+520,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.resume.ask_who_knows/2,Not a soul. I've had chances - I've had drink and company and chances - and no.,,mods/mcaconversations-1.2.0.jar,1
+521,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.resume.ask_who_knows/3,"Just you. Which means if it ever gets out, I'll know exactly where to look. ...That's not a threat. It's just arithmetic.",,mods/mcaconversations-1.2.0.jar,1
+522,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.close.thank/1,"Thank me for what - for being old? ...No, I know what you mean. You're welcome, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+523,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.close.say_means/1,...It did. You don't lay the whole thing out for just anybody.,,mods/mcaconversations-1.2.0.jar,1
+524,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.close.say_means/2,Telling it in order is the hard part. You keep wanting to defend the middle bits.,,mods/mcaconversations-1.2.0.jar,1
+525,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.close.say_means/3,"You noticed that. It's easy to hear a life and think it's only talking, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+526,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.close.leave/2,Right. Enough of that for one day.,,mods/mcaconversations-1.2.0.jar,1
+527,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.close.leave/3,"Off you go, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+528,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.close.thank/1,Don't thank me yet. Thank me if it ever turns into anything.,,mods/mcaconversations-1.2.0.jar,1
+529,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.close.thank/2,"You're welcome. Saying it to someone makes it feel a bit more like a plan, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+530,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.close.thank/3,"Aye, well. It cost me nothing to say and rather a lot to admit. Both of those are true.",,mods/mcaconversations-1.2.0.jar,1
+531,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.close.say_means/1,...It did. Wanting a thing out loud is how people find out you might fail at it.,,mods/mcaconversations-1.2.0.jar,1
+532,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.close.say_means/2,Saying it makes it real enough to be disappointed by. That's the cost of it.,,mods/mcaconversations-1.2.0.jar,1
+533,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.close.say_means/3,"You noticed that. Everyone thinks a dream is the easy thing to talk about, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+534,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.close.leave/2,Right. Enough of that for one day.,,mods/mcaconversations-1.2.0.jar,1
+535,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.close.leave/3,"Off you go, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+536,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.hopes.close.thank/1,"Thank you for not laughing, more like. That's the harder half.",,mods/mcaconversations-1.2.0.jar,1
+537,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.hopes.close.say_means/1,...It did. Hoping where somebody can hear you is a small act of daftness.,,mods/mcaconversations-1.2.0.jar,1
+538,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.hopes.close.say_means/2,It's the being-seen-hoping that's hard. Not the hoping.,,mods/mcaconversations-1.2.0.jar,1
+539,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.hopes.close.say_means/3,"You noticed that. It's the softest thing I own, %1$s, and I just left it out on the table.",,mods/mcaconversations-1.2.0.jar,1
+540,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.hopes.close.leave/2,Right. Enough of that for one day.,,mods/mcaconversations-1.2.0.jar,1
+541,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.hopes.close.leave/3,"Off you go, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+542,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.resume.check_in.entrusted/1,"...You asked after me, not the secret. You always were the right person to tell.",,mods/mcaconversations-1.2.0.jar,1
+543,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.romantic.mutual/1,...Say that again. I've waited a long while to hear it back.,,mods/mcaconversations-1.2.0.jar,1
+544,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.romantic.mutual/2,The same. You're sure? ...Good. Good.,,mods/mcaconversations-1.2.0.jar,1
+545,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.romantic.mutual/3,"Then we've both been carrying it. Idiots, the pair of us.",,mods/mcaconversations-1.2.0.jar,1
+546,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.romantic.ask_needs/1,What I need. Nobody's ever asked it that way round.,,mods/mcaconversations-1.2.0.jar,1
+547,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.romantic.ask_needs/2,"...Time, mostly. And for you to keep asking that question.",,mods/mcaconversations-1.2.0.jar,1
+548,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.romantic.ask_needs/3,"Less than you'd think, and more than I say. Ask me again sometimes.",,mods/mcaconversations-1.2.0.jar,1
+549,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.romantic.candid_concern/1,...Alright. I'd rather hear it than have you carry it quietly.,,mods/mcaconversations-1.2.0.jar,1
+550,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.romantic.candid_concern/2,"Say it, then. We've never been the sort to leave things unsaid.",,mods/mcaconversations-1.2.0.jar,1
+551,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.romantic.candid_concern/3,"That tone. Right — go on, I'm listening properly.",,mods/mcaconversations-1.2.0.jar,1
+552,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.romantic.leave/1,Aye. Some things want a moment afterwards.,,mods/mcaconversations-1.2.0.jar,1
+553,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.romantic.leave/2,"Go on. I'll be here, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+554,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.romantic.leave/3,Right. That's enough honesty for one afternoon.,,mods/mcaconversations-1.2.0.jar,1
+555,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.romantic.say_it_plainly/1,...Plainly. After all this time you say it plainly. I love you too.,,mods/mcaconversations-1.2.0.jar,1
+556,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.romantic.say_it_plainly/2,You don't say things you don't mean. That's how I know.,,mods/mcaconversations-1.2.0.jar,1
+557,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.romantic.say_it_plainly/3,"Then say it every so often, %1$s. I'll not tire of it.",,mods/mcaconversations-1.2.0.jar,1
+558,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.romantic.set_boundary/1,...Slower. Alright. I'd rather have you at your pace than not at all.,,mods/mcaconversations-1.2.0.jar,1
+559,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.romantic.set_boundary/2,Thank you for saying it instead of just going quiet on me.,,mods/mcaconversations-1.2.0.jar,1
+560,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.romantic.set_boundary/3,"Slower it is. You've not changed your mind about me, though?",,mods/mcaconversations-1.2.0.jar,1
+561,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.romantic.deflect/1,...A whole thing. Right. Forget I brought it up.,,mods/mcaconversations-1.2.0.jar,1
+562,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.romantic.deflect/2,"It was a whole thing to me, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+563,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.romantic.deflect/3,Mm. I'll keep it smaller next time.,,mods/mcaconversations-1.2.0.jar,1
+564,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.young.kind/1,...Am I? Nobody says that to me.,,mods/mcaconversations-1.2.0.jar,1
+565,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.young.kind/2,Good sort. I'll take that.,,mods/mcaconversations-1.2.0.jar,1
+566,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.young.kind/3,Thanks. You're alright too.,,mods/mcaconversations-1.2.0.jar,1
+567,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.young.proud/1,...That's a nice thing to hear.,,mods/mcaconversations-1.2.0.jar,1
+568,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.young.proud/2,"Glad you're around. Ha. Don't get soppy about it. ...That was nice, though.",,mods/mcaconversations-1.2.0.jar,1
+569,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.young.proud/3,"Me too. About you being around, I mean.",,mods/mcaconversations-1.2.0.jar,1
+570,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.young.brush_off/1,...Fine. Forget it.,,mods/mcaconversations-1.2.0.jar,1
+571,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.young.brush_off/2,"You asked, though.",,mods/mcaconversations-1.2.0.jar,1
+572,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.young.brush_off/3,Right. Sorry for saying anything.,,mods/mcaconversations-1.2.0.jar,1
+573,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.revisit/1,"I've been thinking about what I said to you. I meant it, in case you wondered.",,mods/mcaconversations-1.2.0.jar,1
+574,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.revisit/2,"That conversation we had. It's been sitting with me, in a good way.",,mods/mcaconversations-1.2.0.jar,1
+575,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.revisit/3,"You'll remember what I told you. I've not changed my mind, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+576,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.resume.reaffirm/1,...You meant it. People say things once and hope you forget.,,mods/mcaconversations-1.2.0.jar,1
+577,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.resume.reaffirm/2,Said twice. That's how I know it was true the first time.,,mods/mcaconversations-1.2.0.jar,1
+578,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.resume.reaffirm/3,"Then so did I, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+579,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.resume.leave/1,"Aye. Let it be, for now.",,mods/mcaconversations-1.2.0.jar,1
+580,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.resume.leave/2,Right you are.,,mods/mcaconversations-1.2.0.jar,1
+581,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.resume.leave/3,"Off you go, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+582,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.checkin_child.respond,That's how they're getting on.,,mods/mcaconversations-1.2.0.jar,1
+583,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.ask_parent.followup,So there it is.,,mods/mcaconversations-1.2.0.jar,1
+584,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.checkin_child.respond.listen,Tell me how they really are.,,mods/mcaconversations-1.2.0.jar,1
+585,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.checkin_child.respond.praise,You're doing right by them.,,mods/mcaconversations-1.2.0.jar,1
+586,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.checkin_child.respond.dismiss,Children are all the same.,,mods/mcaconversations-1.2.0.jar,1
+587,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.checkin_child.followup.play_along,They sound wonderful.,,mods/mcaconversations-1.2.0.jar,1
+588,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.checkin_child.followup.scold,They need a firmer hand.,,mods/mcaconversations-1.2.0.jar,1
+589,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.memories.respond.laugh,I'd forgotten that.,,mods/mcaconversations-1.2.0.jar,1
+590,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.memories.respond.brush_off,That's not how it went.,,mods/mcaconversations-1.2.0.jar,1
+591,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.memories.respond.leave,Another time.,,mods/mcaconversations-1.2.0.jar,1
+592,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.happy.affirm/1,"Are you? Good. Say that more often, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+593,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.happy.affirm/2,So am I. It's easy to forget to say it.,,mods/mcaconversations-1.2.0.jar,1
+594,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.happy.affirm/3,"Then we're both alright. That's not nothing, after this long.",,mods/mcaconversations-1.2.0.jar,1
+595,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.happy.reassure/1,We will. I believe you when you say it.,,mods/mcaconversations-1.2.0.jar,1
+596,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.happy.reassure/2,Aye. We've been through worse than this week.,,mods/mcaconversations-1.2.0.jar,1
+597,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.happy.reassure/3,"That helps more than solving it would, honestly.",,mods/mcaconversations-1.2.0.jar,1
+598,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.firstmet.share_own/1,You remember it differently to me. I love that.,,mods/mcaconversations-1.2.0.jar,1
+599,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.firstmet.share_own/2,Go on then — I want to hear your version.,,mods/mcaconversations-1.2.0.jar,1
+600,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.firstmet.share_own/3,Ha! That's not how I tell it at all.,,mods/mcaconversations-1.2.0.jar,1
+601,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.firstmet.tease/1,"I WAS a state. You were no better, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+602,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.firstmet.tease/2,Ha! Say that again and I'll tell everyone what YOU said.,,mods/mcaconversations-1.2.0.jar,1
+603,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.firstmet.tease/3,"Cruel. Accurate, but cruel.",,mods/mcaconversations-1.2.0.jar,1
+604,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.firstmet.brush_off/1,...You don't remember it. Right.,,mods/mcaconversations-1.2.0.jar,1
+605,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.firstmet.brush_off/2,"I've thought about that day more than I'd admit, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+606,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.firstmet.brush_off/3,Well. I do.,,mods/mcaconversations-1.2.0.jar,1
+607,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.firstmet.ask_stood_out/1,...You did. Not anything you said. Just that you stayed.,,mods/mcaconversations-1.2.0.jar,1
+608,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.firstmet.ask_stood_out/2,"The way you spoke to the baker, actually. Kindness when nobody's counting.",,mods/mcaconversations-1.2.0.jar,1
+609,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.firstmet.ask_stood_out/3,I'll not tell you. You'll only get insufferable about it.,,mods/mcaconversations-1.2.0.jar,1
+610,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.firstmet.correct_gently/1,"...Was it not? Huh. I've told it wrong for years, then.",,mods/mcaconversations-1.2.0.jar,1
+611,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.firstmet.correct_gently/2,You'd know better than me. You were the sober one.,,mods/mcaconversations-1.2.0.jar,1
+612,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.firstmet.correct_gently/3,"Maybe. I like my version, mind.",,mods/mcaconversations-1.2.0.jar,1
+613,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.firstmet.dismiss/1,"It was. It's still the day I count from, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+614,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.firstmet.dismiss/2,"Long ago, aye. Not gone, though.",,mods/mcaconversations-1.2.0.jar,1
+615,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.firstmet.dismiss/3,...Right. Never mind.,,mods/mcaconversations-1.2.0.jar,1
+616,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.firstmet.leave/1,"Aye. Nice to think back, though.",,mods/mcaconversations-1.2.0.jar,1
+617,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.firstmet.leave/2,"Go on, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+618,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.firstmet.leave/3,Right. Later.,,mods/mcaconversations-1.2.0.jar,1
+619,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.future.align/1,"You do? ...Then that's the whole conversation, and a good one.",,mods/mcaconversations-1.2.0.jar,1
+620,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.future.align/2,"Same thing. After all my worrying, the same thing.",,mods/mcaconversations-1.2.0.jar,1
+621,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.future.align/3,Good. Then we plan instead of wondering.,,mods/mcaconversations-1.2.0.jar,1
+622,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.future.ask_priorities/1,"What matters most. ...You. Then the rest, in some order.",,mods/mcaconversations-1.2.0.jar,1
+623,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.future.ask_priorities/2,Nobody asks it that way round. Give me a moment to answer honestly.,,mods/mcaconversations-1.2.0.jar,1
+624,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.future.ask_priorities/3,"A roof, quiet, and someone in it. That's the whole list.",,mods/mcaconversations-1.2.0.jar,1
+625,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.future.avoid/1,...Not that far ahead. Alright. I'll stop bringing it up.,,mods/mcaconversations-1.2.0.jar,1
+626,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.future.avoid/2,"We have to plan it sometime, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+627,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.future.avoid/3,Mm. I notice you always say that.,,mods/mcaconversations-1.2.0.jar,1
+628,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.future.negotiate/1,...Work it out. Aye. That's better than one of us just giving in.,,mods/mcaconversations-1.2.0.jar,1
+629,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.future.negotiate/2,"Different things and still here. That's most of a marriage, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+630,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.future.negotiate/3,"Then we'll talk it through properly. Not tonight, but properly.",,mods/mcaconversations-1.2.0.jar,1
+631,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.future.promise_nothing/1,That's fair. I'd rather that than a promise you'd resent.,,mods/mcaconversations-1.2.0.jar,1
+632,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.future.promise_nothing/2,No promises. Good. We've both seen what those cost.,,mods/mcaconversations-1.2.0.jar,1
+633,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.future.promise_nothing/3,Honest. I'll take honest over comfortable.,,mods/mcaconversations-1.2.0.jar,1
+634,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.future.reject/1,"...Never. Right. That's a hard word, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+635,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.future.reject/2,You could have said 'not yet'. You said never.,,mods/mcaconversations-1.2.0.jar,1
+636,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.future.reject/3,Then I'll stop hoping for it. Consider it stopped.,,mods/mcaconversations-1.2.0.jar,1
+637,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.future.leave/1,Aye. It's not a one-evening subject.,,mods/mcaconversations-1.2.0.jar,1
+638,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.future.leave/2,"Go on. We'll come back to it, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+639,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.future.leave/3,Right. Later.,,mods/mcaconversations-1.2.0.jar,1
+640,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.worries.validate/1,"...It is, isn't it. I'd half convinced myself it was silly.",,mods/mcaconversations-1.2.0.jar,1
+641,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.worries.validate/2,You didn't tell me not to worry. Thank you for that.,,mods/mcaconversations-1.2.0.jar,1
+642,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.worries.validate/3,"Worth worrying about. Aye. That helps, oddly.",,mods/mcaconversations-1.2.0.jar,1
+643,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.close.thank/1,You don't need to thank me for that.,,mods/mcaconversations-1.2.0.jar,1
+644,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.close.thank/2,"Aye, well. That's what this is for, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+645,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.close.thank/3,Thank you for listening to it.,,mods/mcaconversations-1.2.0.jar,1
+646,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.close.say_means/1,...It did. More than I let on.,,mods/mcaconversations-1.2.0.jar,1
+647,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.close.say_means/2,"Then it was worth saying, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+648,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.close.say_means/3,Good. I'd hate to have said it for nothing.,,mods/mcaconversations-1.2.0.jar,1
+649,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.close.leave/1,Aye. Off you go.,,mods/mcaconversations-1.2.0.jar,1
+650,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.close.leave/2,"Right you are, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+651,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.close.leave/3,"Later, then.",,mods/mcaconversations-1.2.0.jar,1
+652,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.child.listen/1,"...Really are. Right. Not as well as I tell people, if I'm honest.",,mods/mcaconversations-1.2.0.jar,1
+653,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.child.listen/2,You want the true answer about them. That's kind of you to ask for.,,mods/mcaconversations-1.2.0.jar,1
+654,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.child.listen/3,Better than last month. Worse than I'd like. That's children.,,mods/mcaconversations-1.2.0.jar,1
+655,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.child.praise/1,...Am I? Some days I'm certain I'm not.,,mods/mcaconversations-1.2.0.jar,1
+656,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.child.praise/2,"That's the thing nobody says to a parent. Thank you, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+657,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.child.praise/3,I try. It's good to be told the trying shows.,,mods/mcaconversations-1.2.0.jar,1
+658,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.child.guide/1,"...That's useful. Actually useful, not the usual advice.",,mods/mcaconversations-1.2.0.jar,1
+659,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.child.guide/2,"You've thought about this. Say it again, slower.",,mods/mcaconversations-1.2.0.jar,1
+660,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.child.guide/3,I'll try it. If it works I'll say it was my idea.,,mods/mcaconversations-1.2.0.jar,1
+661,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.child.play_along/1,They ARE. Don't tell them I agreed with you.,,mods/mcaconversations-1.2.0.jar,1
+662,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.child.play_along/2,"Wonderful and exhausting, in that order.",,mods/mcaconversations-1.2.0.jar,1
+663,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.child.play_along/3,"Ha! You'd change your mind by supper, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+664,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.child.scold/1,...A firmer hand. That's not what they need.,,mods/mcaconversations-1.2.0.jar,1
+665,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.child.scold/2,"I'll raise mine my way, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+666,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.child.scold/3,Mm. I'll pretend you didn't say that.,,mods/mcaconversations-1.2.0.jar,1
+667,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.child.leave/1,Aye. They'll want feeding shortly anyway.,,mods/mcaconversations-1.2.0.jar,1
+668,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.child.leave/2,"Go on, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+669,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.child.leave/3,Right you are.,,mods/mcaconversations-1.2.0.jar,1
+670,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.parent.answer_honestly/1,"...Thank you. You've never fobbed me off, and I notice.",,mods/mcaconversations-1.2.0.jar,1
+671,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.parent.answer_honestly/2,The truth. Right. That's all I was after.,,mods/mcaconversations-1.2.0.jar,1
+672,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.parent.answer_honestly/3,Good. I'd rather a hard true thing than a soft false one.,,mods/mcaconversations-1.2.0.jar,1
+673,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.parent.ask_worries/1,...You want to know what I worry about? Nobody's asked me that.,,mods/mcaconversations-1.2.0.jar,1
+674,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.parent.ask_worries/2,Everything. Mostly you. That's the honest answer.,,mods/mcaconversations-1.2.0.jar,1
+675,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.parent.ask_worries/3,"The usual things a person worries about, and one or two more.",,mods/mcaconversations-1.2.0.jar,1
+676,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.parent.deflect/1,"Nothing. It's never nothing, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+677,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.parent.deflect/2,...Right. I'll not press.,,mods/mcaconversations-1.2.0.jar,1
+678,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.parent.deflect/3,Mm. I'll ask again next week.,,mods/mcaconversations-1.2.0.jar,1
+679,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.parent.leave/2,"Off you go, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+680,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.parent.leave/3,Right you are.,,mods/mcaconversations-1.2.0.jar,1
+681,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.close.thank/1,Family doesn't need thanking. But you're welcome.,,mods/mcaconversations-1.2.0.jar,1
+682,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.close.thank/2,"Aye, well. That's what we're for, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+683,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.close.thank/3,Any time.,,mods/mcaconversations-1.2.0.jar,1
+684,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.close.say_means/1,...It did. More than I'd say out loud.,,mods/mcaconversations-1.2.0.jar,1
+685,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.close.say_means/2,Then it was worth the saying.,,mods/mcaconversations-1.2.0.jar,1
+686,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.close.say_means/3,"Good. We don't say enough, in this family.",,mods/mcaconversations-1.2.0.jar,1
+687,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.close.leave/1,Aye. Off you go.,,mods/mcaconversations-1.2.0.jar,1
+688,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.close.leave/2,"Right you are, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+689,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.close.leave/3,"Later, then.",,mods/mcaconversations-1.2.0.jar,1
+690,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.memories.tell/1,There's one I always come back to. Sit down.,,mods/mcaconversations-1.2.0.jar,1
+691,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.memories.tell/2,Family stories. I've a hundred and you'll hear at least one.,,mods/mcaconversations-1.2.0.jar,1
+692,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.family.memories.tell/3,"Ha — where do I start. The goat, probably.",,mods/mcaconversations-1.2.0.jar,1
+693,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.firstmet.tell/1,"You want the story of how we met? Go on, then. I'll tell it my way.",,mods/mcaconversations-1.2.0.jar,1
+694,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.firstmet.tell/2,"The day we met. I remember more of it than I let on, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+695,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.us.firstmet.tell/3,Ha. That day. Right — my version first.,,mods/mcaconversations-1.2.0.jar,1
+696,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.open.rebuffed.apologize/1,"...Aye. Well. I'm prickly about it, and you weren't to know. We'll call it even.",,mods/mcaconversations-1.2.0.jar,1
+697,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.open.rebuffed.apologize/2,"It did. But I've the shorter fuse where that's concerned. Let's leave it there, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+698,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.open.rebuffed.apologize/3,Mm. Thank you for not arguing the point. Most would have.,,mods/mcaconversations-1.2.0.jar,1
+699,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.open.rebuffed.accept/1,"...That's the right answer, and I didn't expect it. Sit there a minute, if you like.",,mods/mcaconversations-1.2.0.jar,1
+700,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.open.rebuffed.accept/2,Good. Not everything wants handling. Some of it just wants somebody stood nearby.,,mods/mcaconversations-1.2.0.jar,1
+701,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.open.rebuffed.accept/3,"Right. You listen well when you stop trying to help, %1$s. That's not an insult.",,mods/mcaconversations-1.2.0.jar,1
+702,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.open.rebuffed.leave/1,Aye. Go on. I'll be less of a hedgehog tomorrow.,,mods/mcaconversations-1.2.0.jar,1
+703,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.open.rebuffed.leave/2,"Off you go. It's not you I'm cross with, for what it's worth.",,mods/mcaconversations-1.2.0.jar,1
+704,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.open.rebuffed.leave/3,"Right you are, %1$s. Mind the step.",,mods/mcaconversations-1.2.0.jar,1
+705,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.repaired.ask_safer/1,"Now that I can do. Ask me about the fence, the harvest, anything with a floor to stand on.",,mods/mcaconversations-1.2.0.jar,1
+706,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.repaired.ask_safer/2,"Something easy. Aye. We'll build back up to the rest, in our own time.",,mods/mcaconversations-1.2.0.jar,1
+707,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.repaired.ask_safer/3,"Sensible, %1$s. Shallow water first. I'll tell you when I can swim again.",,mods/mcaconversations-1.2.0.jar,1
+708,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.repaired.respect/1,"...Then we'll get there. Slowly, and without anyone's hand on my back.",,mods/mcaconversations-1.2.0.jar,1
+709,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.repaired.respect/2,"You'll keep to it. I believe you, which is the strange part.",,mods/mcaconversations-1.2.0.jar,1
+710,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.repaired.respect/3,"That's all I ever wanted asked of me, %1$s. Just that.",,mods/mcaconversations-1.2.0.jar,1
+711,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.repaired.leave/1,Aye. Enough digging for one day. Come back and I'll still be here.,,mods/mcaconversations-1.2.0.jar,1
+712,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.repaired.leave/2,"Right. Off you go, and thank you for the slower version.",,mods/mcaconversations-1.2.0.jar,1
+713,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.repaired.leave/3,"Go on, %1$s. We're alright, you and I.",,mods/mcaconversations-1.2.0.jar,1
+714,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.lapsed.apologize/1,"...Well. That's more than most would say. It's not undone, but it's said, and that helps.",,mods/mcaconversations-1.2.0.jar,1
+715,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.lapsed.apologize/2,"You could have argued. You didn't. ...Alright, %1$s. We're not square, but we're speaking.",,mods/mcaconversations-1.2.0.jar,1
+716,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.lapsed.apologize/3,Mm. Owning it costs something. I noticed you paid it.,,mods/mcaconversations-1.2.0.jar,1
+717,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.lapsed.make_good/1,"Now, you mean. ...Right. Now will do. Now is the only bit anyone can actually offer.",,mods/mcaconversations-1.2.0.jar,1
+718,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.lapsed.make_good/2,"Then be here, and we'll say no more about the gap, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+719,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.lapsed.make_good/3,Alright. Second time of asking. I'd not give everyone that.,,mods/mcaconversations-1.2.0.jar,1
+720,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.lapsed.leave/1,"No excuses. Aye - that's the right call, and I'd have thought less of a good one.",,mods/mcaconversations-1.2.0.jar,1
+721,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.lapsed.leave/2,"Off you go, then. It's not the end of anything, %1$s. It's just a thing that happened.",,mods/mcaconversations-1.2.0.jar,1
+722,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.lapsed.leave/3,Right. We'll leave it where it is and see what you do next.,,mods/mcaconversations-1.2.0.jar,1
+723,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.resume.ask_progress.lapsed/1,"You said you'd help. I waited a bit, then got on with it alone. That's usually how it goes.",,mods/mcaconversations-1.2.0.jar,1
+724,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.resume.ask_progress.lapsed/2,"Some. On my own, mostly - you'd offered, and then the days went by, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+725,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.resume.ask_progress.lapsed/3,"It's moved. Not because of the offer, if I'm honest. But you're asking now, and that's something.",,mods/mcaconversations-1.2.0.jar,1
+726,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.toddler.delight/1,It IS! It's the best one. I said so and I was RIGHT.,,mods/mcaconversations-1.2.0.jar,1
+727,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.toddler.delight/2,You know about good food! Grown-ups don't usually.,,mods/mcaconversations-1.2.0.jar,1
+728,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.toddler.delight/3,Excellent food. That's what it is. Excellent.,,mods/mcaconversations-1.2.0.jar,1
+729,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.toddler.ask/1,The best one is... all of them. But mostly the first one.,,mods/mcaconversations-1.2.0.jar,1
+730,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.toddler.ask/2,The one you get when you've been good. That one tastes different.,,mods/mcaconversations-1.2.0.jar,1
+731,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.toddler.ask/3,"Whichever is biggest. Bigger food tastes better, everyone knows.",,mods/mcaconversations-1.2.0.jar,1
+732,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.toddler.leave/1,Okay bye! I'm going to eat now. All of it.,,mods/mcaconversations-1.2.0.jar,1
+733,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.toddler.leave/2,"Bye, %1$s! Save me some!",,mods/mcaconversations-1.2.0.jar,1
+734,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.toddler.leave/3,Yep. Eating time. Bye!,,mods/mcaconversations-1.2.0.jar,1
+735,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.toddler.delight/1,It IS good! I'm having the best one. I checked.,,mods/mcaconversations-1.2.0.jar,1
+736,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.toddler.delight/2,"You think so too! Then it's true, 'cause you're big.",,mods/mcaconversations-1.2.0.jar,1
+737,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.toddler.delight/3,A GOOD life. Yes. That's what I've got.,,mods/mcaconversations-1.2.0.jar,1
+738,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.toddler.ask/1,The middle bit. That's when everything happens.,,mods/mcaconversations-1.2.0.jar,1
+739,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.toddler.ask/2,When it's not too early and not bedtime. The in-between part.,,mods/mcaconversations-1.2.0.jar,1
+740,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.toddler.ask/3,The part with the snack in it. Obviously the part with the snack.,,mods/mcaconversations-1.2.0.jar,1
+741,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.toddler.leave/1,Bye! I've got a lot to do today.,,mods/mcaconversations-1.2.0.jar,1
+742,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.toddler.leave/3,Bye bye. I'll be here. I'm always here.,,mods/mcaconversations-1.2.0.jar,1
+743,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.toddler.delight/1,"You BELIEVE me. Nobody says that, they just laugh and go 'aww'.",,mods/mcaconversations-1.2.0.jar,1
+744,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.toddler.delight/2,Then it's happening. It's decided. You said it and now it's decided.,,mods/mcaconversations-1.2.0.jar,1
+745,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.toddler.delight/3,"I KNOW. I'm going to be it so much, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+746,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.toddler.ask/1,You just do it. You do it and then it's done. That's how.,,mods/mcaconversations-1.2.0.jar,1
+747,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.toddler.ask/2,Eating. Eating makes you get big and then you can do anything.,,mods/mcaconversations-1.2.0.jar,1
+748,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.toddler.ask/3,Practising. Every day. Except some days 'cause of naps.,,mods/mcaconversations-1.2.0.jar,1
+749,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.toddler.leave/1,Bye! I'm going to go practise being it.,,mods/mcaconversations-1.2.0.jar,1
+750,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.toddler.leave/2,"Okay bye, %1$s! Watch me later!",,mods/mcaconversations-1.2.0.jar,1
+751,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.toddler.leave/3,Bye bye. You'll see. You'll ALL see.,,mods/mcaconversations-1.2.0.jar,1
+752,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.toddler.delight/1,They ARE good ones. I've got the good ones today.,,mods/mcaconversations-1.2.0.jar,1
+753,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.toddler.delight/2,You're allowed lots at once. I checked. Nobody stopped me.,,mods/mcaconversations-1.2.0.jar,1
+754,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.toddler.delight/3,"Good ones. Yep. Good ones all the way down, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+755,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.toddler.ask/1,Like when you run down a hill but you're standing still.,,mods/mcaconversations-1.2.0.jar,1
+756,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.toddler.ask/2,Like bread. But inside. That's the closest one.,,mods/mcaconversations-1.2.0.jar,1
+757,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.toddler.ask/3,Um. Wiggly? It's a wiggly one. I don't know the word yet.,,mods/mcaconversations-1.2.0.jar,1
+758,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.toddler.leave/1,Bye! I'm going to go and feel it over there.,,mods/mcaconversations-1.2.0.jar,1
+759,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.toddler.leave/3,Bye bye. Feel yours too!,,mods/mcaconversations-1.2.0.jar,1
+760,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.village.toddler.respond,That's my village.,,mods/mcaconversations-1.2.0.jar,1
+761,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.village.toddler.respond.delight,It's a good village.,,mods/mcaconversations-1.2.0.jar,1
+762,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.village.toddler.respond.ask,What's your favourite bit of it?,,mods/mcaconversations-1.2.0.jar,1
+763,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.village.toddler.respond.leave,"Off you go, then.",,mods/mcaconversations-1.2.0.jar,1
+764,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.toddler.delight/1,It's the BEST village. There isn't a better one anywhere.,,mods/mcaconversations-1.2.0.jar,1
+765,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.toddler.delight/2,You like it too! Then you should live here. Everyone should.,,mods/mcaconversations-1.2.0.jar,1
+766,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.toddler.delight/3,"Good village. Good, good village, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+767,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.toddler.ask/1,The bit with the water in. But I'm not allowed close.,,mods/mcaconversations-1.2.0.jar,1
+768,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.toddler.ask/2,Behind the houses. There's a gap and it's MINE.,,mods/mcaconversations-1.2.0.jar,1
+769,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.toddler.ask/3,The high bit! You can see everything from the high bit.,,mods/mcaconversations-1.2.0.jar,1
+770,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.toddler.leave/1,Bye! I'm going to go and be in it.,,mods/mcaconversations-1.2.0.jar,1
+771,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.toddler.leave/3,"Bye bye. Don't get lost, it's big.",,mods/mcaconversations-1.2.0.jar,1
+772,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.checkin.toddler.ask/1,The best bit was the bit at the start. Before everything else.,,mods/mcaconversations-1.2.0.jar,1
+773,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.checkin.toddler.ask/2,There were LOTS of best bits. That's why it's a good day.,,mods/mcaconversations-1.2.0.jar,1
+774,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.checkin.toddler.ask/3,"The bit nobody saw. That one's mine. ...Okay, I'll tell you later.",,mods/mcaconversations-1.2.0.jar,1
+775,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.young.take_seriously/1,...Properly. You said properly. Grown-ups usually do the voice where they don't believe me.,,mods/mcaconversations-1.2.0.jar,1
+776,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.young.take_seriously/2,"You're the first one who didn't check with somebody taller first, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+777,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.young.take_seriously/3,I TOLD it properly. I practised. Thank you for noticing that I practised.,,mods/mcaconversations-1.2.0.jar,1
+778,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.young.ask_how_they_know/1,"I listen. Nobody thinks I'm listening because I'm playing, but I'm always listening.",,mods/mcaconversations-1.2.0.jar,1
+779,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.young.ask_how_they_know/2,People say things over my head like I'm furniture. So I know nearly everything.,,mods/mcaconversations-1.2.0.jar,1
+780,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.young.ask_how_they_know/3,"I was under the table. That's the best place, %1$s. You should try it.",,mods/mcaconversations-1.2.0.jar,1
+781,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.young.dismiss/1,...It's not repeating if it's TRUE. You asked me. You asked and now I'm in trouble for answering.,,mods/mcaconversations-1.2.0.jar,1
+782,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.young.dismiss/2,"Everyone else repeats things. I've heard them. But when I do it it's different, apparently.",,mods/mcaconversations-1.2.0.jar,1
+783,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.young.dismiss/3,Fine. Then I won't tell you the next one.,,mods/mcaconversations-1.2.0.jar,1
+784,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.young.leave/1,Okay bye! I'll come and find you if something else happens.,,mods/mcaconversations-1.2.0.jar,1
+785,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.young.leave/2,"Bye, %1$s! There'll be more tomorrow, there always is.",,mods/mcaconversations-1.2.0.jar,1
+786,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.young.leave/3,Right. I'm going to go and find out more things.,,mods/mcaconversations-1.2.0.jar,1
+787,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.resume.followup.encourage/1,"You say that like it's obvious. It isn't, but I'll borrow your version for a bit.",,mods/mcaconversations-1.2.0.jar,1
+788,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.resume.followup.encourage/2,Aye. Well. It's easier to keep at a thing when somebody's watching to see if you do.,,mods/mcaconversations-1.2.0.jar,1
+789,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.resume.followup.encourage/3,"I'll get there. ...I said that out loud and it didn't sound stupid, %1$s. That's new.",,mods/mcaconversations-1.2.0.jar,1
+790,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.resume.followup.practical/1,"The next step. Nobody asks that. They ask if I'm still doing it, which isn't the same question.",,mods/mcaconversations-1.2.0.jar,1
+791,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.resume.followup.practical/2,Right - the next step is the boring one. Which is why it's still the next one.,,mods/mcaconversations-1.2.0.jar,1
+792,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.resume.followup.practical/3,Give me a moment. ...There. Written on the inside of my head. Thank you for making me say it.,,mods/mcaconversations-1.2.0.jar,1
+793,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.resume.followup.honest/1,It might not. I know. I'd rather hear that from you than from myself at three in the morning.,,mods/mcaconversations-1.2.0.jar,1
+794,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.resume.followup.honest/2,"That's the truth of it, aye. Doesn't stop me. But it's good that one of us says it.",,mods/mcaconversations-1.2.0.jar,1
+795,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.resume.followup.honest/3,"Not many will say that. They nod and move on. ...I'd rather be told, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+796,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.resume.followup.leave/1,"Aye, go on. It'll still be here in the morning, worse luck.",,mods/mcaconversations-1.2.0.jar,1
+797,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.resume.followup.leave/2,"Right you are. Back to it, then.",,mods/mcaconversations-1.2.0.jar,1
+798,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.resume.followup.leave/3,"Off you go, %1$s. Thanks for asking after it.",,mods/mcaconversations-1.2.0.jar,1
+799,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.resume.followup.warm/1,You're glad. ...I'd spent a week deciding whether telling you would cost me something.,,mods/mcaconversations-1.2.0.jar,1
+800,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.resume.followup.warm/2,"Then it was worth the saying. I wasn't sure it would be, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+801,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.resume.followup.warm/3,"Good. That's a weight off, and I'd been carrying it about like a bucket.",,mods/mcaconversations-1.2.0.jar,1
+802,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.resume.followup.boundary/2,"That's fair. It stings a little, and it's fair, and I'd have it no other way.",,mods/mcaconversations-1.2.0.jar,1
+803,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.resume.followup.boundary/3,"Honest is better. It's not what I hoped, but it's better, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+804,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.resume.followup.leave/1,Aye. Let it sit. Things settle better when nobody stirs them.,,mods/mcaconversations-1.2.0.jar,1
+805,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.resume.followup.leave/2,Right. We'll leave it where it is.,,mods/mcaconversations-1.2.0.jar,1
+806,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.feelings.resume.followup.leave/3,"Off you go, %1$s. Nothing's broken.",,mods/mcaconversations-1.2.0.jar,1
+807,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.resume.followup.thank/1,Glad. Hm. I'd braced for 'that's a lot' and got 'glad' instead.,,mods/mcaconversations-1.2.0.jar,1
+808,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.resume.followup.thank/2,"Then it did what I hoped it would, which is rare for anything I say out loud.",,mods/mcaconversations-1.2.0.jar,1
+809,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.resume.followup.thank/3,"Aye. Well. Now you know where the dents came from, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+810,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.resume.followup.connect/1,"...It does, doesn't it. Huh. I've never had those two things stood next to each other before.",,mods/mcaconversations-1.2.0.jar,1
+811,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.resume.followup.connect/2,"You've gone and made sense of me. I'm not sure I wanted to be made sense of, but here we are.",,mods/mcaconversations-1.2.0.jar,1
+812,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.resume.followup.connect/3,"It explains the good bits too, mind. Don't only use it for the awkward ones, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+813,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.resume.followup.probe/1,There's always more left out. That's what leaving out means. ...Let it lie.,,mods/mcaconversations-1.2.0.jar,1
+814,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.resume.followup.probe/2,"You get what I hand you. The rest isn't a locked door, it's just not a door at all.",,mods/mcaconversations-1.2.0.jar,1
+815,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.resume.followup.probe/3,"Asking for the offcuts, %1$s. I gave you the whole loaf and you're after the crumbs.",,mods/mcaconversations-1.2.0.jar,1
+816,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.resume.followup.leave/1,Aye. Enough history for one afternoon.,,mods/mcaconversations-1.2.0.jar,1
+817,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.resume.followup.leave/2,Right you are. It keeps.,,mods/mcaconversations-1.2.0.jar,1
+818,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.resume.followup.leave/3,"Off you go, %1$s. Thanks for sitting through it.",,mods/mcaconversations-1.2.0.jar,1
+819,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work_offer.ask_terms.hard_bargain/1,"Now that's the right question, and you're the first today to ask it before saying yes.",,mods/mcaconversations-1.2.0.jar,1
+820,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work_offer.ask_terms.hard_bargain/2,"Terms. Good. I'd have thought less of you for not asking, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+821,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work_offer.ask_terms.hard_bargain/3,Straight to the price. I like that. It saves us both an afternoon of politeness.,,mods/mcaconversations-1.2.0.jar,1
+822,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.followup.joke/1,Ha. Don't tell the others. They think it holds itself up out of respect.,,mods/mcaconversations-1.2.0.jar,1
+823,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.followup.joke/2,"I am, and nobody will notice until the day I stop. That's the job, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+824,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.followup.joke/3,"The reason, aye. Also the reason it breaks. Both true, sadly.",,mods/mcaconversations-1.2.0.jar,1
+825,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.followup.joke/1,"Ha! String, stubbornness and one very determined blacksmith. That's the whole engineering of it.",,mods/mcaconversations-1.2.0.jar,1
+826,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.followup.joke/2,"Mostly stubbornness. The string is decorative, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+827,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.people.followup.joke,You'd all be lost without somebody to complain about.,,mods/mcaconversations-1.2.0.jar,1
+828,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.people.followup.joke/2,"That's uncomfortably close to the truth, %1$s. I'd like it noted that I resent it.",,mods/mcaconversations-1.2.0.jar,1
+829,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.people.followup.joke/3,Lost entirely. It's the one thing that keeps us all turning up to the same well.,,mods/mcaconversations-1.2.0.jar,1
+830,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.close.confide/1,"...You didn't have to do that. Trading is better than being asked, though. Much better.",,mods/mcaconversations-1.2.0.jar,1
+831,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.close.confide/2,"Now we're both stood out in it. That's a fairer way round, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+832,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.close.confide/3,Hah. You went first on the second one. I'll not forget that.,,mods/mcaconversations-1.2.0.jar,1
+833,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.hopes.close.confide/1,"...Go on, then. It's easier to hope at something when there's two of you doing it.",,mods/mcaconversations-1.2.0.jar,1
+834,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.hopes.close.confide/2,"You've one of your own. Of course you have. Everyone does and nobody says, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+835,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.hopes.close.confide/3,Aye - and now we're both stood here being daft about the future. Good.,,mods/mcaconversations-1.2.0.jar,1
+836,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.regrets.sit_with_it,...,,mods/mcaconversations-1.2.0.jar,1
+837,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.close.honest.thank/1,"You're welcome. And you didn't dress it up as help you weren't going to give, which I'll remember.",,mods/mcaconversations-1.2.0.jar,1
+838,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.close.honest.thank/2,"Aye, well. An honest 'no' keeps better than a friendly 'maybe', %1$s.",,mods/mcaconversations-1.2.0.jar,1
+839,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.close.honest.thank/3,Hm. Thank you for hearing it without immediately volunteering for it.,,mods/mcaconversations-1.2.0.jar,1
+840,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.close.honest.say_means/1,...It did. More so knowing you'd not pretend to be more use than you are.,,mods/mcaconversations-1.2.0.jar,1
+841,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.close.honest.say_means/2,Saying it to somebody who won't help is the purer test. It's still a want either way.,,mods/mcaconversations-1.2.0.jar,1
+842,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.dreams.close.honest.say_means/3,"You noticed. I'd rather be heard honestly than helped carelessly, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+843,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.helped.ask_who/2,"Someone passing through, by the sound of it. They didn't stay to be thanked, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+844,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.helped.ask_who/3,"I've a guess. I'll keep it, though. Guessing out loud is how rumours start.",,mods/mcaconversations-1.2.0.jar,1
+845,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.helped.glad/1,It is. We're not much of a village if we only notice each other when something goes wrong.,,mods/mcaconversations-1.2.0.jar,1
+846,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.helped.glad/2,"Aye. One less thing hanging over somebody. That's a good week by our standards, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+847,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.helped.glad/3,"That's the whole of it, isn't it. Everyone takes a turn being the one who needs it.",,mods/mcaconversations-1.2.0.jar,1
+848,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.helped.take_credit/1,...Was it. Well. It'd have been a better story if I'd heard it from somebody else.,,mods/mcaconversations-1.2.0.jar,1
+849,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.helped.take_credit/2,"Hm. I'd got most of the way to admiring whoever did it, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+850,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.helped.take_credit/3,"Aye, I'd half worked that out. You didn't have to help me finish it.",,mods/mcaconversations-1.2.0.jar,1
+851,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.helped.leave/1,"Aye. Off you go, and mind who you tell.",,mods/mcaconversations-1.2.0.jar,1
+852,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.helped.leave/2,"Right you are, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+853,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.news.helped.leave/3,"Go on, then. It'll be round the whole village by morning regardless.",,mods/mcaconversations-1.2.0.jar,1
+854,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.checkin.late/1,Late to be about. I'm no better - I've been up since the fire went low.,,mods/mcaconversations-1.2.0.jar,1
+855,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.checkin.late/2,"You're up. So am I, and neither of us has a good reason, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+856,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.checkin.late/3,"This hour, the village belongs to whoever couldn't sleep. Welcome to it.",,mods/mcaconversations-1.2.0.jar,1
+857,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.checkin.late.ask_why_up/1,Nothing I could name. That's the trouble - a named thing you can put down.,,mods/mcaconversations-1.2.0.jar,1
+858,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.checkin.late.ask_why_up/2,"Tomorrow, mostly. It's very close at this hour, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+859,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.checkin.late.ask_why_up/3,The list. Everyone's got a list and mine reads itself aloud around this time.,,mods/mcaconversations-1.2.0.jar,1
+860,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.checkin.late.send_to_bed/1,...You're right. It will keep. It always keeps and I never believe it until somebody says so.,,mods/mcaconversations-1.2.0.jar,1
+861,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.checkin.late.send_to_bed/2,"Aye. Bed. Thank you for the shove, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+862,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.checkin.late.send_to_bed/3,Right. Nothing at this hour ever looks the same size in the morning.,,mods/mcaconversations-1.2.0.jar,1
+863,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.checkin.late.keep_watch/1,"...You'd sit up. With me. For no reason at all. Well. Pull the other stool over, then.",,mods/mcaconversations-1.2.0.jar,1
+864,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.checkin.late.keep_watch/2,"A while. Aye. It's better company than the list, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+865,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.checkin.late.keep_watch/3,"Don't talk, mind. Just be here. That's the useful part.",,mods/mcaconversations-1.2.0.jar,1
+866,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.checkin.late.leave/1,"Goodnight. Mind the step on the way, it's darker than it looks.",,mods/mcaconversations-1.2.0.jar,1
+867,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.checkin.late.leave/2,"Sleep well, %1$s. One of us ought to.",,mods/mcaconversations-1.2.0.jar,1
+868,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.checkin.late.leave/3,Aye. Goodnight. It'll be morning before either of us is ready for it.,,mods/mcaconversations-1.2.0.jar,1
+869,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.checkin.rough.tense/3,"I'll tell you, but I'll be watching how you take it. Old habits.",,mods/mcaconversations-1.2.0.jar,1
+870,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.respond.empathise.longknown/1,You'd know. You've been about long enough to have watched half of it happen.,,mods/mcaconversations-1.2.0.jar,1
+871,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.respond.empathise.longknown/2,"It wasn't, and you were there for some of it. That's a strange comfort, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+872,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.respond.empathise.longknown/3,"Coming from somebody who's known me this long, that means more than it would from a stranger.",,mods/mcaconversations-1.2.0.jar,1
+873,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.respond.agree.longknown/1,You've been here long enough to say that and mean it. Most agree out of politeness.,,mods/mcaconversations-1.2.0.jar,1
+874,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.respond.agree.longknown/2,"Aye - and you've seen it through a winter or two now, %1$s. Your opinion counts.",,mods/mcaconversations-1.2.0.jar,1
+875,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.respond.agree.longknown/3,"You'd know. You're not a visitor any more, whatever the rest of them say.",,mods/mcaconversations-1.2.0.jar,1
+876,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.open.pledge.trusted/1,...I know you will. That's the strange part - I said it and then realised I already believed it.,,mods/mcaconversations-1.2.0.jar,1
+877,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.open.pledge.trusted/2,"I'd not have told you this a year ago, %1$s. I'd not have told anyone. Hold on to that.",,mods/mcaconversations-1.2.0.jar,1
+878,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.open.pledge.trusted/3,You don't have to promise. You've been doing it for months without the word attached.,,mods/mcaconversations-1.2.0.jar,1
+879,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.followup.promise.trusted/1,...I never doubted it. I asked because saying it out loud makes it a thing between us.,,mods/mcaconversations-1.2.0.jar,1
+880,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.followup.promise.trusted/2,"Your word. I'd already have staked the whole thing on it, %1$s, but it's good to hear.",,mods/mcaconversations-1.2.0.jar,1
+881,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.secret.followup.promise.trusted/3,"Then it's safe, and I knew it was before I opened my mouth. That's why I opened my mouth.",,mods/mcaconversations-1.2.0.jar,1
+882,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.open.thank.spent/1,We've talked it thin for one day. Come back and we'll pick it up where it is.,,mods/mcaconversations-1.2.0.jar,1
+883,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.open.thank.spent/2,"Enough for today. There's only so much of a thing you can say before it stops meaning anything, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+884,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.open.thank.spent/3,"Aye. Let it rest now. It'll still be here, and so will I.",,mods/mcaconversations-1.2.0.jar,1
+885,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.hear_burnout.crit/1,"...It is. Nobody asks the second question, and you just did. Sit down, I've things to say.",,mods/mcaconversations-1.2.0.jar,1
+886,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.hear_burnout.crit/2,"You've been watching the man and not the work, %1$s. That's rarer than a good hammer.",,mods/mcaconversations-1.2.0.jar,1
+887,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.hear_burnout.success/1,...Aye. It is. That's the first time I've said so out loud.,,mods/mcaconversations-1.2.0.jar,1
+888,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.hear_burnout.success/2,"It wears. You noticed. Right - back to it, but thank you.",,mods/mcaconversations-1.2.0.jar,1
+889,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.hear_burnout.partial/1,"Everything wears somebody down. That's not an insight, that's a job.",,mods/mcaconversations-1.2.0.jar,1
+890,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.hear_burnout.partial/2,"Mm. It's work, %1$s. It's supposed to be tiring.",,mods/mcaconversations-1.2.0.jar,1
+891,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.hear_burnout.rebuff/1,Don't diagnose me across a workbench. I've been doing this longer than you've been watching.,,mods/mcaconversations-1.2.0.jar,1
+892,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.hear_burnout.rebuff/2,Wearing me down. Right. Was that meant to be helpful?,,mods/mcaconversations-1.2.0.jar,1
+893,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.ask_which.low/1,"Which part matters. ...Today, the part where it stopped going the way I planned.",,mods/mcaconversations-1.2.0.jar,1
+894,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.ask_which.low/2,"Ask me on a better day, %1$s, and you'll get a different answer to that.",,mods/mcaconversations-1.2.0.jar,1
+895,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.ask_which.low/3,"All of it matters. Today none of it feels like it does. That passes, I'm told.",,mods/mcaconversations-1.2.0.jar,1
+896,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.praise.high/1,Ha! You've caught me on a good day and I'll take every word of that.,,mods/mcaconversations-1.2.0.jar,1
+897,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.praise.high/2,"It has gone well, hasn't it. I'd not have said so first, but since you did, %1$s - aye!",,mods/mcaconversations-1.2.0.jar,1
+898,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.praise.high/3,"Right you are, and don't stop there. Days like this I can take a great deal of it.",,mods/mcaconversations-1.2.0.jar,1
+899,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.ask_improve.passive/1,"Improve it. Hm. Nothing springs to mind, which is either a good sign or a very bad one.",,mods/mcaconversations-1.2.0.jar,1
+900,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.ask_improve.passive/2,"It's fine. Genuinely fine. Nobody ever wants to hear that, %1$s, but there it is.",,mods/mcaconversations-1.2.0.jar,1
+901,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.ask_improve.passive/3,Ask me when something's gone wrong. On an ordinary day I've no complaints ready.,,mods/mcaconversations-1.2.0.jar,1
+902,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.agree.fine/1,Aye. It's food. Some days that's the whole of the review.,,mods/mcaconversations-1.2.0.jar,1
+903,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.agree.fine/2,"It does the job. Not everything has to be an occasion, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+904,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.agree.fine/3,Perfectly ordinary and perfectly sufficient. I'll not pretend otherwise.,,mods/mcaconversations-1.2.0.jar,1
+905,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.weather.enjoy.high/1,Isn't it! I've been finding excuses to be outdoors since breakfast.,,mods/mcaconversations-1.2.0.jar,1
+906,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.weather.enjoy.high/2,"A day like this and I forget every complaint I had about this place, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+907,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.criticise_fairly.mayor/1,"It could. I'd know - it's my name on it when it isn't. Go on, then: where would you start?",,mods/mcaconversations-1.2.0.jar,1
+908,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.criticise_fairly.mayor/2,"You're telling the mayor his village could be run better. ...Bold. And not wrong, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+909,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.criticise_fairly.mayor/3,I've a list of my own that long. The trouble is which end to pick it up by.,,mods/mcaconversations-1.2.0.jar,1
+910,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.ask_improve.smith/1,"We've a smith, which puts us ahead of most. What we've not got is a decent road to reach her by.",,mods/mcaconversations-1.2.0.jar,1
+911,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.ask_improve.smith/2,"The forge is the best thing here. Everything else could learn from it, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+912,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.ask_improve.smith/3,With a smith we can mend what breaks. It's the things nobody can mend that want the work.,,mods/mcaconversations-1.2.0.jar,1
+913,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.ask_why.harvest/1,"Why? In %1$s you don't ask why. You ask whether it's in yet, and it isn't.",,mods/mcaconversations-1.2.0.jar,1
+914,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.ask_why.harvest/2,"Ask me that in a quieter season, %1$s. Right now the answer is 'because it'll rot otherwise'.",,mods/mcaconversations-1.2.0.jar,1
+915,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.ask_why.harvest/3,This time of year the work does the asking and I just answer it.,,mods/mcaconversations-1.2.0.jar,1
+916,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.praise.storm/1,Kind of you to say it standing out in this. Get under something.,,mods/mcaconversations-1.2.0.jar,1
+917,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.praise.storm/2,"Praise in a downpour counts double, %1$s. Now go inside.",,mods/mcaconversations-1.2.0.jar,1
+918,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.praise.storm/3,Ha! You've picked a filthy afternoon to be complimentary. I'll take it.,,mods/mcaconversations-1.2.0.jar,1
+919,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.agree.winter/1,In %1$s you find out what a village is actually made of. This one holds.,,mods/mcaconversations-1.2.0.jar,1
+920,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.agree.winter/2,"Ask me again in spring and I'll be less sentimental about it, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+921,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.village.agree.winter/3,It's the cold months that prove it. Anyone can like a place in summer.,,mods/mcaconversations-1.2.0.jar,1
+922,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.ask_recipe.season/1,"In %1$s? Whatever's ripe, barely cooked, eaten standing up. That's the recipe.",,mods/mcaconversations-1.2.0.jar,1
+923,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.ask_recipe.season/2,"There's no recipe this time of year, %1$s. There's just what came in that morning.",,mods/mcaconversations-1.2.0.jar,1
+924,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.food.ask_recipe.season/3,The trick is to do less to it. Everything's already good right now.,,mods/mcaconversations-1.2.0.jar,1
+925,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work_offer.ask_later.proud/1,"Nothing today - and after the last thing you did for me, I'd almost be embarrassed to ask.",,mods/mcaconversations-1.2.0.jar,1
+926,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work_offer.ask_later.proud/2,"Come back tomorrow, %1$s. You've done enough for this village to be going on with.",,mods/mcaconversations-1.2.0.jar,1
+927,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work_offer.ask_later.proud/3,Not just now. I'm still telling people about the last one.,,mods/mcaconversations-1.2.0.jar,1
+928,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.noticed.fine.respond.blunt,You're not fine and we both know it.,,mods/mcaconversations-1.2.0.jar,1
+929,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.people.respond.blunt,Some of that sounds like your side of it.,,mods/mcaconversations-1.2.0.jar,1
+930,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.blunt/1,"...I would, wouldn't I. It's what you say about your own trade. ...Ask me again and I'll try harder.",,mods/mcaconversations-1.2.0.jar,1
+931,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.blunt/2,"That's a rude thing to be right about, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+932,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.work.blunt/3,Hm. Fair. Half of what I say about the work is habit and the other half is defence.,,mods/mcaconversations-1.2.0.jar,1
+933,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.no_words/1,...Good. Nobody should have anything ready for a thing like that. Sit there a minute instead.,,mods/mcaconversations-1.2.0.jar,1
+934,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.no_words/2,"You don't have to have an answer, %1$s. I've had thirty years and I've not got one.",,mods/mcaconversations-1.2.0.jar,1
+935,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.life.no_words/3,That's more honest than a comfort would have been. Thank you for not reaching for one.,,mods/mcaconversations-1.2.0.jar,1
+936,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.fears.no_words/1,"...Nor did I, for years. That's rather the whole trouble with it. We'll sit here not knowing together.",,mods/mcaconversations-1.2.0.jar,1
+937,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.neighbour.death/1,"...%2$s. I'd rather not, if it's all the same. It's too near.",,mods/mcaconversations-1.2.0.jar,1
+938,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.neighbour.death/2,%2$s is gone. I keep starting to say their name and then not.,,mods/mcaconversations-1.2.0.jar,1
+939,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.neighbour.death/3,"Don't ask me about %2$s this week, %1$s. Ask me next month and I'll tell you properly.",,mods/mcaconversations-1.2.0.jar,1
+940,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.neighbour.divorce/1,%2$s and %3$s. There's a whole story and I've decided not to be the one telling it.,,mods/mcaconversations-1.2.0.jar,1
+941,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.neighbour.divorce/2,%2$s is having a bad year. That's as much as I'll say about it.,,mods/mcaconversations-1.2.0.jar,1
+942,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.neighbour.divorce/3,"%2$s and %3$s parted. I liked them both, which makes it awkward at the well.",,mods/mcaconversations-1.2.0.jar,1
+943,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.neighbour.arrival/1,"%2$s? New. I've not decided about them yet, and I take my time over that.",,mods/mcaconversations-1.2.0.jar,1
+944,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.neighbour.arrival/2,%2$s moved in recently. Seems steady. Ask me again in a season.,,mods/mcaconversations-1.2.0.jar,1
+945,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.neighbour.arrival/3,"You'll have met %2$s. Still finding the lanes. Be kind to them, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+946,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.neighbour.departure/1,%2$s left. I think about that more than I expected to.,,mods/mcaconversations-1.2.0.jar,1
+947,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.neighbour.departure/2,"%2$s went. No forwarding word. That's their right, but still.",,mods/mcaconversations-1.2.0.jar,1
+948,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.neighbour.departure/3,%2$s doesn't live here any more. The house looks wrong with nobody in it.,,mods/mcaconversations-1.2.0.jar,1
+949,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.neighbour.quest/1,%2$s had a bad patch and somebody sorted it. They've been walking taller since.,,mods/mcaconversations-1.2.0.jar,1
+950,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.neighbour.quest/2,Something got fixed for %2$s. They'll not say what and I'll not ask.,,mods/mcaconversations-1.2.0.jar,1
+951,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.neighbour.quest/3,"%2$s owes somebody a favour. Small village, %1$s — that gets noticed.",,mods/mcaconversations-1.2.0.jar,1
+952,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.neighbour.respond,"That's who's been on my mind, anyway.",,mods/mcaconversations-1.2.0.jar,1
+953,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.neighbour.respond.ask_more,"What are they like, really?",,mods/mcaconversations-1.2.0.jar,1
+954,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.neighbour.respond.defend_them,They've always been decent to me.,,mods/mcaconversations-1.2.0.jar,1
+955,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.neighbour.respond.not_my_business,"That's theirs to tell, not yours.",,mods/mcaconversations-1.2.0.jar,1
+956,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.neighbour.respond.encourage_more,Go on — what else do you know?,,mods/mcaconversations-1.2.0.jar,1
+957,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.neighbour.respond.leave,I'll not pry.,,mods/mcaconversations-1.2.0.jar,1
+958,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.neighbour.defend_them/1,"...They have, haven't they. I'd got into the habit of the other story. Thank you for the correction.",,mods/mcaconversations-1.2.0.jar,1
+959,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.neighbour.defend_them/2,"That's true, and I'd forgotten it was true. It's easier to remember the one bad afternoon.",,mods/mcaconversations-1.2.0.jar,1
+960,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.neighbour.defend_them/3,"Aye. They are decent. I'd let the telling run away from the person, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+961,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.neighbour.encourage_more/1,...I could. I'm not going to. You've a hungry look about you and I don't like where this goes.,,mods/mcaconversations-1.2.0.jar,1
+962,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.neighbour.encourage_more/2,"That's the wrong question, %1$s, and I've asked it myself often enough to recognise it.",,mods/mcaconversations-1.2.0.jar,1
+963,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.neighbour.encourage_more/3,No. What I've said is already a sentence more than I'd have liked.,,mods/mcaconversations-1.2.0.jar,1
+964,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.neighbour.leave/1,Good. There's little enough privacy in a place this size.,,mods/mcaconversations-1.2.0.jar,1
+965,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.neighbour.leave/2,"Right you are, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+966,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.neighbour.leave/3,"Aye. Off you go, and mind what you repeat.",,mods/mcaconversations-1.2.0.jar,1
+967,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.neighbour.followup,"That's the whole of what I know, anyway.",,mods/mcaconversations-1.2.0.jar,1
+968,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.neighbour.followup.ask_history,How long have you known them?,,mods/mcaconversations-1.2.0.jar,1
+969,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.neighbour.followup.be_honest,You don't sound sure about them.,,mods/mcaconversations-1.2.0.jar,1
+970,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.neighbour.followup.let_it_lie,Let's leave them be.,,mods/mcaconversations-1.2.0.jar,1
+971,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.neighbour.followup.leave,That'll do.,,mods/mcaconversations-1.2.0.jar,1
+972,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.neighbour.followup_leave/1,Aye. That's enough about anybody for one day.,,mods/mcaconversations-1.2.0.jar,1
+973,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.neighbour.followup_leave/2,"Right you are, %1$s. Mind how you go.",,mods/mcaconversations-1.2.0.jar,1
+974,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.neighbour.followup_leave/3,"Go on, then. And thank you for not pushing.",,mods/mcaconversations-1.2.0.jar,1
+975,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.neighbour.none.respond,"Nobody comes to mind, honestly.",,mods/mcaconversations-1.2.0.jar,1
+976,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.neighbour.none.respond.ask_anyway,Nobody at all?,,mods/mcaconversations-1.2.0.jar,1
+977,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.neighbour.none.respond.glad,That sounds like a good week.,,mods/mcaconversations-1.2.0.jar,1
+978,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.neighbour.none.respond.press,Someone must have done something.,,mods/mcaconversations-1.2.0.jar,1
+979,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.topic.neighbour.none.respond.leave,Fair enough.,,mods/mcaconversations-1.2.0.jar,1
+980,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.neighbour.ask_anyway/1,"Nobody worth naming. There's always somebody worth naming, so this is remarkable.",,mods/mcaconversations-1.2.0.jar,1
+981,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.neighbour.ask_anyway/2,"Not one, %1$s. I've checked. I checked twice, actually, which tells you about my week.",,mods/mcaconversations-1.2.0.jar,1
+982,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.neighbour.glad/1,"It has been, at that. Nobody's fallen out with anybody. I'd forgotten it could be like this.",,mods/mcaconversations-1.2.0.jar,1
+983,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.neighbour.glad/2,"A good week. Aye. Say it quietly, %1$s, in case somebody hears and fixes it.",,mods/mcaconversations-1.2.0.jar,1
+984,ОТСУТСТВУЕТ,mca_dialogue,dialogue.conversations.neighbour.glad/3,It is. Ordinary weeks get no credit and they're most of a life.,,mods/mcaconversations-1.2.0.jar,1
+985,ОТСУТСТВУЕТ,mca_dialogue_anxious,anxious.dialogue.conversations.checkin.good/1,"Good, I think? Nothing's gone wrong yet, which usually means something's about to. But — good. Thank you for asking.",,mods/mcaconversations-1.2.0.jar,1
+986,ОТСУТСТВУЕТ,mca_dialogue_anxious,anxious.dialogue.conversations.checkin.good/2,"Fine, actually! I keep waiting for the catch, but there hasn't been one. That's new.",,mods/mcaconversations-1.2.0.jar,1
+987,ОТСУТСТВУЕТ,mca_dialogue_anxious,anxious.dialogue.conversations.checkin.good/3,"Better than I expected. I'd braced for much worse, so I'm counting it a win.",,mods/mcaconversations-1.2.0.jar,1
+988,ОТСУТСТВУЕТ,mca_dialogue_anxious,anxious.dialogue.conversations.checkin.rough/1,"Not good. I've been turning the same worry over since Tuesday and it hasn't got any smaller. Sorry, %1$s.",,mods/mcaconversations-1.2.0.jar,1
+989,ОТСУТСТВУЕТ,mca_dialogue_anxious,anxious.dialogue.conversations.checkin.rough/2,Rough. I keep thinking I've forgotten something important and I can't work out what.,,mods/mcaconversations-1.2.0.jar,1
+990,ОТСУТСТВУЕТ,mca_dialogue_anxious,anxious.dialogue.conversations.checkin.again/2,Twice now. Should I be reading into that? I'm still fine. Mostly fine.,,mods/mcaconversations-1.2.0.jar,1
+991,ОТСУТСТВУЕТ,mca_dialogue_anxious,anxious.dialogue.conversations.work.hate/1,"What if I get it wrong? People rely on this. That thought sits with me most days, honestly.",,mods/mcaconversations-1.2.0.jar,1
+992,ОТСУТСТВУЕТ,mca_dialogue_anxious,anxious.dialogue.conversations.work.hate/2,It's the responsibility. One mistake and it's everyone's problem. I think about that far too much.,,mods/mcaconversations-1.2.0.jar,1
+993,ОТСУТСТВУЕТ,mca_dialogue_anxious,anxious.dialogue.conversations.people.first/1,They're kind. I do worry I've said the wrong thing to them — usually I haven't. Usually.,,mods/mcaconversations-1.2.0.jar,1
+994,ОТСУТСТВУЕТ,mca_dialogue_anxious,anxious.dialogue.conversations.people.first/2,"Good people. I replay our conversations afterwards, though. Every one of them.",,mods/mcaconversations-1.2.0.jar,1
+995,ОТСУТСТВУЕТ,mca_dialogue_anxious,anxious.dialogue.conversations.fears.first/1,"All of them, honestly — that's rather the problem. Mostly that something bad happens and it's my fault.",,mods/mcaconversations-1.2.0.jar,1
+996,ОТСУТСТВУЕТ,mca_dialogue_anxious,anxious.dialogue.conversations.fears.first/2,"Letting someone down without realising I'd done it. That one follows me about, %1$s.",,mods/mcaconversations-1.2.0.jar,1
