@@ -52,3 +52,13 @@ Verification: wait for experimental addon Forge compilation run and integration 
 ## RPG expansion: exploration and agriculture
 
 Added two new RPG branches beyond the existing five: **Исследование** (exploration, 24 skill XP per newly discovered biome, recording up to 128 biome identifiers in per-player persistent NBT, Luck rank I / underground Night Vision rank II / Luck II rank III) and **Земледелие** (8 skill XP for harvesting mature crop blocks, escalating small vanilla XP bonuses at ranks I–III). Both expose progress, unlockable perks and Russian descriptions through `/skills`. Existing saved skills remain intact. World structures, MCA relationships, and native Power Grid data are not modified by this feature. Forge compilation and main MRPACK GitHub Actions must pass before the update is marked releasable. Next priority: dedicated GUI skill tree, trading/leadership specialization, exploit resistance and playtesting.
+
+## Worker logistics and village pantry reliability (19 October 2026)
+
+Changed **WorkerChests.java only**, leaving the RPG skill system untouched as requested:
+- Block chest reassignment if a worker still carries a harvest, preventing silent NBT item deletion.
+- Release the old chest's worker ownership when the old chest is loaded and available; refuse takeover of another worker's chest.
+- Correctly respect per-slot inventory capacity and `canPlaceItem` rules, avoiding overstacking and inserting into restricted slots.
+- Add food reserve replenishment from *surplus* in a linked chest: worker must be within 6 blocks, hunger at least 70, personal reserve empty and chest must contain more than 16 eligible food items; transfers one food item to personal reserve. Food replenishment remains active during worker rest; harvesting and moving items pause.
+
+Build verification: Forge addon compilation and full MRPACK CI started automatically; review latest run conclusions before claiming ready. This logic is standalone to worker chests; it does not modify MCA's reputation, relationships, or skill trees. Next: implement capacity/backpressure diagnostics, optionally configurable permitted harvest list and an end-to-end world smoke test.
