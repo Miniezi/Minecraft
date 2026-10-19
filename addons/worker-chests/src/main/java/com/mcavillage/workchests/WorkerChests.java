@@ -2,6 +2,7 @@ package com.mcavillage.workchests;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -60,6 +61,15 @@ public final class WorkerChests {
         int comfort=Math.min(100,data.getInt(NEED_COMFORT)+(int)(elapsed/400));
         if (level.isRainingAt(worker.blockPosition())) comfort=Math.min(100,comfort+2);
         if (worker.getHealth()<worker.getMaxHealth()*0.5F) comfort=Math.min(100,comfort+2);
+        // Resting in a bedroom restores comfort. Scan at most 75 blocks once per 200 ticks.
+        if (data.getBoolean(PAUSED) && comfort>0) {
+            BlockPos center=worker.blockPosition();
+            boolean bedNearby=false;
+            for (BlockPos candidate:BlockPos.betweenClosed(center.offset(-2,-1,-2),center.offset(2,1,2))) {
+                if (level.getBlockState(candidate).is(BlockTags.BEDS)) { bedNearby=true;break; }
+            }
+            comfort=Math.max(0,comfort-(bedNearby?12:3));
+        }
         int reserve=data.getInt(FOOD_RESERVE);
         if (hunger>=65 && reserve>0) {
             reserve--;
