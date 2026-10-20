@@ -273,7 +273,8 @@ def run(args):
     counts=Counter(x['status'] for x in audit)
     summary={"namespaces":sorted(namespaces),"status_counts":counts,"total_keys":len(audit),
              "pack":str(args.output),"report":str(args.report),
-             "complete":counts.get('pending',0)==0 and not counts.get('excluded',0)}
+             "language_key_candidates_done":counts.get('pending',0)==0,
+             "complete_modpack_translation_verified":False}
     Path(args.summary).write_text(json.dumps(summary,ensure_ascii=False,indent=2,default=dict)+'\n',encoding='utf-8')
     print(json.dumps(summary,ensure_ascii=False,indent=2,default=dict))
     if args.fail_on_pending and counts.get('pending',0):
