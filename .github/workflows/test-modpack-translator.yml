@@ -1,0 +1,22 @@
+name: Validate Modpack Translator
+on:
+  push:
+    branches: [minecraft]
+    paths:
+      - 'переводчик сборок/**'
+      - '.github/workflows/test-modpack-translator.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Python syntax and translation unit tests
+        run: |
+          python -m py_compile "переводчик сборок/translate_modpack.py"
+          python -m unittest discover -s "переводчик сборок" -p "test_*.py" -v
