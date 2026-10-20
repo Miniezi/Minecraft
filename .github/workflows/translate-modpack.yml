@@ -1,0 +1,54 @@
+name: Translate Minecraft Modpack
+on:
+  workflow_dispatch:
+    inputs:
+      source_url:
+        description: 'Direct HTTPS link to modpack ZIP or MRPACK'
+        required: true
+        type: string
+      download_mods:
+        description: 'Download SHA512-verified JAR files from MRPACK'
+        required: false
+        type: boolean
+        default: true
+      model:
+        description: 'OpenAI translation model'
+        required: false
+        type: string
+        default: 'gpt-4o-mini'
+permissions:
+  contents: read
+jobs:
+  translate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test translator
+        run: python -m unittest discover -s "переводчик сборок" -p "test_*.py" -v
+      - name: Generate Russian translation
+        env:
+          SOURCE_URL: ${{ inputs.source_url }}
+          DOWNLOAD_MODS: ${{ inputs.download_mods }}
+          MODEL: ${{ inputs.model }}
+        shell: bash
+        run: |
+          args=(--source-url "$SOURCE_URL" --model "$MODEL" --output build/modpack-ru.zip --report build/audit.csv --summary build/summary.json)
+          if [[ "$DOWNLOAD_MODS" == "true" ]]; then args+=(--download-mods); fi
+          python "переводчик сборок/translate_modpack.py" "${args[@]}"
+      - name: Save translation and full audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: translated-modpack-ru
+          path: |
+            build/modpack-ru.zip
+            build/audit.csv
+            build/summary.json
+            translations/cache.json
+          if-no-files-found: warn
