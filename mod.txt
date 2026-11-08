@@ -1,0 +1,1 @@
+System.out.println("[Minecraft Safe Tools] Text mod loaded!");
