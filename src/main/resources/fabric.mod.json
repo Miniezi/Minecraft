@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "minecraft_safe_tools",
+  "version": "${version}",
+  "name": "Minecraft Safe Tools",
+  "description": "Safe Fabric 26.3 starter mod. Includes an in-game status command.",
+  "authors": ["Miniezi"],
+  "environment": "*",
+  "entrypoints": {
+    "main": ["dev.miniezi.safetools.SafeToolsMod"]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.5",
+    "minecraft": "26.3",
+    "java": ">=25",
+    "fabric-api": "*"
+  }
+}
