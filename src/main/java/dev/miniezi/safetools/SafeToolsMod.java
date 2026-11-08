@@ -9,6 +9,8 @@ import net.minecraft.network.chat.Component;
 public final class SafeToolsMod implements ModInitializer {
     @Override
     public void onInitialize() {
+        TxtMod.initialize();
+
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
             dispatcher.register(Commands.literal("modstatus").executes(context -> {
                 context.getSource().sendSuccess(
