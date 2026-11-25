@@ -34,10 +34,10 @@ jobs:
         run: |
           python3 tools/package_release.py
           python3 tools/package_release.py --source
-          cp ../Bunker-Relay-0.52.0.zip dist/
+          cp ../Bunker-Relay-*.zip dist/
       - uses: actions/upload-artifact@v4
         with:
-          name: Bunker-Relay-0.52.0
+          name: Bunker-Relay-release
           path: sources/Bunker-Relay/dist/*
           if-no-files-found: error
       - name: Dedicated server expedition test
