@@ -4475,3 +4475,253 @@ index 67dff86..8b3c1c6 100644
              check(landmarks.stream().allMatch(room->!PersonalLoot.templateItem(zone,
                  new BlockPos(room.getInt("x"),room.getInt("y"),room.getInt("z")),4).isEmpty()),"landmark caches stocked");
              System.out.println("RELAY_SPORE_STORY_PASS");
+diff --git a/README_RU.md b/README_RU.md
+index f0d9ef0..388d43c 100644
+--- a/README_RU.md
++++ b/README_RU.md
+@@ -1,4 +1,4 @@
+-# Bunker Relay 0.59.0
++# Bunker Relay 0.60.0
+ 
+ Изменения релиза см. в WORK_0.56.md.
+ 
+diff --git a/WORK_0.60.md b/WORK_0.60.md
+new file mode 100644
+index 0000000..3cb8b5d
+--- /dev/null
++++ b/WORK_0.60.md
+@@ -0,0 +1,3 @@
++# 0.60.0
++
++Пять ориентиров выбираются из полного пула зоны. При повторной генерации минимум три шаблона отличаются от предыдущего посещения этой темы. История сохраняется между запусками. Сюжетные здания и входы в специальные интерьеры сохранены.
+diff --git a/mod/build.gradle b/mod/build.gradle
+index 029ef5f..46fa5fa 100644
+--- a/mod/build.gradle
++++ b/mod/build.gradle
+@@ -1,5 +1,5 @@
+ plugins { id 'java-library'; id 'net.neoforged.moddev' version '2.0.148' }
+-version = '0.59.0'
++version = '0.60.0'
+ group = 'dev.bunkerrelay'
+ base { archivesName = 'bunkerrelay' }
+ java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+diff --git a/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java b/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java
+index 1d2f1c0..ae2e6fc 100644
+--- a/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java
++++ b/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java
+@@ -233,7 +233,7 @@ public final class BunkerRelay {
+   var center=fixedOrigin?new SectorPlan.Center(s.centerX,s.centerZ):SectorPlan.center(s.nextSector);if(fixedOrigin)s.nextSector=Math.max(s.nextSector,1);else s.nextSector++;s.centerX=center.x();s.centerZ=center.z();s.activeSize=s.size;s.activeTheme=s.theme;
+   s.activeDimension=ExpeditionReset.dimension(s.theme);
+   ExpeditionLight.accept(s);
+-  s.generating=true;s.ready=false;s.seed=new Random().nextLong();s.activeDifficulty=ZoneProfile.of(s.activeTheme).difficulty(s.seed);s.activeLoot=s.activeDifficulty;s.variableStories=true;s.sectorBuildings=true;s.caches.clear();s.scoutMap=new net.minecraft.nbt.CompoundTag();s.fieldRoutes=new net.minecraft.nbt.CompoundTag();s.setDirty();progress=0;server.saveEverything(false,true,true);borders(server);
++  s.generating=true;s.ready=false;s.seed=ZoneLandmarks.nextSeed(s);s.activeDifficulty=ZoneProfile.of(s.activeTheme).difficulty(s.seed);s.activeLoot=s.activeDifficulty;s.variableStories=true;s.sectorBuildings=true;s.caches.clear();s.scoutMap=new net.minecraft.nbt.CompoundTag();s.fieldRoutes=new net.minecraft.nbt.CompoundTag();s.setDirty();progress=0;server.saveEverything(false,true,true);borders(server);
+   builder=new ExpeditionBuilder(server.getLevel(key(s.activeDimension)),s);broadcast(server,"Обновляем локации "+s.activeSize+"×"+s.activeSize+". Команда может оставаться на базе.");
+  }
+  private void teleport(ServerPlayer p,ServerLevel l,BlockPos pos){authorisedTravel=true;try{p.stopRiding();p.teleportTo(l,pos.getX()+0.5,pos.getY(),pos.getZ()+0.5,Set.of(),180,0);p.connection.send(new net.minecraft.network.protocol.game.ClientboundInitializeBorderPacket(l.getWorldBorder()));p.fallDistance=0;}finally{authorisedTravel=false;}}
+diff --git a/mod/src/main/java/dev/bunkerrelay/LiveRefreshTest.java b/mod/src/main/java/dev/bunkerrelay/LiveRefreshTest.java
+index 8b3c1c6..29559a0 100644
+--- a/mod/src/main/java/dev/bunkerrelay/LiveRefreshTest.java
++++ b/mod/src/main/java/dev/bunkerrelay/LiveRefreshTest.java
+@@ -90,7 +90,7 @@ final class LiveRefreshTest {
+             check(zone.getBlockState(BlockPos.of(state.cargoStation)).is(Blocks.LODESTONE),"template cargo node");
+             var landmarks=allRooms.stream().filter(room->room.getString("type").equals("landmark")).toList();
+             check(landmarks.size()==ZoneLandmarks.COUNT,"five zone landmarks");
+-            check(landmarks.stream().filter(room->java.util.Set.of("minecraft","kaisyn").contains(SporeStorySites.templateId(room.getString("template")).getNamespace())).count()==2,"two imported forest landmarks");
++            check(landmarks.stream().map(room->room.getString("template")).distinct().count()==5,"five distinct landmarks");
+             check(landmarks.stream().allMatch(room->!PersonalLoot.templateItem(zone,
+                 new BlockPos(room.getInt("x"),room.getInt("y"),room.getInt("z")),4).isEmpty()),"landmark caches stocked");
+             System.out.println("RELAY_SPORE_STORY_PASS");
+diff --git a/mod/src/main/java/dev/bunkerrelay/PolarIntegrationTest.java b/mod/src/main/java/dev/bunkerrelay/PolarIntegrationTest.java
+index bc17729..5086afe 100644
+--- a/mod/src/main/java/dev/bunkerrelay/PolarIntegrationTest.java
++++ b/mod/src/main/java/dev/bunkerrelay/PolarIntegrationTest.java
+@@ -12,6 +12,7 @@ import net.neoforged.neoforge.common.util.FakePlayer;
+ final class PolarIntegrationTest {
+     private static BlockPos entry;
+     private static long seed;
++    private static java.util.Set<String> previousSites;
+     static void launch(MinecraftServer server,RelayState state){
+         var player=new FakePlayer(server.getLevel(BunkerRelay.HUB),new GameProfile(UUID.randomUUID(),"WinterTerminal"));
+         var terminal=HubBuilder.TERMINAL;
+@@ -36,7 +37,9 @@ final class PolarIntegrationTest {
+             check(!PersonalLoot.templateItem(level,at,4).isEmpty(),"stocked landmark");
+             check(level.getBlockState(BlockPos.of(room.getLong("hearth"))).is(Blocks.CAMPFIRE),"warming station");
+         }
++        var sites=rooms.stream().map(room->room.getString("template")).collect(java.util.stream.Collectors.toSet());
+         if(entry!=null){
++            check(sites.stream().filter(site->!previousSites.contains(site)).count()>=3,"three replacement buildings");
+             check(entry.equals(arrival) && seed!=state.seed,"same-place regeneration");
+             System.out.println("RELAY_POLAR_PASS terminal=true cold=true shelter=true heat=true loot=true live=true");
+             server.halt(false);
+@@ -63,7 +66,7 @@ final class PolarIntegrationTest {
+             RaidJournal.get(server).raids.remove(player.getUUID());
+             level.removeBlock(sample.above(2),false);level.removeBlock(sample.east(),false);
+         }
+-        entry=arrival;seed=state.seed;
++        previousSites=sites;entry=arrival;seed=state.seed;
+         launch(server,state);
+     }
+ 
+diff --git a/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java b/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java
+index 0304615..ceae9e4 100644
+--- a/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java
++++ b/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java
+@@ -60,7 +60,46 @@ final class ZoneLandmarks {
+     }
+ 
+     // Keep the contract sites fixed; vary one support site per region and expedition.
+-    static Plan select(String theme,int index,long seed){
++    private static final java.util.Map<String,List<Plan>> POOLS=new java.util.HashMap<>();
++
++    private static List<Plan> pool(String theme){
++        return POOLS.computeIfAbsent(theme,key->{
++            var sites=new java.util.LinkedHashSet<Plan>(plans(key));
++            for(int sample=0;sample<64;sample++)for(int slot=3;slot<5;slot++)
++                sites.add(variant(key,slot,sample));
++            return List.copyOf(sites);
++        });
++    }
++
++    static List<Plan> lineup(String theme,long seed){
++        var candidates=new java.util.ArrayList<>(pool(theme));
++        var random=new java.util.Random(seed ^ theme.hashCode());
++        java.util.Collections.shuffle(candidates,random);
++        // Keep the entrance to the regional interior available on every expedition.
++        String required=switch(theme){case "industrial"->"cell";case "infected"->"hospital";case "ash"->"military_camp";default->"";};
++        var selected=new java.util.ArrayList<>(candidates.subList(0,COUNT));
++        var anchor=candidates.stream().filter(p->p.template().equals(required)).findFirst();
++        if(anchor.isPresent()&&!selected.contains(anchor.get()))selected.set(COUNT-1,anchor.get());
++        java.util.Collections.shuffle(selected,random);
++        return selected;
++    }
++
++    static Plan select(String theme,int index,long seed){return lineup(theme,seed).get(index);}
++
++    static long nextSeed(RelayState state){
++        String key="lastLineup/"+state.theme;
++        var random=new java.util.Random();
++        long seed=random.nextLong();
++        if(state.structureLayouts.contains(key)){
++            var previous=lineup(state.theme,state.structureLayouts.getLong(key));
++            while(lineup(state.theme,seed).stream().filter(p->!previous.contains(p)).count()<3)
++                seed=random.nextLong();
++        }
++        state.structureLayouts.putLong(key,seed);
++        return seed;
++    }
++
++    private static Plan variant(String theme,int index,long seed){
+         var base=plans(theme).get(index);
+         var profile=ZoneProfile.of(theme);
+         int slot=switch(profile){case INDUSTRIAL, INFECTED, ASH -> 4; default -> 3;};
+diff --git a/mod/src/main/resources/META-INF/neoforge.mods.toml b/mod/src/main/resources/META-INF/neoforge.mods.toml
+index 3df31b6..a413d90 100644
+--- a/mod/src/main/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/main/resources/META-INF/neoforge.mods.toml
+@@ -3,7 +3,7 @@ loaderVersion="[4,)"
+ license="MIT"
+ [[mods]]
+ modId="bunkerrelay"
+-version="0.59.0"
++version="0.60.0"
+ displayName="Bunker Relay"
+ description="Cooperative bunker, garage and procedural expeditions. Early prototype."
+ [[dependencies.bunkerrelay]]
+@@ -56,7 +56,7 @@ side="BOTH"
+ [[dependencies.bunkerrelay]]
+ modId="relaylights"
+ type="required"
+-versionRange="[0.59.0]"
++versionRange="[0.60.0]"
+ ordering="AFTER"
+ side="BOTH"
+ 
+@@ -66,13 +66,13 @@ config="bunkerrelay.mixins.json"
+ [[dependencies.bunkerrelay]]
+ modId="relayfactories"
+ type="required"
+-versionRange="[0.59.0]"
++versionRange="[0.60.0]"
+ ordering="AFTER"
+ side="BOTH"
+ 
+ [[dependencies.bunkerrelay]]
+ modId="relayarsenal"
+ type="required"
+-versionRange="[0.59.0]"
++versionRange="[0.60.0]"
+ ordering="AFTER"
+ side="BOTH"
+diff --git a/mod/src/relayArsenal/resources/META-INF/neoforge.mods.toml b/mod/src/relayArsenal/resources/META-INF/neoforge.mods.toml
+index 0007806..f908cce 100644
+--- a/mod/src/relayArsenal/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/relayArsenal/resources/META-INF/neoforge.mods.toml
+@@ -4,7 +4,7 @@ license="MIT"
+ 
+ [[mods]]
+ modId="relayarsenal"
+-version="0.59.0"
++version="0.60.0"
+ displayName="Relay Arsenal"
+ description="Historical TaCZ arsenal for Bunker Relay."
+ 
+diff --git a/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml b/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml
+index 1029dde..429cbaa 100644
+--- a/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml
+@@ -4,7 +4,7 @@ license="MIT"
+ 
+ [[mods]]
+ modId="relayfactories"
+-version="0.59.0"
++version="0.60.0"
+ displayName="Relay Factories"
+ description="Factory structures for industrial expeditions."
+ 
+diff --git a/mod/src/relayLights/resources/META-INF/neoforge.mods.toml b/mod/src/relayLights/resources/META-INF/neoforge.mods.toml
+index 4cba51f..8e2f2f6 100644
+--- a/mod/src/relayLights/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/relayLights/resources/META-INF/neoforge.mods.toml
+@@ -4,7 +4,7 @@ license="MIT"
+ 
+ [[mods]]
+ modId="relaylights"
+-version="0.59.0"
++version="0.60.0"
+ displayName="Relay Lights"
+ description="Directional lights with personal and multiplayer modes."
+ 
+diff --git a/modrinth.index.json b/modrinth.index.json
+index 1bfaf78..3babb3f 100644
+--- a/modrinth.index.json
++++ b/modrinth.index.json
+@@ -1,7 +1,7 @@
+ {
+   "formatVersion": 1,
+   "game": "minecraft",
+-  "versionId": "0.59.0",
++  "versionId": "0.60.0",
+   "name": "Bunker Relay",
+   "summary": "Cooperative expeditions, ECHO encounters, threats, extraction and persistent bunker.",
+   "files": [
+diff --git a/tools/package_release.py b/tools/package_release.py
+index e3f28ff..33bcdba 100644
+--- a/tools/package_release.py
++++ b/tools/package_release.py
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env python3
+ import hashlib,pathlib,shutil,zipfile,sys
+ ROOT=pathlib.Path(__file__).resolve().parents[1];dist=ROOT/'dist';dist.mkdir(exist_ok=True)
+-VERSION='0.59.0';source='--source' in sys.argv;jar=ROOT/f'mod/build/libs/bunkerrelay-{VERSION}.jar'
++VERSION='0.60.0';source='--source' in sys.argv;jar=ROOT/f'mod/build/libs/bunkerrelay-{VERSION}.jar'
+ lights=ROOT/f'mod/build/libs/relaylights-{VERSION}.jar'
+ factories=ROOT/f'mod/build/libs/relayfactories-{VERSION}.jar'
+ if not source:
+@@ -66,6 +66,7 @@ if not source:
+   z.write(ROOT/'WORK_0.57.md','overrides/WORK_0.57.md')
+   z.write(ROOT/'WORK_0.58.md','overrides/WORK_0.58.md')
+   z.write(ROOT/'WORK_0.59.md','overrides/WORK_0.59.md')
++  z.write(ROOT/'WORK_0.60.md','overrides/WORK_0.60.md')
+   z.write(arsenal,'overrides/mods/'+arsenal.name)
+   z.write(factories,'overrides/mods/'+factories.name)
+   z.write(lights,'overrides/mods/'+lights.name)
