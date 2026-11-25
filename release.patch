@@ -2319,7 +2319,7 @@ index 0000000..e17e357
 +        if(this==PHARMACY && state.activeLoot>=3)chest.setItem(20,new ItemStack(Medicine.MEDKIT.get()));
 +        PersonalLoot.convert(level,at,chest);
 +        if(level.getBlockEntity(at) instanceof BaseContainerBlockEntity personal){
-+            personal.setCustomName(Component.literal(title));
++            var tag=personal.saveWithoutMetadata(level.registryAccess()); tag.putString("CustomName",Component.Serializer.toJson(Component.literal(title),level.registryAccess())); personal.loadWithComponents(tag,level.registryAccess());
 +            personal.setChanged();
 +        }
 +    }
