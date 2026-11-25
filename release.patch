@@ -4462,3 +4462,16 @@ index bcb5992..0304615 100644
                  case INDUSTRIAL -> draw==1?new Plan("Разбитый сухогруз","minecraft:shipwreck/rightsideup_full",SupplySites.Kind.WAREHOUSE,false):new Plan("Старая кузница","minecraft:village/plains/houses/plains_tool_smith_1",SupplySites.Kind.WAREHOUSE,false);
                  case INFECTED -> draw==1?new Plan("Карантинная часовня","minecraft:village/plains/houses/plains_temple_3",SupplySites.Kind.CANTEEN,true):new Plan("Палата изоляции","minecraft:igloo/bottom",SupplySites.Kind.CANTEEN,true);
                  case ASH -> draw==1?new Plan("Засыпанная оружейная","minecraft:village/desert/houses/desert_armorer_1",SupplySites.Kind.ARMORY,false):new Plan("Дозорная застава","minecraft:pillager_outpost/watchtower",SupplySites.Kind.ARMORY,false);
+diff --git a/mod/src/main/java/dev/bunkerrelay/LiveRefreshTest.java b/mod/src/main/java/dev/bunkerrelay/LiveRefreshTest.java
+index 67dff86..8b3c1c6 100644
+--- a/mod/src/main/java/dev/bunkerrelay/LiveRefreshTest.java
++++ b/mod/src/main/java/dev/bunkerrelay/LiveRefreshTest.java
+@@ -90,7 +90,7 @@ final class LiveRefreshTest {
+             check(zone.getBlockState(BlockPos.of(state.cargoStation)).is(Blocks.LODESTONE),"template cargo node");
+             var landmarks=allRooms.stream().filter(room->room.getString("type").equals("landmark")).toList();
+             check(landmarks.size()==ZoneLandmarks.COUNT,"five zone landmarks");
+-            check(landmarks.stream().filter(room->room.getString("template").startsWith("kaisyn:")).count()==2,"two imported forest landmarks");
++            check(landmarks.stream().filter(room->java.util.Set.of("minecraft","kaisyn").contains(SporeStorySites.templateId(room.getString("template")).getNamespace())).count()==2,"two imported forest landmarks");
+             check(landmarks.stream().allMatch(room->!PersonalLoot.templateItem(zone,
+                 new BlockPos(room.getInt("x"),room.getInt("y"),room.getInt("z")),4).isEmpty()),"landmark caches stocked");
+             System.out.println("RELAY_SPORE_STORY_PASS");
