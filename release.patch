@@ -344,10 +344,10 @@ index 450f78d..0abad3c 100644
          if(type!=null){chest.getPersistentData().putBoolean(type,true);chest.setChanged();}
 diff --git a/mod/src/main/java/dev/bunkerrelay/InteriorSites.java b/mod/src/main/java/dev/bunkerrelay/InteriorSites.java
 new file mode 100644
-index 0000000..4c9c83b
+index 0000000..2c35a9b
 --- /dev/null
 +++ b/mod/src/main/java/dev/bunkerrelay/InteriorSites.java
-@@ -0,0 +1,76 @@
+@@ -0,0 +1,79 @@
 +package dev.bunkerrelay;
 +
 +import net.minecraft.core.BlockPos;
@@ -368,8 +368,11 @@ index 0000000..4c9c83b
 +            case "cell" -> "bunker";
 +            default -> "";
 +        };
-+        if(theme.isEmpty() || origin.getY()-level.getMinBuildHeight()<48)return;
-+        var inside=origin.atY(level.getMinBuildHeight()+8);
++        if(theme.isEmpty())return;
++        int floorY=level.getMinBuildHeight()+8;
++        // Old flat expedition worlds may have no usable depth below their structures.
++        if(origin.getY()-floorY<40)floorY=level.getMaxBuildHeight()-12;
++        var inside=origin.atY(floorY);
 +        var gate=approach.offset(Integer.signum(origin.getX()-approach.getX())*2,0,Integer.signum(origin.getZ()-approach.getZ())*2);
 +        room.putLong("insideGate",gate.asLong());
 +        room.putLong("insideFloor",inside.asLong());
@@ -524,7 +527,7 @@ index ea823b1..08f5e11 100644
    }
    if(!p.level().getBlockState(pos).is(net.minecraft.world.level.block.Blocks.LODESTONE))return;
 diff --git a/mod/src/main/java/dev/bunkerrelay/RegionalIntegrationTest.java b/mod/src/main/java/dev/bunkerrelay/RegionalIntegrationTest.java
-index 2c169ed..981840f 100644
+index 2c169ed..5528403 100644
 --- a/mod/src/main/java/dev/bunkerrelay/RegionalIntegrationTest.java
 +++ b/mod/src/main/java/dev/bunkerrelay/RegionalIntegrationTest.java
 @@ -26,7 +26,7 @@ final class RegionalIntegrationTest {
@@ -543,7 +546,7 @@ index 2c169ed..981840f 100644
 +                if (java.util.Set.of("hospital","cell","military_camp").contains(plan.template())) {
 +                    var gate=BlockPos.of(room.getLong("insideGate"));
 +                    var inside=BlockPos.of(room.getLong("insideFloor"));
-+                    check(room.contains("insideGate") && level.getBlockState(gate.below()).is(Blocks.OXIDIZED_COPPER),"walk-in gate");
++                    check(room.contains("insideGate") && level.getBlockState(gate.below()).is(Blocks.OXIDIZED_COPPER),"walk-in gate "+plan.template()+" at "+gate);
 +                    var visitor=new FakePlayer(level,new GameProfile(UUID.randomUUID(),"InteriorTest"));
 +                    var journal=RaidJournal.get(server);
 +                    journal.raids.put(visitor.getUUID(),new net.minecraft.nbt.CompoundTag());
