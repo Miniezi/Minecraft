@@ -1,0 +1,962 @@
+diff --git a/README_RU.md b/README_RU.md
+index b847b42..8f4220c 100644
+--- a/README_RU.md
++++ b/README_RU.md
+@@ -1,4 +1,6 @@
+-# Bunker Relay 0.51.3
++# Bunker Relay 0.52.0
++
++Изменения релиза см. в WORK_0.52.md.
+ 
+ Убрано ограничение дальности всего светового пятна по одному лучу из центра. Ручной и оружейный фонари освещают видимые поверхности внутри конуса до 22 блоков. Для света напарника и вида от третьего лица затенение приближённо рассчитывается по глубине видимой сцены. Геометрия вне экрана в этой проверке не участвует.
+ 
+diff --git a/WORK_0.52.md b/WORK_0.52.md
+new file mode 100644
+index 0000000..7b15cb0
+--- /dev/null
++++ b/WORK_0.52.md
+@@ -0,0 +1,5 @@
++# Bunker Relay 0.52.0
++Скупка из рюкзака и со склада больше не зависит от бюджета. Счёт игрока по-прежнему защищён от переполнения.
++Улицы соседних городских участков получают переход над свободным пролётом при подходящих берегах. Выделенный участок босса получил расширенный ринг с полом из бедрока. Высокие уровни угрозы допускают более сильных заражённых.
++В промзоне размещаются три шаблона отдельного мода Relay Factories. У больницы, военной базы и склада гражданской обороны есть медная плита перехода во внутренние помещения с личными тематическими тайниками. Плита у входа внутри возвращает наружу.
++Через терминал доступен «Адский разлом», открытая базальтовая зона пятой сложности с адскими материалами. Для M700 и SCAR-H добавлены рецепты с точным механизмом Create и редкими материалами. Изменены множители урона MP5, M700 и SCAR-H.
+diff --git a/mod/build.gradle b/mod/build.gradle
+index 10ff768..e37afd0 100644
+--- a/mod/build.gradle
++++ b/mod/build.gradle
+@@ -1,5 +1,5 @@
+ plugins { id 'java-library'; id 'net.neoforged.moddev' version '2.0.148' }
+-version = '0.51.3'
++version = '0.52.0'
+ group = 'dev.bunkerrelay'
+ base { archivesName = 'bunkerrelay' }
+ java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+@@ -42,3 +42,16 @@ tasks.register('relayLightsJar', Jar) {
+     from sourceSets.relayLights.output
+ }
+ tasks.named('assemble') { dependsOn tasks.named('relayLightsJar') }
++
++sourceSets {
++    relayFactories {
++        compileClasspath += sourceSets.main.compileClasspath
++        runtimeClasspath += sourceSets.main.runtimeClasspath
++    }
++}
++neoForge.mods { relayfactories { sourceSet sourceSets.relayFactories } }
++tasks.register('relayFactoriesJar', Jar) {
++    archiveBaseName = 'relayfactories'
++    from sourceSets.relayFactories.output
++}
++tasks.named('assemble') { dependsOn tasks.named('relayFactoriesJar') }
+diff --git a/mod/src/main/java/dev/bunkerrelay/BossArena.java b/mod/src/main/java/dev/bunkerrelay/BossArena.java
+index dfdd01d..83165d7 100644
+--- a/mod/src/main/java/dev/bunkerrelay/BossArena.java
++++ b/mod/src/main/java/dev/bunkerrelay/BossArena.java
+@@ -9,12 +9,13 @@ public final class BossArena {
+   boolean forest=s.activeTheme.equals("forest"),ash=s.activeTheme.equals("ash"),lab=s.activeTheme.equals("infected");
+   Block floor=forest?Blocks.MOSSY_STONE_BRICKS:ash?Blocks.POLISHED_BLACKSTONE:lab?Blocks.SMOOTH_QUARTZ:Blocks.SMOOTH_STONE;
+   Block wall=forest?Blocks.DARK_OAK_LOG:ash?Blocks.DEEPSLATE_BRICKS:lab?Blocks.WHITE_CONCRETE:Blocks.GRAY_CONCRETE;
+-  for(int x=-18;x<=18;x++)for(int z=-18;z<=18;z++){
+-   level.setBlock(origin.offset(x,-1,z),floor.defaultBlockState(),2);
++  int radius=s.layoutVersion==3?30:18;
++  for(int x=-radius;x<=radius;x++)for(int z=-radius;z<=radius;z++){
++   level.setBlock(origin.offset(x,-1,z),Blocks.BEDROCK.defaultBlockState(),2);
+    for(int y=0;y<9;y++)level.setBlock(origin.offset(x,y,z),Blocks.AIR.defaultBlockState(),2);
+-   boolean edge=Math.abs(x)==18||Math.abs(z)==18;
+-   if(edge&&!(z==-18&&Math.abs(x)<=3))for(int y=0;y<4;y++)level.setBlock(origin.offset(x,y,z),(y==2&&lab?Blocks.LIGHT_BLUE_STAINED_GLASS:wall).defaultBlockState(),2);
+-   if(Math.abs(x)==18&&Math.abs(z)==18)for(int y=4;y<9;y++)level.setBlock(origin.offset(x,y,z),wall.defaultBlockState(),2);
++   boolean edge=Math.abs(x)==radius||Math.abs(z)==radius;
++   if(edge&&!(z==-radius&&Math.abs(x)<=3))for(int y=0;y<4;y++)level.setBlock(origin.offset(x,y,z),(y==2&&lab?Blocks.LIGHT_BLUE_STAINED_GLASS:wall).defaultBlockState(),2);
++   if(Math.abs(x)==radius&&Math.abs(z)==radius)for(int y=4;y<9;y++)level.setBlock(origin.offset(x,y,z),wall.defaultBlockState(),2);
+   }
+   for(int x:new int[]{-12,12})for(int z:new int[]{-10,10}){
+    for(int dx=-2;dx<=2;dx++)for(int dz=-2;dz<=2;dz++)for(int y=0;y<4;y++){
+@@ -23,13 +24,13 @@ public final class BossArena {
+    }
+    level.setBlock(origin.offset(x,4,z),(ash?Blocks.SHROOMLIGHT:Blocks.SEA_LANTERN).defaultBlockState(),2);
+   }
+-  for(int x=-4;x<=4;x++)level.setBlock(origin.offset(x,5,-18),wall.defaultBlockState(),2);
++  for(int x=-4;x<=4;x++)level.setBlock(origin.offset(x,5,-radius),wall.defaultBlockState(),2);
+   for(int step=0;step<18;step++)for(int dx=-3;dx<=3;dx++){
+-   var p=origin.offset(dx,-1-step,-19-step);if(p.getY()<level.getSeaLevel())continue;level.setBlock(p,floor.defaultBlockState(),2);for(int h=1;h<5;h++)level.setBlock(p.above(h),Blocks.AIR.defaultBlockState(),2);
++   var p=origin.offset(dx,-1-step,-radius-1-step);if(p.getY()<level.getSeaLevel())continue;level.setBlock(p,floor.defaultBlockState(),2);for(int h=1;h<5;h++)level.setBlock(p.above(h),Blocks.AIR.defaultBlockState(),2);
+   }
+   for(int h=level.getSeaLevel();h<origin.getY();h++){
+-   level.setBlock(new BlockPos(origin.getX()+18,h,origin.getZ()),wall.defaultBlockState(),2);
+-   level.setBlock(new BlockPos(origin.getX()+19,h,origin.getZ()),Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING,Direction.EAST),2);
++   level.setBlock(new BlockPos(origin.getX()+radius,h,origin.getZ()),wall.defaultBlockState(),2);
++   level.setBlock(new BlockPos(origin.getX()+radius+1,h,origin.getZ()),Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING,Direction.EAST),2);
+   }
+  }
+  private BossArena(){}
+diff --git a/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java b/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java
+index 843ca5d..08ef91d 100644
+--- a/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java
++++ b/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java
+@@ -33,8 +33,18 @@ public final class BunkerRelay {
+   BossTrophies.ITEMS.register("terminal",()->new net.minecraft.world.item.BlockItem(RelayTerminalBlock.TERMINAL.get(),new net.minecraft.world.item.Item.Properties()));
+   net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.entity.EntityJoinLevelEvent event)->{
+    if(!event.getLevel().isClientSide() && event.getEntity() instanceof com.tacz.guns.entity.EntityKineticBullet bullet
+-       && bullet.getOwner() instanceof ServerPlayer shooter && StarterKit.marked(shooter.getMainHandItem())
+-       && shooter.getMainHandItem().getItem() instanceof com.tacz.guns.api.item.IGun)bullet.setShotDamageMultiplier(0.5f);
++       && bullet.getOwner() instanceof ServerPlayer shooter 
++       && shooter.getMainHandItem().getItem() instanceof com.tacz.guns.api.item.IGun gun){
++    var stack=shooter.getMainHandItem();
++    float multiplier=switch(gun.getGunId(stack).toString()){
++     case "tacz:glock_17" -> StarterKit.marked(stack)?0.5f:1f;
++     case "tacz:hk_mp5a5" -> 0.94f;
++     case "tacz:m700" -> 1.12f;
++     case "tacz:scar_h" -> 1.06f;
++     default -> 1f;
++    };
++    if(multiplier!=1f)bullet.setShotDamageMultiplier(multiplier);
++   }
+   });
+   TrophyResearch.register();Medicine.register();BossTrophies.ITEMS.register(modBus);RelayMenus.TYPES.register(modBus);StructureLoot.TYPES.register(modBus);modBus.addListener(ExitSignal::register);
+   RaidRules.register();DownedPlayers.register();NeoForge.EVENT_BUS.addListener(net.neoforged.bus.api.EventPriority.LOWEST,RaidBosses::died);NeoForge.EVENT_BUS.addListener(net.neoforged.bus.api.EventPriority.LOWEST,MiniBosses::died);NeoForge.EVENT_BUS.addListener(net.neoforged.bus.api.EventPriority.LOWEST,(ServerAboutToStartEvent e)->CityIntegration.profiles());
+@@ -43,7 +53,7 @@ public final class BunkerRelay {
+   NeoForge.EVENT_BUS.addListener(this::login);NeoForge.EVENT_BUS.addListener(this::logout);NeoForge.EVENT_BUS.addListener(this::respawn);NeoForge.EVENT_BUS.addListener(net.neoforged.bus.api.EventPriority.HIGH,this::interact);
+   NeoForge.EVENT_BUS.addListener(this::damage);NeoForge.EVENT_BUS.addListener(this::spawn);NeoForge.EVENT_BUS.addListener(this::explosion);NeoForge.EVENT_BUS.addListener(this::dimensionTravel);NeoForge.EVENT_BUS.addListener(ExpeditionContent::joined);NeoForge.EVENT_BUS.addListener(SporeEncounters::drops);NeoForge.EVENT_BUS.addListener(this::filterHostiles);NeoForge.EVENT_BUS.addListener(this::expeditionPlacement);
+  }
+- private static final Set<String> ZONES=Set.of("expedition","city","wilds","forest_expedition","infected_city","ashlands");
++ private static final Set<String> ZONES=Set.of("expedition","city","wilds","forest_expedition","infected_city","ashlands","hell_raid");
+  public static boolean expedition(Level l){return l.dimension().location().getNamespace().equals("bunkerrelay")&&ZONES.contains(l.dimension().location().getPath());}
+  private boolean safe(Level l){return l.dimension().equals(BUNKER)||l.dimension().equals(HUB)||l.dimension().equals(GARAGE);}
+  private ResourceKey<Level> home(RelayState s){return s.hubV2?HUB:BUNKER;}
+@@ -301,6 +311,7 @@ public final class BunkerRelay {
+    if(expedition(p.level())){
+     if(invalidZone(p,s)){sendHome(p,s);continue;}
+     if(!SectorPlan.contains(s.centerX,s.centerZ,s.activeSize,p.getX(),p.getZ())){teleport(p,p.serverLevel(),arrival(s));RaidRules.tell(p,"Граница зоны: возвращение к эвакуации.");}
++    if(ticks%4==0)InteriorSites.walk(p,s);
+     if(ticks%40==0){ZoneLandmarks.visit(p,s);ExpeditionRoads.visit(p,s);ReconChart.visit(p,s);if(s.sectorBuildings)SectorBuildings.discover(p,s);else ExpeditionContent.nearby(p,s);}
+    }
+    if(ticks%20==0&&safe(p.level())){p.setRemainingFireTicks(0);p.setAirSupply(p.getMaxAirSupply());p.getFoodData().setFoodLevel(20);if(p.getY()<p.level().getMinBuildHeight()+2)sendHome(p,s);}
+diff --git a/mod/src/main/java/dev/bunkerrelay/EconomyIntegrationTest.java b/mod/src/main/java/dev/bunkerrelay/EconomyIntegrationTest.java
+index 3286397..e020223 100644
+--- a/mod/src/main/java/dev/bunkerrelay/EconomyIntegrationTest.java
++++ b/mod/src/main/java/dev/bunkerrelay/EconomyIntegrationTest.java
+@@ -22,14 +22,14 @@ public final class EconomyIntegrationTest {
+   var ammoStack=ammo.stack(p);check(ammoStack.getItem() instanceof IAmmo&&((IAmmo)ammoStack.getItem()).getAmmoId(ammoStack).equals(ResourceLocation.parse("tacz:9mm")),"correct ammo data");
+   var gun=offer("glock").stack(p);check(gun.getItem() instanceof IGun&&((IGun)gun.getItem()).getGunId(gun).equals(ResourceLocation.parse("tacz:glock_17")),"correct gun data");
+   RelayEconomy.buy(p,ammo);check(RelayEconomy.balance(p)==9904&&count(p,ammoStack)==32&&RelayEconomy.remaining(p,ammo)==7,"purchase and stock");
+-  RelayEconomy.sell(p,ammo);check(RelayEconomy.balance(p)==9936&&count(p,ammoStack)==0&&a.getInt("budget")==1168,"sale consumes exact batch, spread");
++  RelayEconomy.sell(p,ammo);check(RelayEconomy.balance(p)==9936&&count(p,ammoStack)==0,"sale consumes exact batch, spread");
+   long before=RelayEconomy.balance(p);for(int i=0;i<36;i++)p.getInventory().setItem(i,new ItemStack(Items.COBBLESTONE,64));int stock=RelayEconomy.remaining(p,iron);RelayEconomy.buy(p,iron);check(RelayEconomy.balance(p)==before&&RelayEconomy.remaining(p,iron)==stock,"full inventory no debit");
+   p.getInventory().clearContent();a.putLong("balance",0);RelayEconomy.buy(p,iron);check(p.getInventory().isEmpty()&&RelayEconomy.remaining(p,iron)==stock,"insufficient funds");a.putLong("balance",10000);
+   for(int i=0;i<10;i++)RelayEconomy.buy(p,iron);check(count(p,iron.stack(p))==32&&RelayEconomy.remaining(p,iron)==0&&RelayEconomy.balance(p)==9360,"stock exhaustion");
+   p.getInventory().clearContent();var named=iron.stack(p);named.set(DataComponents.CUSTOM_NAME,Component.literal("Keep"));p.getInventory().setItem(0,named);RelayEconomy.sell(p,iron);check(named.getCount()==8&&RelayEconomy.balance(p)==9360,"modified item never sold");
+   p.getInventory().setItem(0,new ItemStack(Items.IRON_INGOT,3));p.getInventory().setItem(1,new ItemStack(Items.IRON_INGOT,5));RelayEconomy.sell(p,iron);check(count(p,iron.stack(p))==0&&RelayEconomy.balance(p)==9408,"sale across slots");
+-  a.putInt("budget",0);p.getInventory().setItem(0,iron.stack(p));RelayEconomy.sell(p,iron);check(count(p,iron.stack(p))==8&&RelayEconomy.balance(p)==9408,"buyer budget exhaustion");
+-  a.putLong("balance",RelayEconomy.MAX_BALANCE);a.putInt("budget",600);RelayEconomy.sell(p,iron);check(count(p,iron.stack(p))==8,"balance overflow guarded");a.putLong("balance",9408);
++  a.putInt("budget",0);p.getInventory().setItem(0,iron.stack(p));RelayEconomy.sell(p,iron);check(count(p,iron.stack(p))==0&&RelayEconomy.balance(p)>9408,"sell with empty legacy budget");
++  p.getInventory().setItem(0,iron.stack(p));a.putLong("balance",RelayEconomy.MAX_BALANCE);a.putInt("budget",600);RelayEconomy.sell(p,iron);check(count(p,iron.stack(p))==8,"balance overflow guarded");a.putLong("balance",9408);
+   var previous=RelayEconomy.offers(p);var raid=new CompoundTag();raid.putString("contractCycle","economy-test-zone");raid.putInt("economyDifficulty",3);raid.putString("status","RESTORE");RelayEconomy.extracted(p,raid);check(a.getInt("rotation")==0&&RelayEconomy.balance(p)==9408,"death no reward or restock");raid.putString("status","COMMIT");RelayEconomy.extracted(p,raid);check(RelayEconomy.balance(p)==9733&&a.getInt("rotation")==1&&a.getInt("budget")==1200&&RelayEconomy.remaining(p,iron)==4&&!previous.equals(RelayEconomy.offers(p)),"extraction reward and rotation");RelayEconomy.extracted(p,raid);check(RelayEconomy.balance(p)==9733&&a.getInt("rotation")==1,"same zone replay idempotent");
+   var journal=RaidJournal.get(server);journal.raids.put(ID,new CompoundTag());RelayEconomy.buy(p,ammo);RelayEconomy.sell(p,iron);check(RelayEconomy.balance(p)==9733&&count(p,iron.stack(p))==8,"active raid trade forbidden");journal.raids.remove(ID);
+   p.getInventory().clearContent();var menu=new RelayEconomy.MarketMenu(7,p.getInventory(),p,false);menu.clicked(9,0,ClickType.QUICK_MOVE,p);menu.clicked(9,0,ClickType.SWAP,p);check(RelayEconomy.balance(p)==9733&&p.getInventory().isEmpty(),"icons protected");menu.clicked(9,0,ClickType.PICKUP,p);check(RelayEconomy.balance(p)==9730&&count(p,ammoStack)==1,"LMB immediate single purchase");
+diff --git a/mod/src/main/java/dev/bunkerrelay/EncounterPressure.java b/mod/src/main/java/dev/bunkerrelay/EncounterPressure.java
+index fe8793e..7b38072 100644
+--- a/mod/src/main/java/dev/bunkerrelay/EncounterPressure.java
++++ b/mod/src/main/java/dev/bunkerrelay/EncounterPressure.java
+@@ -29,7 +29,7 @@ enum EncounterPressure {
+     }
+ 
+     static EncounterPressure of(RelayState state) {
+-        return valueOf(ZoneProfile.of(state.activeTheme).name());
++        return state.activeTheme.equals("hell") ? ASH : valueOf(ZoneProfile.of(state.activeTheme).name());
+     }
+ 
+     boolean room(ServerLevel level,BlockPos center,boolean natural) {
+diff --git a/mod/src/main/java/dev/bunkerrelay/ExpeditionReset.java b/mod/src/main/java/dev/bunkerrelay/ExpeditionReset.java
+index 8cfddc4..bdfcdaf 100644
+--- a/mod/src/main/java/dev/bunkerrelay/ExpeditionReset.java
++++ b/mod/src/main/java/dev/bunkerrelay/ExpeditionReset.java
+@@ -9,7 +9,7 @@ import net.minecraft.world.level.storage.LevelResource;
+ 
+ final class ExpeditionReset {
+     private static final Map<String,String> THEMES=Map.of("industrial","city","infected","infected_city",
+-        "ash","ashlands","forest","forest_expedition");
++        "hell","hell_raid","ash","ashlands","forest","forest_expedition");
+ 
+     static String dimension(String theme){return THEMES.get(theme);}
+ 
+diff --git a/mod/src/main/java/dev/bunkerrelay/ExpeditionRoads.java b/mod/src/main/java/dev/bunkerrelay/ExpeditionRoads.java
+index be60af3..d9a84a1 100644
+--- a/mod/src/main/java/dev/bunkerrelay/ExpeditionRoads.java
++++ b/mod/src/main/java/dev/bunkerrelay/ExpeditionRoads.java
+@@ -24,6 +24,7 @@ final class ExpeditionRoads {
+     static void visit(ServerPlayer player,RelayState state){
+         if(state.layoutVersion!=3||!state.ready||state.generating)return;
+         var level=player.serverLevel();
++        SectorCrossings.visit(level,state,player.blockPosition());
+         var center=player.chunkPosition();
+         var links=links(state,RaidDirector.get(player.server));
+         Block surface=switch(state.activeTheme){
+diff --git a/mod/src/main/java/dev/bunkerrelay/InteriorSites.java b/mod/src/main/java/dev/bunkerrelay/InteriorSites.java
+new file mode 100644
+index 0000000..4c9c83b
+--- /dev/null
++++ b/mod/src/main/java/dev/bunkerrelay/InteriorSites.java
+@@ -0,0 +1,76 @@
++package dev.bunkerrelay;
++
++import net.minecraft.core.BlockPos;
++import net.minecraft.nbt.CompoundTag;
++import net.minecraft.server.level.ServerLevel;
++import net.minecraft.server.level.ServerPlayer;
++import net.minecraft.world.item.ItemStack;
++import net.minecraft.world.item.Items;
++import net.minecraft.world.level.block.Blocks;
++import net.minecraft.world.level.block.entity.ChestBlockEntity;
++
++/** A walk-in vestibule leads to the interior underneath its own reserved plot. */
++final class InteriorSites {
++    static void prepare(ServerLevel level, RelayState state, CompoundTag room, BlockPos origin, BlockPos approach) {
++        String theme=switch(room.getString("template")){
++            case "hospital" -> "hospital";
++            case "military_camp" -> "military";
++            case "cell" -> "bunker";
++            default -> "";
++        };
++        if(theme.isEmpty() || origin.getY()-level.getMinBuildHeight()<48)return;
++        var inside=origin.atY(level.getMinBuildHeight()+8);
++        var gate=approach.offset(Integer.signum(origin.getX()-approach.getX())*2,0,Integer.signum(origin.getZ()-approach.getZ())*2);
++        room.putLong("insideGate",gate.asLong());
++        room.putLong("insideFloor",inside.asLong());
++        level.setBlock(gate.below(),Blocks.OXIDIZED_COPPER.defaultBlockState(),2);
++        var wall=switch(theme){case "hospital"->Blocks.WHITE_CONCRETE;case "military"->Blocks.GREEN_TERRACOTTA;default->Blocks.DEEPSLATE_BRICKS;};
++        int wings=theme.equals("military")?4:theme.equals("hospital")?3:2;
++        int depth=8*wings+3;
++        for(int x=-14;x<=14;x++)for(int z=0;z<=depth;z++)for(int y=-1;y<=4;y++){
++            boolean edge=Math.abs(x)==14||z==0||z==depth;
++            boolean partition=(Math.abs(x)==3 && z%8!=4)||(Math.abs(x)>3 && z%8==0);
++            var block=y==-1?Blocks.SMOOTH_STONE:y==4?(x==0&&z%4==0?Blocks.SEA_LANTERN:wall):edge||partition?wall:Blocks.AIR;
++            level.setBlock(inside.offset(x,y,z),block.defaultBlockState(),2);
++        }
++        level.setBlock(inside.offset(0,-1,1),Blocks.OXIDIZED_COPPER.defaultBlockState(),2);
++        for(int wing=0;wing<wings;wing++)for(int side:new int[]{-1,1}){
++            var at=inside.offset(11*side,0,4+wing*8);
++            level.setBlock(at,Blocks.CHEST.defaultBlockState(),3);
++            if(!(level.getBlockEntity(at) instanceof ChestBlockEntity chest))continue;
++            var rng=net.minecraft.util.RandomSource.create(state.seed^at.asLong());
++            if(theme.equals("hospital")){
++                chest.setItem(1,new ItemStack(Medicine.BANDAGE.get(),2+rng.nextInt(6)));
++                chest.setItem(7,side>0?new ItemStack(Medicine.MEDKIT.get()):new ItemStack(Items.HONEY_BOTTLE));
++                level.setBlock(at.east(),Blocks.WHITE_WOOL.defaultBlockState(),2);
++            }else if(theme.equals("military")){
++                RaidLoot.specialist(chest,level,state,at,SupplySites.Kind.ARMORY);
++                chest.setItem(15,new ItemStack(wing%2==0?Items.IRON_HELMET:Items.IRON_CHESTPLATE));
++                level.setBlock(at.east(),Blocks.SMITHING_TABLE.defaultBlockState(),2);
++            }else{
++                RaidLoot.specialist(chest,level,state,at,side>0?SupplySites.Kind.WAREHOUSE:SupplySites.Kind.CANTEEN);
++                level.setBlock(at.east(),Blocks.CRAFTING_TABLE.defaultBlockState(),2);
++            }
++            PersonalLoot.convert(level,at,chest);
++        }
++    }
++
++    static void walk(ServerPlayer player,RelayState state){
++        if(!state.ready||state.generating||!RaidRules.active(player))return;
++        var feet=player.blockPosition();
++        if(!player.level().getBlockState(feet.below()).is(Blocks.OXIDIZED_COPPER))return;
++        for(var room:RaidDirector.get(player.server).rooms){
++            if(!room.contains("insideGate"))continue;
++            var gate=BlockPos.of(room.getLong("insideGate"));
++            var inside=BlockPos.of(room.getLong("insideFloor"));
++            BlockPos destination;
++            if(feet.equals(gate))destination=inside.south(3);
++            else if(feet.equals(inside.south()))destination=BlockPos.of(room.getLong("approach"));
++            else continue;
++            player.teleportTo(destination.getX()+0.5,destination.getY(),destination.getZ()+0.5);
++            RaidRules.tell(player,feet.equals(gate)?room.getString("title")+" · для выхода вернитесь на медную плиту":"Вы вернулись на улицу.");
++            return;
++        }
++    }
++    private InteriorSites(){}
++}
+diff --git a/mod/src/main/java/dev/bunkerrelay/LockerMenu.java b/mod/src/main/java/dev/bunkerrelay/LockerMenu.java
+index 419be90..14ffdc4 100644
+--- a/mod/src/main/java/dev/bunkerrelay/LockerMenu.java
++++ b/mod/src/main/java/dev/bunkerrelay/LockerMenu.java
+@@ -50,7 +50,7 @@ public final class LockerMenu extends ChestMenu {
+         icon(1, new ItemStack(Items.HOPPER), selected(Mode.DEPOSIT, "Сдать"), "Из рюкзака на склад");
+         icon(2, new ItemStack(Items.EMERALD), selected(Mode.SELL, "Продать"), "Скупка прямо со склада");
+         icon(7, new ItemStack(Items.GOLD_NUGGET), "Счёт " + RelayEconomy.balance(owner) + " кр.",
+-            "Бюджет скупщика " + RelayEconomy.account(owner).getInt("budget") + " кр.");
++            "Скупка без лимита");
+         icon(8, new ItemStack(Items.BARREL), "Склад " + warehouse.occupied() + " / " + Warehouse.CAPACITY,
+             "Занято ячеек хранения");
+         entries = warehouse.entries();
+diff --git a/mod/src/main/java/dev/bunkerrelay/RaidBosses.java b/mod/src/main/java/dev/bunkerrelay/RaidBosses.java
+index 5066538..b1b65db 100644
+--- a/mod/src/main/java/dev/bunkerrelay/RaidBosses.java
++++ b/mod/src/main/java/dev/bunkerrelay/RaidBosses.java
+@@ -20,12 +20,12 @@ public final class RaidBosses {
+   return Component.literal(name(state)).withStyle(style->style.withInsertion("bunkerrelay:boss/"+theme));
+  }
+  public static BlockPos arena(RelayState s){return ExpeditionLayout.arena(s).atY(s.bossY);}
+- public static void prepare(ServerLevel level,RelayState s){var point=ExpeditionLayout.arena(s);int x=point.getX(),z=point.getZ();int y=StructureLevels.floor(level,s,"arena",x,z,18,18,10);s.bossY=y;s.bossGeneration=s.generation+1;s.bossId=null;s.bossDefeated=false;s.bossAbility=0;reset();
++ public static void prepare(ServerLevel level,RelayState s){var point=ExpeditionLayout.arena(s);int x=point.getX(),z=point.getZ();int radius=s.layoutVersion==3?30:18;int y=StructureLevels.floor(level,s,"arena",x,z,radius,radius,10);s.bossY=y;s.bossGeneration=s.generation+1;s.bossId=null;s.bossDefeated=false;s.bossAbility=0;reset();
+   BossArena.build(level,s,new BlockPos(x,y,z));s.setDirty();
+  }
+  public static void second(MinecraftServer server,RelayState s){if(!s.ready||s.bossGeneration!=s.generation||s.bossDefeated){reset();return;}var level=server.getLevel(BunkerRelay.key(s.activeDimension));if(level==null)return;var pos=arena(s);var players=server.getPlayerList().getPlayers().stream().filter(p->p.isAlive()&&!p.isSpectator()&&RaidRules.active(p)&&p.serverLevel()==level&&p.blockPosition().distSqr(pos)<80*80).toList();encounter(server,s,level,players);}
+  static void encounter(MinecraftServer server,RelayState s,ServerLevel level,java.util.List<ServerPlayer> players){var pos=arena(s);if(players.isEmpty()){reset();if(s.bossAbility!=0){s.bossAbility=0;s.setDirty();}return;}Mob boss;
+-  if(s.bossId==null){boss=SporeSites.boss(level,s.activeTheme);if(boss==null)return;boss.moveTo(pos.getX()+.5,pos.getY(),pos.getZ()+.5,0,0);boss.setCustomName(appearance(s,boss));boss.setCustomNameVisible(true);boss.setPersistenceRequired();boss.getAttribute(Attributes.MAX_HEALTH).setBaseValue(120+60*s.activeDifficulty);var attack=boss.getAttribute(Attributes.ATTACK_DAMAGE);if(attack!=null)attack.setBaseValue(5+2*s.activeDifficulty);boss.setHealth(boss.getMaxHealth());boss.getPersistentData().putBoolean("relay_boss",true);boss.addTag("relay_scaled");if(appearance(s,boss).getStyle().getInsertion()!=null&&(s.activeTheme.equals("forest")||s.activeTheme.equals("ash"))){boss.setItemSlot(EquipmentSlot.MAINHAND,new ItemStack(s.activeTheme.equals("forest")?Items.IRON_AXE:Items.IRON_SWORD));boss.setDropChance(EquipmentSlot.MAINHAND,0);}if(!level.addFreshEntity(boss))return;s.bossId=boss.getUUID();s.setDirty();}
++  if(s.bossId==null){boss=SporeSites.boss(level,s.activeTheme);if(boss==null)return;boss.moveTo(pos.getX()+.5,pos.getY(),pos.getZ()+.5,0,0);boss.setCustomName(appearance(s,boss));boss.setCustomNameVisible(true);boss.setPersistenceRequired();boss.getAttribute(Attributes.MAX_HEALTH).setBaseValue(Math.max(boss.getMaxHealth(),120+60*s.activeDifficulty));var attack=boss.getAttribute(Attributes.ATTACK_DAMAGE);if(attack!=null)attack.setBaseValue(Math.max(attack.getBaseValue(),5+2*s.activeDifficulty));boss.setHealth(boss.getMaxHealth());boss.getPersistentData().putBoolean("relay_boss",true);boss.addTag("relay_scaled");if(appearance(s,boss).getStyle().getInsertion()!=null&&(s.activeTheme.equals("forest")||s.activeTheme.equals("ash"))){boss.setItemSlot(EquipmentSlot.MAINHAND,new ItemStack(s.activeTheme.equals("forest")?Items.IRON_AXE:Items.IRON_SWORD));boss.setDropChance(EquipmentSlot.MAINHAND,0);}if(!level.addFreshEntity(boss))return;s.bossId=boss.getUUID();s.setDirty();}
+   else{var entity=level.getEntity(s.bossId);if(!(entity instanceof Mob found)||!found.isAlive()){reset();return;}boss=found;if(!appearance(s,boss).equals(boss.getCustomName()))boss.setCustomName(appearance(s,boss));}
+   if(bar==null)bar=new ServerBossEvent(Component.literal(name(s)),BossEvent.BossBarColor.RED,BossEvent.BossBarOverlay.NOTCHED_10);
+   bar.setProgress(Math.clamp(boss.getHealth()/boss.getMaxHealth(),0,1));
+diff --git a/mod/src/main/java/dev/bunkerrelay/RaidLoot.java b/mod/src/main/java/dev/bunkerrelay/RaidLoot.java
+index 28a194b..6a52ff1 100644
+--- a/mod/src/main/java/dev/bunkerrelay/RaidLoot.java
++++ b/mod/src/main/java/dev/bunkerrelay/RaidLoot.java
+@@ -40,10 +40,13 @@ public final class RaidLoot {
+             case INDUSTRIAL -> INDUSTRIAL;
+             case INFECTED -> INFECTED;
+             case ASH -> ASH;
++            case HELL -> new String[]{"nether_wart","blaze_rod","magma_cream","quartz","glowstone_dust","gold_ingot"};
+         },2+(tier-1)/2,1,1+tier,random);
+         if(random.nextInt(100)<25+8*tier)result.add(ammo(tier,4+2*tier,random));
+         if(tier>=2&&random.nextInt(100)<(profile==ZoneProfile.INDUSTRIAL?24:12))result.add(circuit(tier,1));
+         if(tier>=3&&random.nextInt(100)<tier*2)result.add(module(tier,random));
++        if(tier>=4 && random.nextInt(12)==0)result.add(new ItemStack(Items.BLAZE_ROD,1+random.nextInt(3)));
++        if(tier==5 && random.nextInt(25)==0)result.add(new ItemStack(Items.NETHERITE_SCRAP));
+         if(tier>=4&&random.nextInt(100)<tier)result.add(gun(level,tier-1,random));
+         return result;
+     }
+diff --git a/mod/src/main/java/dev/bunkerrelay/RelayEconomy.java b/mod/src/main/java/dev/bunkerrelay/RelayEconomy.java
+index ce56503..adcc69d 100644
+--- a/mod/src/main/java/dev/bunkerrelay/RelayEconomy.java
++++ b/mod/src/main/java/dev/bunkerrelay/RelayEconomy.java
+@@ -239,10 +239,10 @@ public final class RelayEconomy {
+  public static String trade(ServerPlayer p,Offer o,boolean selling,int requested){
+   if(!safe(p)||!CATALOG.contains(o)||requested<=0)return "Сделка недоступна.";var a=account(p);var target=o.stack(p);if(target.isEmpty())return "Товар отсутствует в установленных модах.";
+   int cost=selling?unitSell(o):unitBuy(p,o),count;
+-  if(selling)count=(int)Math.min(Math.min(requested,owned(p,o)),Math.min(a.getInt("budget")/cost,(MAX_BALANCE-balance(p))/cost));
++  if(selling)count=(int)Math.min(Math.min(requested,owned(p,o)),(MAX_BALANCE-balance(p))/cost);
+   else{if(!offers(p).contains(o))return "Товар отсутствует в поставке.";count=(int)Math.min(Math.min(requested,remainingUnits(p,o)),Math.min(balance(p)/cost,SafeInventory.capacity(p.getInventory(),target)));}
+-  if(count<=0)return selling?"Нет подходящих предметов или исчерпан бюджет.":"Недостаточно денег, места или товара.";
+-  if(selling){int left=count;for(var stack:p.getInventory().items)if(left>0&&ItemStack.isSameItemSameComponents(stack,target)){int n=Math.min(left,stack.getCount());stack.shrink(n);left-=n;}a.putLong("balance",balance(p)+(long)count*cost);a.putInt("budget",a.getInt("budget")-count*cost);}
++  if(count<=0)return selling?"Нет подходящих предметов или достигнут предел счёта.":"Недостаточно денег, места или товара.";
++  if(selling){int left=count;for(var stack:p.getInventory().items)if(left>0&&ItemStack.isSameItemSameComponents(stack,target)){int n=Math.min(left,stack.getCount());stack.shrink(n);left-=n;}a.putLong("balance",balance(p)+(long)count*cost);}
+   else{target.setCount(count);SafeInventory.insert(p.getInventory(),target);a.putLong("balance",balance(p)-(long)count*cost);var bought=a.getCompound("boughtUnits");bought.putInt(o.id(),bought.getInt(o.id())+count);a.put("boughtUnits",bought);}
+   save(p);return (selling?"Продано":"Куплено")+": "+count+" шт. · "+((long)count*cost)+" кр. · счёт "+balance(p);
+  }
+@@ -293,10 +293,10 @@ public final class RelayEconomy {
+   var a=account(p);String cycle=raid.getString("contractCycle");var paid=a.getCompound("paidZones");if(paid.contains(cycle))return;
+   int tier=Math.clamp(raid.getInt("economyDifficulty"),1,5);
+   int reward=extractionCredit(p,raid);
+-  a.putLong("balance",Math.min(MAX_BALANCE,balance(p)+reward));paid.putBoolean(cycle,true);a.put("paidZones",paid);a.putInt("rotation",a.getInt("rotation")+1);a.putInt("budget",(600+200*tier+(BaseUpgrades.has(p,BaseUpgrades.Upgrade.SUPPLY)?400:0))+(TrophyResearch.has(RelayState.get(p.server),TrophyResearch.Part.SCANNER)?200:0)+(SkillMenu.has(p,SkillMenu.Skill.BROKER)?250:0));a.remove("bought");a.remove("boughtUnits");SupplyOrders.onExtract(p);save(p);
+-  RaidRules.tell(p,"На счёт начислено "+reward+" кр. Поставка торговца обновлена; бюджет скупщика: "+a.getInt("budget")+" кр. Торговля через терминал.");
++  reward+=(SkillMenu.has(p,SkillMenu.Skill.BROKER)?250:0)+(TrophyResearch.has(RelayState.get(p.server),TrophyResearch.Part.SCANNER)?200:0);a.putLong("balance",Math.min(MAX_BALANCE,balance(p)+reward));paid.putBoolean(cycle,true);a.put("paidZones",paid);a.putInt("rotation",a.getInt("rotation")+1);a.putInt("budget",(600+200*tier+(BaseUpgrades.has(p,BaseUpgrades.Upgrade.SUPPLY)?400:0))+(TrophyResearch.has(RelayState.get(p.server),TrophyResearch.Part.SCANNER)?200:0)+(SkillMenu.has(p,SkillMenu.Skill.BROKER)?250:0));a.remove("bought");a.remove("boughtUnits");SupplyOrders.onExtract(p);save(p);
++  RaidRules.tell(p,"На счёт начислено "+reward+" кр. Поставка торговца обновлена. Торговля через терминал.");
+  }
+- public static int wallet(ServerPlayer p){RaidRules.tell(p,"Счёт: "+balance(p)+" кр. Бюджет скупщика: "+account(p).getInt("budget")+" кр. Торговля через терминал. · /relay sell");return 1;}
++ public static int wallet(ServerPlayer p){RaidRules.tell(p,"Счёт: "+balance(p)+" кр. Скупка без лимита. Торговля через терминал. · /relay sell");return 1;}
+  public static int open(ServerPlayer p,boolean selling){if(!safe(p)){RaidRules.tell(p,"Магазин доступен только в бункере или гараже после вылазки.");return 0;}account(p);save(p);p.openMenu(new SimpleMenuProvider((id,inv,player)->new MarketMenu(id,inv,p,selling),Component.literal(selling?"Скупщик · кредиты":"Торговец · кредиты")));return 1;}
+  public static int open(ServerPlayer p,boolean selling,Merchant merchant){if(!safe(p))return 0;save(p);p.openMenu(new SimpleMenuProvider((id,inv,player)->new MarketMenu(id,inv,p,selling,merchant),Component.literal(selling?"Скупщик":"Торговцы базы")));return 1;}
+  static int openPocket(ServerPlayer p,boolean selling,Merchant merchant){
+@@ -313,7 +313,7 @@ public final class RelayEconomy {
+   private void relist(){visible=(selling?CATALOG:offers(owner)).stream().filter(o->merchant(o)==category).filter(o->category!=Merchant.WEAPONS||armoryFilter==0||o.item().startsWith(armoryFilter==1?"gun/":armoryFilter==2?"attachment/":"ammo/")).toList();page=0;}
+   private void icon(int slot,ItemStack stack,String title,String... lore){stack=stack.copyWithCount(1);stack.set(DataComponents.CUSTOM_NAME,Component.literal(title));stack.set(DataComponents.LORE,new ItemLore(Arrays.stream(lore).map(Component::literal).map(c->(Component)c).toList()));panel.setItem(slot,stack);}
+   private void refresh(){panel.clearContent();var warehouse=new Warehouse(owner);for(var m:Merchant.values())icon(m.ordinal(),new ItemStack(m.icon),(m==category?"▶ ":"")+m.title,"Открыть раздел");
+-   icon(7,new ItemStack(Items.GOLD_NUGGET),"Счёт: "+balance(owner)+" кр.","Бюджет скупщика: "+account(owner).getInt("budget"));icon(8,new ItemStack(selling?Items.HOPPER:Items.EMERALD),selling?"СКУПКА":"МАГАЗИН","ЛКМ: 1 шт. · ПКМ: максимум");
++   icon(7,new ItemStack(Items.GOLD_NUGGET),"Счёт: "+balance(owner)+" кр.","Скупка без лимита");icon(8,new ItemStack(selling?Items.HOPPER:Items.EMERALD),selling?"СКУПКА":"МАГАЗИН","ЛКМ: 1 шт. · ПКМ: максимум");
+    if(selling){for(int i=0;i<36;i++){
+     var stack=getSlot(54+i).getItem();if(stack.isEmpty())continue;
+     int quote=SalvageValue.price(stack);
+diff --git a/mod/src/main/java/dev/bunkerrelay/RouteEvents.java b/mod/src/main/java/dev/bunkerrelay/RouteEvents.java
+index dab56b8..2153805 100644
+--- a/mod/src/main/java/dev/bunkerrelay/RouteEvents.java
++++ b/mod/src/main/java/dev/bunkerrelay/RouteEvents.java
+@@ -19,7 +19,7 @@ final class RouteEvents {
+             case FOREST -> new Signal("Потерянный разведчик","Слабый сигнал с полевой тропы. Проверьте оставленный груз.",SupplySites.Kind.CANTEEN);
+             case INDUSTRIAL -> new Signal("Аварийная передача","Промышленный передатчик работает от резерва, рядом остался технический ящик.",SupplySites.Kind.FACTORY);
+             case INFECTED -> new Signal("Сигнал санбригады","У дороги слышен аварийный маяк медиков.",SupplySites.Kind.CANTEEN);
+-            case ASH -> new Signal("Застрявший грузовик","В эфир попала запись водителя. Проверьте сброшенный груз у дороги.",SupplySites.Kind.WAREHOUSE);
++            case ASH, HELL -> new Signal("Застрявший грузовик","В эфир попала запись водителя. Проверьте сброшенный груз у дороги.",SupplySites.Kind.WAREHOUSE);
+         };
+     }
+ 
+diff --git a/mod/src/main/java/dev/bunkerrelay/SalvageValue.java b/mod/src/main/java/dev/bunkerrelay/SalvageValue.java
+index 4ffc26a..a2e1a35 100644
+--- a/mod/src/main/java/dev/bunkerrelay/SalvageValue.java
++++ b/mod/src/main/java/dev/bunkerrelay/SalvageValue.java
+@@ -68,14 +68,13 @@ final class SalvageValue {
+ 
+     static int affordableSale(ServerPlayer player, int price, int available) {
+         if (price <= 0) return 0;
+-        return (int) Math.min(available, Math.min(RelayEconomy.account(player).getInt("budget") / price,
+-            (RelayEconomy.MAX_BALANCE - RelayEconomy.balance(player)) / price));
++        return (int) Math.min(available, (RelayEconomy.MAX_BALANCE - RelayEconomy.balance(player)) / price);
+     }
+ 
+     static void creditSale(ServerPlayer player, int payout) {
+         var account = RelayEconomy.account(player);
+         account.putLong("balance", RelayEconomy.balance(player) + payout);
+-        account.putInt("budget", account.getInt("budget") - payout);
++
+     }
+ 
+     static String sellSlot(ServerPlayer player, ItemStack stack, int requested) {
+@@ -85,7 +84,7 @@ final class SalvageValue {
+         int owned=player.getInventory().items.stream().filter(item->ItemStack.isSameItemSameComponents(item,stack))
+             .mapToInt(ItemStack::getCount).sum();
+         int count=affordableSale(player,price,Math.min(owned,requested));
+-        if(count<=0) return "Недостаточно бюджета скупщика.";
++        if(count<=0) return "Нет предметов для продажи или достигнут предел счёта.";
+         int payout=count*price;
+         var sample=stack.copyWithCount(1);
+         int left=count;
+diff --git a/mod/src/main/java/dev/bunkerrelay/SectorCrossings.java b/mod/src/main/java/dev/bunkerrelay/SectorCrossings.java
+new file mode 100644
+index 0000000..895692e
+--- /dev/null
++++ b/mod/src/main/java/dev/bunkerrelay/SectorCrossings.java
+@@ -0,0 +1,76 @@
++package dev.bunkerrelay;
++
++import net.minecraft.core.BlockPos;
++import net.minecraft.core.Direction;
++import net.minecraft.server.level.ServerLevel;
++import net.minecraft.world.level.block.Blocks;
++import net.minecraft.world.level.levelgen.Heightmap;
++
++/** Join opposite banks of the two reserved chunks at a city parcel boundary. */
++final class SectorCrossings {
++    private static final int BANK = 17;
++    private static final int WIDTH = 2;
++
++    static void visit(ServerLevel level, RelayState state, BlockPos player) {
++        if (state.activeTheme.equals("forest")) return;
++        for (Direction axis : new Direction[]{Direction.EAST, Direction.SOUTH}) {
++            boolean east = axis == Direction.EAST;
++            int origin = east ? state.centerX : state.centerZ;
++            int normal = east ? player.getX() : player.getZ();
++            int along = east ? player.getZ() : player.getX();
++            int boundary = origin + Math.floorDiv(normal-origin, ExpeditionGrid.SIDE)*ExpeditionGrid.SIDE + ExpeditionGrid.HALF;
++            if (Math.abs(boundary-normal)>48) continue;
++            // Lost Cities street centres are aligned to chunks.
++            int first = Math.floorDiv(along-32,16)*16+8;
++            for (int lane=first;lane<=along+32;lane+=16) {
++                BlockPos middle = new BlockPos(east?boundary:lane,0,east?lane:boundary);
++                if (!SectorPlan.contains(state.centerX,state.centerZ,state.activeSize,middle.getX()-BANK,middle.getZ()-BANK)
++                    || !SectorPlan.contains(state.centerX,state.centerZ,state.activeSize,middle.getX()+BANK,middle.getZ()+BANK)) continue;
++                String key="bridge52/"+level.dimension().location()+"/"+middle.asLong()+"/"+axis;
++                if (!state.roadChunks.contains(key) && build(level,state,middle,axis)) {
++                    state.roadChunks.putBoolean(key,true);
++                    state.setDirty();
++                }
++            }
++        }
++    }
++
++    private static boolean build(ServerLevel level,RelayState state,BlockPos middle,Direction axis) {
++        Direction side=axis.getClockWise();
++        BlockPos left=middle.relative(axis,-BANK), right=middle.relative(axis,BANK);
++        for(int i=-BANK;i<=BANK;i++) for(int k:new int[]{-WIDTH,WIDTH})
++            if(!level.hasChunkAt(middle.relative(axis,i).relative(side,k))) return false;
++        int from=height(level,left), to=height(level,right);
++        if(Math.abs(to-from)>BANK || !street(level,left.atY(from)) || !street(level,right.atY(to))) return false;
++        // Validate the full span before placing anything. Never cut buildings or open containers.
++        for(int i=-BANK;i<=BANK;i++){
++            int y=from+Math.round((to-from)*(i+BANK)/(2f*BANK));
++            var centre=middle.relative(axis,i).atY(y);
++            if(StructureLevels.overlapsHistorical(level,state,centre,WIDTH)) return false;
++            for(int k=-WIDTH;k<=WIDTH;k++){
++                var at=centre.relative(side,k);
++                if(!level.isEmptyBlock(at.above())||!level.isEmptyBlock(at.above(2))) return false;
++                if(level.getBlockEntity(at)!=null) return false;
++                if(Math.abs(i)==BANK && !level.getBlockState(at).isSolidRender(level,at))return false;
++            }
++        }
++        for(int i=1-BANK;i<BANK;i++){
++            int y=from+Math.round((to-from)*(i+BANK)/(2f*BANK));
++            for(int k=-WIDTH;k<=WIDTH;k++)level.setBlock(middle.relative(axis,i).relative(side,k).atY(y),
++                (k==0?Blocks.LIGHT_GRAY_CONCRETE:Blocks.SMOOTH_STONE).defaultBlockState(),2);
++        }
++        return true;
++    }
++
++    private static int height(ServerLevel level,BlockPos at){
++        return level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,at.getX(),at.getZ())-1;
++    }
++
++    private static boolean street(ServerLevel level,BlockPos pos){
++        var block=level.getBlockState(pos);
++        return block.is(Blocks.GRAY_CONCRETE)||block.is(Blocks.WHITE_CONCRETE)||block.is(Blocks.LIGHT_GRAY_CONCRETE)
++            ||block.is(Blocks.SMOOTH_STONE)||block.is(Blocks.STONE_BRICKS)||block.is(Blocks.POLISHED_ANDESITE)
++            ||block.is(Blocks.STONE)||block.is(Blocks.ANDESITE)||block.is(Blocks.SMOOTH_STONE_SLAB);
++    }
++    private SectorCrossings(){}
++}
+diff --git a/mod/src/main/java/dev/bunkerrelay/SkillMenu.java b/mod/src/main/java/dev/bunkerrelay/SkillMenu.java
+index 62cafa2..022f9d8 100644
+--- a/mod/src/main/java/dev/bunkerrelay/SkillMenu.java
++++ b/mod/src/main/java/dev/bunkerrelay/SkillMenu.java
+@@ -20,7 +20,7 @@ public final class SkillMenu extends ChestMenu {
+         SCOUT("Разведчик","Эвакуация теперь мгновенная · очки возвращены",Items.COMPASS,10,1,null),
+         VETERAN("Полевой ветеран","Эвакуация теперь мгновенная · очки возвращены",Items.ENDER_PEARL,19,2,SCOUT),
+         DEALER("Переговорщик","+60 кр. за первую эвакуацию из новой зоны",Items.EMERALD,13,1,null),
+-        BROKER("Снабженец","+250 кр. к бюджету скупщика при обновлении",Items.GOLD_INGOT,22,2,DEALER),
++        BROKER("Снабженец","+250 кр. за успешную вылазку",Items.GOLD_INGOT,22,2,DEALER),
+         ORDERLY("Санитар","Перевязка напарника за 1 секунду",Items.PAPER,10,1,null),
+         PARAMEDIC("Фельдшер","Поднятый напарник получает 12 здоровья",Items.GOLDEN_APPLE,19,2,ORDERLY);
+         final String title,effect;
+diff --git a/mod/src/main/java/dev/bunkerrelay/SporeEncounters.java b/mod/src/main/java/dev/bunkerrelay/SporeEncounters.java
+index 03c053e..f21b581 100644
+--- a/mod/src/main/java/dev/bunkerrelay/SporeEncounters.java
++++ b/mod/src/main/java/dev/bunkerrelay/SporeEncounters.java
+@@ -13,8 +13,8 @@ final class SporeEncounters {
+         {"inf_human", "inf_husk"},
+         {"inf_pillager", "inf_hazmat"},
+         {"stalker", "leaper"},
+-        {"slasher", "spitter"},
+-        {"brute", "protector"}
++        {"slasher", "spitter", "brute", "leaper"},
++        {"brute", "protector", "slasher", "wendigo"}
+     };
+ 
+     static Mob create(ServerLevel level, RelayState state, int index) {
+diff --git a/mod/src/main/java/dev/bunkerrelay/SporeSites.java b/mod/src/main/java/dev/bunkerrelay/SporeSites.java
+index 05a2106..930b9a7 100644
+--- a/mod/src/main/java/dev/bunkerrelay/SporeSites.java
++++ b/mod/src/main/java/dev/bunkerrelay/SporeSites.java
+@@ -16,6 +16,8 @@ final class SporeSites {
+             case "ash" -> "hollen";
+             default -> "grober";
+         };
++        var elite=SporeEncounters.create(level,switch(theme){case "forest"->"sieger";case "infected"->"howitzer";default->"gazenbreacher";});
++        if(elite!=null)return elite;
+         return BuiltInRegistries.ENTITY_TYPE.getOptional(ResourceLocation.fromNamespaceAndPath("spore",id))
+             .map(type->type.create(level)).filter(Mob.class::isInstance).map(Mob.class::cast).orElse(null);
+     }
+diff --git a/mod/src/main/java/dev/bunkerrelay/TerminalMenu.java b/mod/src/main/java/dev/bunkerrelay/TerminalMenu.java
+index 1c39ba7..806752d 100644
+--- a/mod/src/main/java/dev/bunkerrelay/TerminalMenu.java
++++ b/mod/src/main/java/dev/bunkerrelay/TerminalMenu.java
+@@ -60,7 +60,7 @@ public final class TerminalMenu extends ChestMenu {
+   if(page==3){
+    for(var profile:ZoneProfile.values())
+     icon(10+profile.ordinal(),Items.MAP,(zone==profile?"• ":"")+profile.title,"Выбрать район вылазки");
+-   icon(14,Items.COMPASS,"Размер · "+expeditionSize,"Сменить размер");
++   icon(15,Items.COMPASS,"Размер · "+expeditionSize,"Сменить размер");
+    for(var option:ExpeditionContracts.Type.values())if(option.available(zone))
+     icon(18+option.ordinal(),Items.PAPER,(contract==option?"• ":"")+option.title,option.hint);
+    boolean night=ExpeditionLight.offer(s,zone);
+@@ -107,10 +107,10 @@ public final class TerminalMenu extends ChestMenu {
+    page=3;refresh();sendAllDataToRemote();return;
+   }
+   if(page==3){
+-   if(slot>=10&&slot<=13){
++   if(slot>=10&&slot<10+ZoneProfile.values().length){
+     zone=ZoneProfile.values()[slot-10];
+     if(!contract.available(zone))contract=ExpeditionContracts.Type.STANDARD;
+-   }else if(slot==14)expeditionSize=expeditionSize==2048?4096:expeditionSize==4096?8192:2048;
++   }else if(slot==15)expeditionSize=expeditionSize==2048?4096:expeditionSize==4096?8192:2048;
+    else if(slot>=18&&slot<=21)contract=ExpeditionContracts.Type.values()[slot-18];
+    else if(slot==26)ExpeditionLight.reroll(RelayState.get(owner.server),zone);
+    else if(slot==24){
+diff --git a/mod/src/main/java/dev/bunkerrelay/TrophyResearch.java b/mod/src/main/java/dev/bunkerrelay/TrophyResearch.java
+index 472fe84..62c040d 100644
+--- a/mod/src/main/java/dev/bunkerrelay/TrophyResearch.java
++++ b/mod/src/main/java/dev/bunkerrelay/TrophyResearch.java
+@@ -9,7 +9,7 @@ import net.minecraft.world.item.Rarity;
+ final class TrophyResearch {
+     enum Part {
+         REGULATOR("regulator","Стабилизатор · 120 FE/с и доступ к изолированному медицинскому отсеку",BossTrophies.QUARANTINE),
+-        SCANNER("scanner","Модуль анализа · ранний пеленг аирдропа и +200 кр. к бюджету скупщика после вылазки",BossTrophies.ECHO),
++        SCANNER("scanner","Модуль анализа · ранний пеленг аирдропа и +200 кр. за успешную вылазку",BossTrophies.ECHO),
+         HARNESS("harness","Подвес груза · замедление 10% вместо 25%",BossTrophies.RANGER),
+         TOOLING("tooling","Оснастка · ремонт вдвое дешевле",BossTrophies.FORGE);
+ 
+diff --git a/mod/src/main/java/dev/bunkerrelay/UpgradeIntegrationTest.java b/mod/src/main/java/dev/bunkerrelay/UpgradeIntegrationTest.java
+index 5b428a1..feb32c0 100644
+--- a/mod/src/main/java/dev/bunkerrelay/UpgradeIntegrationTest.java
++++ b/mod/src/main/java/dev/bunkerrelay/UpgradeIntegrationTest.java
+@@ -17,8 +17,8 @@ public final class UpgradeIntegrationTest {
+  private static void check(boolean ok,String message){if(!ok)throw new IllegalStateException("UPGRADE: "+message);}
+  private static RelayEconomy.Offer offer(String id){return RelayEconomy.CATALOG.stream().filter(o->o.id().equals(id)).findFirst().orElseThrow();}
+  public static void market(MinecraftServer server){var p=new FakePlayer(server.getLevel(BunkerRelay.HUB),new GameProfile(UUID.randomUUID(),"Market08"));var a=RelayEconomy.account(p);a.putLong("balance",10000);var ammo=offer("9mm");var iron=offer("iron");check(RelayEconomy.CATALOG.size()>100,"expanded catalog");var menu=new RelayEconomy.MarketMenu(12,p.getInventory(),p,false);menu.clicked(9,0,ClickType.PICKUP,p);check(RelayEconomy.owned(p,ammo)==1&&RelayEconomy.balance(p)==9997,"one purchase");menu.clicked(9,1,ClickType.PICKUP,p);check(RelayEconomy.owned(p,ammo)==256&&RelayEconomy.balance(p)==9232,"max purchase stock cap");menu.clicked(48,0,ClickType.PICKUP,p);int saleSlot=java.util.stream.IntStream.range(9,45).filter(i->!menu.getSlot(i).getItem().isEmpty()).findFirst().orElseThrow();menu.clicked(saleSlot,0,ClickType.PICKUP,p);check(RelayEconomy.owned(p,ammo)==255&&RelayEconomy.balance(p)==9233,"one sale");menu.clicked(saleSlot,1,ClickType.PICKUP,p);check(RelayEconomy.owned(p,ammo)==0&&RelayEconomy.balance(p)==9488,"max sale across slots");
+-  for(int i=0;i<36;i++)p.getInventory().setItem(i,new ItemStack(Items.COBBLESTONE,64));long before=RelayEconomy.balance(p);RelayEconomy.trade(p,iron,false,Integer.MAX_VALUE);check(RelayEconomy.balance(p)==before,"full inventory no debit");p.getInventory().setItem(0,new ItemStack(Items.IRON_INGOT,63));RelayEconomy.trade(p,iron,false,Integer.MAX_VALUE);check(RelayEconomy.balance(p)==before-20&&p.getInventory().getItem(0).getCount()==64,"partial capacity");p.getInventory().clearContent();a.putLong("balance",45);RelayEconomy.trade(p,iron,false,Integer.MAX_VALUE);check(RelayEconomy.owned(p,iron)==2&&RelayEconomy.balance(p)==5,"max affordable");a.putInt("budget",6);RelayEconomy.trade(p,iron,true,Integer.MAX_VALUE);check(RelayEconomy.owned(p,iron)==1&&RelayEconomy.balance(p)==11,"budget cap");
+-  var named=new ItemStack(Items.IRON_INGOT,10);named.set(DataComponents.CUSTOM_NAME,Component.literal("Keep"));p.getInventory().setItem(0,named);a.putInt("budget",1200);RelayEconomy.trade(p,iron,true,Integer.MAX_VALUE);check(named.getCount()==10&&RelayEconomy.balance(p)==11,"modified item preserved");
++  for(int i=0;i<36;i++)p.getInventory().setItem(i,new ItemStack(Items.COBBLESTONE,64));long before=RelayEconomy.balance(p);RelayEconomy.trade(p,iron,false,Integer.MAX_VALUE);check(RelayEconomy.balance(p)==before,"full inventory no debit");p.getInventory().setItem(0,new ItemStack(Items.IRON_INGOT,63));RelayEconomy.trade(p,iron,false,Integer.MAX_VALUE);check(RelayEconomy.balance(p)==before-20&&p.getInventory().getItem(0).getCount()==64,"partial capacity");p.getInventory().clearContent();a.putLong("balance",45);RelayEconomy.trade(p,iron,false,Integer.MAX_VALUE);check(RelayEconomy.owned(p,iron)==2&&RelayEconomy.balance(p)==5,"max affordable");a.putInt("budget",6);RelayEconomy.trade(p,iron,true,Integer.MAX_VALUE);check(RelayEconomy.owned(p,iron)==0&&RelayEconomy.balance(p)==17,"unrestricted sale");
++  var named=new ItemStack(Items.IRON_INGOT,10);named.set(DataComponents.CUSTOM_NAME,Component.literal("Keep"));p.getInventory().setItem(0,named);a.putInt("budget",1200);RelayEconomy.trade(p,iron,true,Integer.MAX_VALUE);check(named.getCount()==10&&RelayEconomy.balance(p)==17,"modified item preserved");
+   var old=new net.minecraft.nbt.CompoundTag();old.putLong("balance",777);old.putInt("budget",100);var bought=new net.minecraft.nbt.CompoundTag();bought.putInt("9mm",2);old.put("bought",bought);p.getPersistentData().put(RelayEconomy.KEY,old);check(RelayEconomy.account(p).getInt("budget")==700&&RelayEconomy.balance(p)==777&&RelayEconomy.remainingUnits(p,ammo)==192,"old stock and balance migrated");check(RelayEconomy.account(p).getInt("budget")==700,"migration once");
+   for(var m:RelayEconomy.Merchant.values())check(RelayEconomy.offers(p).stream().anyMatch(o->RelayEconomy.merchant(o)==m),"category stocked "+m);System.out.println("RELAY_MARKET08_PASS: direct one/max trades, caps, inventory safety, migration, categories");
+  }
+diff --git a/mod/src/main/java/dev/bunkerrelay/WarehouseIntegrationTest.java b/mod/src/main/java/dev/bunkerrelay/WarehouseIntegrationTest.java
+index 2978eea..f312714 100644
+--- a/mod/src/main/java/dev/bunkerrelay/WarehouseIntegrationTest.java
++++ b/mod/src/main/java/dev/bunkerrelay/WarehouseIntegrationTest.java
+@@ -70,10 +70,10 @@ final class WarehouseIntegrationTest {
+         var account = RelayEconomy.account(player);
+         account.putInt("budget", price * 2);
+         player.containerMenu.clicked(9, 1, ClickType.PICKUP, player);
+-        require(new Warehouse(player).count(copper) == 12 && RelayEconomy.balance(player) == balance + price * 2
+-            && account.getInt("budget") == 0, "direct sale uses shared budget");
++        require(new Warehouse(player).count(copper) == 0 && RelayEconomy.balance(player) == balance + price * 14
++            , "all warehouse stock sold");
+         player.containerMenu.clicked(9, 1, ClickType.PICKUP, player);
+-        require(new Warehouse(player).count(copper) == 12, "exhausted sale leaves stock intact");
++        require(new Warehouse(player).count(copper) == 0, "empty warehouse stays empty");
+         System.out.println("RELAY_WAREHOUSE_PASS");
+     }
+ 
+diff --git a/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java b/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java
+index 3370f34..daec898 100644
+--- a/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java
++++ b/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java
+@@ -23,9 +23,9 @@ final class ZoneLandmarks {
+     private static final List<Plan> INDUSTRIAL=List.of(
+         new Plan("Полицейский участок","prison",SupplySites.Kind.ARMORY,false),
+         new Plan("Склад гражданской обороны","cell",SupplySites.Kind.WAREHOUSE,false),
+-        new Plan("Промышленная шахта","mines",SupplySites.Kind.FACTORY,false),
+-        new Plan("Ремонтная мастерская","kaisyn:outpost/camps/savanna_plateau/side/workshop",SupplySites.Kind.FACTORY,false),
+-        new Plan("Оружейная кузница","kaisyn:village/old_growth_taiga_polish/houses/old_growth_taiga_toolsmith_and_weaponsmith_1",SupplySites.Kind.ARMORY,false));
++        new Plan("Литейный завод","relayfactories:foundry",SupplySites.Kind.FACTORY,false),
++        new Plan("Сборочный цех","relayfactories:assembly",SupplySites.Kind.FACTORY,false),
++        new Plan("Оружейный завод","relayfactories:arsenal",SupplySites.Kind.ARMORY,false));
+     private static final List<Plan> INFECTED=List.of(
+         new Plan("Карантинная больница","hospital",SupplySites.Kind.CANTEEN,true),
+         new Plan("Изолятор","asylum",SupplySites.Kind.WAREHOUSE,true),
+@@ -49,6 +49,7 @@ final class ZoneLandmarks {
+             case INDUSTRIAL -> INDUSTRIAL;
+             case INFECTED -> INFECTED;
+             case ASH -> ASH;
++            case HELL -> List.of(new Plan("Огненная часовня","church2",SupplySites.Kind.ARMORY,false),new Plan("Пепельная башня","biomass_tower",SupplySites.Kind.FACTORY,false),new Plan("Склад углей","biomass_tower_small",SupplySites.Kind.WAREHOUSE,false),new Plan("Обугленный могильник","massgrave4",SupplySites.Kind.WAREHOUSE,false),new Plan("Бастион спор","biomass_tower_tall",SupplySites.Kind.ARMORY,false));
+         };
+     }
+ 
+@@ -138,6 +139,7 @@ final class ZoneLandmarks {
+         room.putLong("origin",site.origin().asLong());
+         room.putInt("x",cache.getX());room.putInt("y",cache.getY());room.putInt("z",cache.getZ());
+         var director=RaidDirector.get(level.getServer());
++        InteriorSites.prepare(level,state,room,site.origin(),site.approach());
+         director.rooms.add(room);
+         director.setDirty();
+         int sx=ExpeditionGrid.cell(state,cache.getX()-state.centerX);
+diff --git a/mod/src/main/java/dev/bunkerrelay/ZoneProfile.java b/mod/src/main/java/dev/bunkerrelay/ZoneProfile.java
+index 204ea10..0baee0b 100644
+--- a/mod/src/main/java/dev/bunkerrelay/ZoneProfile.java
++++ b/mod/src/main/java/dev/bunkerrelay/ZoneProfile.java
+@@ -4,7 +4,8 @@ enum ZoneProfile {
+     FOREST("forest","Лес",1,2),
+     INDUSTRIAL("industrial","Промзона",2,3),
+     INFECTED("infected","Заражённый город",3,4),
+-    ASH("ash","Пустошь",5,5);
++    ASH("ash","Пустошь",5,5),
++    HELL("hell","Адский разлом",5,5);
+ 
+     final String id,title;
+     final int min,max;
+diff --git a/mod/src/main/resources/META-INF/neoforge.mods.toml b/mod/src/main/resources/META-INF/neoforge.mods.toml
+index d08801c..12659cf 100644
+--- a/mod/src/main/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/main/resources/META-INF/neoforge.mods.toml
+@@ -3,7 +3,7 @@ loaderVersion="[4,)"
+ license="MIT"
+ [[mods]]
+ modId="bunkerrelay"
+-version="0.51.3"
++version="0.52.0"
+ displayName="Bunker Relay"
+ description="Cooperative bunker, garage and procedural expeditions. Early prototype."
+ [[dependencies.bunkerrelay]]
+@@ -56,9 +56,16 @@ side="BOTH"
+ [[dependencies.bunkerrelay]]
+ modId="relaylights"
+ type="required"
+-versionRange="[0.51.3]"
++versionRange="[0.52.0]"
+ ordering="AFTER"
+ side="BOTH"
+ 
+ [[mixins]]
+ config="bunkerrelay.mixins.json"
++
++[[dependencies.bunkerrelay]]
++modId="relayfactories"
++type="required"
++versionRange="[0.52.0]"
++ordering="AFTER"
++side="BOTH"
+diff --git a/mod/src/main/resources/data/bunkerrelay/dimension/hell_raid.json b/mod/src/main/resources/data/bunkerrelay/dimension/hell_raid.json
+new file mode 100644
+index 0000000..6ceafaf
+--- /dev/null
++++ b/mod/src/main/resources/data/bunkerrelay/dimension/hell_raid.json
+@@ -0,0 +1,30 @@
++{
++  "type": "minecraft:overworld",
++  "generator": {
++    "type": "minecraft:flat",
++    "settings": {
++      "biome": "minecraft:basalt_deltas",
++      "features": false,
++      "lakes": false,
++      "structure_overrides": [],
++      "layers": [
++        {
++          "block": "minecraft:bedrock",
++          "height": 1
++        },
++        {
++          "block": "minecraft:blackstone",
++          "height": 98
++        },
++        {
++          "block": "minecraft:netherrack",
++          "height": 29
++        },
++        {
++          "block": "minecraft:basalt",
++          "height": 1
++        }
++      ]
++    }
++  }
++}
+\ No newline at end of file
+diff --git a/mod/src/main/resources/data/bunkerrelay/recipe/field_m700.json b/mod/src/main/resources/data/bunkerrelay/recipe/field_m700.json
+new file mode 100644
+index 0000000..6288861
+--- /dev/null
++++ b/mod/src/main/resources/data/bunkerrelay/recipe/field_m700.json
+@@ -0,0 +1,31 @@
++{
++  "type": "minecraft:crafting_shaped",
++  "pattern": [
++    "IBI",
++    " R ",
++    " C "
++  ],
++  "key": {
++    "I": {
++      "item": "minecraft:iron_ingot"
++    },
++    "B": {
++      "item": "minecraft:iron_block"
++    },
++    "R": {
++      "item": "minecraft:blaze_rod"
++    },
++    "C": {
++      "item": "create:precision_mechanism"
++    }
++  },
++  "result": {
++    "id": "tacz:modern_kinetic_gun",
++    "components": {
++      "minecraft:custom_data": {
++        "GunId": "tacz:m700",
++        "GunCurrentAmmoCount": 0
++      }
++    }
++  }
++}
+\ No newline at end of file
+diff --git a/mod/src/main/resources/data/bunkerrelay/recipe/field_scar_h.json b/mod/src/main/resources/data/bunkerrelay/recipe/field_scar_h.json
+new file mode 100644
+index 0000000..d2a744e
+--- /dev/null
++++ b/mod/src/main/resources/data/bunkerrelay/recipe/field_scar_h.json
+@@ -0,0 +1,31 @@
++{
++  "type": "minecraft:crafting_shaped",
++  "pattern": [
++    "IBI",
++    " R ",
++    " C "
++  ],
++  "key": {
++    "I": {
++      "item": "minecraft:iron_ingot"
++    },
++    "B": {
++      "item": "minecraft:iron_block"
++    },
++    "R": {
++      "item": "minecraft:netherite_scrap"
++    },
++    "C": {
++      "item": "create:precision_mechanism"
++    }
++  },
++  "result": {
++    "id": "tacz:modern_kinetic_gun",
++    "components": {
++      "minecraft:custom_data": {
++        "GunId": "tacz:scar_h",
++        "GunCurrentAmmoCount": 0
++      }
++    }
++  }
++}
+\ No newline at end of file
+diff --git a/mod/src/relayFactories/java/dev/relayfactories/RelayFactories.java b/mod/src/relayFactories/java/dev/relayfactories/RelayFactories.java
+new file mode 100644
+index 0000000..935668e
+--- /dev/null
++++ b/mod/src/relayFactories/java/dev/relayfactories/RelayFactories.java
+@@ -0,0 +1,6 @@
++package dev.relayfactories;
++import net.neoforged.fml.common.Mod;
++
++/** Structure library; Bunker Relay controls placement in industrial expeditions. */
++@Mod("relayfactories")
++public final class RelayFactories {}
+diff --git a/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml b/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml
+new file mode 100644
+index 0000000..8b96a36
+--- /dev/null
++++ b/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml
+@@ -0,0 +1,22 @@
++modLoader="javafml"
++loaderVersion="[4,)"
++license="MIT"
++
++[[mods]]
++modId="relayfactories"
++version="0.52.0"
++displayName="Relay Factories"
++description="Factory structures for industrial expeditions."
++
++[[dependencies.relayfactories]]
++modId="neoforge"
++type="required"
++versionRange="[21.1,21.2)"
++side="BOTH"
++
++[[dependencies.relayfactories]]
++modId="minecraft"
++type="required"
++versionRange="[1.21.1]"
++side="BOTH"
++
+diff --git a/mod/src/relayLights/resources/META-INF/neoforge.mods.toml b/mod/src/relayLights/resources/META-INF/neoforge.mods.toml
+index 50a92a8..cab487c 100644
+--- a/mod/src/relayLights/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/relayLights/resources/META-INF/neoforge.mods.toml
+@@ -4,7 +4,7 @@ license="MIT"
+ 
+ [[mods]]
+ modId="relaylights"
+-version="0.51.3"
++version="0.52.0"
+ displayName="Relay Lights"
+ description="Directional lights with personal and multiplayer modes."
+ 
+diff --git a/modrinth.index.json b/modrinth.index.json
+index 062c2d3..07a6a7a 100644
+--- a/modrinth.index.json
++++ b/modrinth.index.json
+@@ -1,7 +1,7 @@
+ {
+   "formatVersion": 1,
+   "game": "minecraft",
+-  "versionId": "0.51.3",
++  "versionId": "0.52.0",
+   "name": "Bunker Relay",
+   "summary": "Cooperative expeditions, ECHO encounters, threats, extraction and persistent bunker.",
+   "files": [
+diff --git a/tools/expand_lock.py b/tools/expand_lock.py
+new file mode 100644
+index 0000000..bf47f75
+--- /dev/null
++++ b/tools/expand_lock.py
+@@ -0,0 +1,32 @@
++"""Resolve new release dependencies once, preserving all existing pins."""
++import json, urllib.request, urllib.parse
++from pathlib import Path
++from resolve_pack import ROOT, main as index
++path=ROOT/'pack.lock.json'
++lock=json.loads(path.read_text())
++known={m['project_id']:m for m in lock['mods']}
++def get(endpoint):
++    req=urllib.request.Request('https://api.modrinth.com/v2/'+endpoint,headers={'User-Agent':'BunkerRelay/release-builder'})
++    with urllib.request.urlopen(req,timeout=45) as response:return json.load(response)
++def add(project,version=None):
++    p=get('project/'+project)
++    if p['id'] in known:
++        if version and known[p['id']]['version_id']!=version:raise ValueError('Version conflict: '+project)
++        return
++    query=urllib.parse.urlencode({'loaders':'["neoforge"]','game_versions':'["1.21.1"]'})
++    vs=[get('version/'+version)] if version else get('project/'+p['id']+'/version?'+query)
++    vs.sort(key=lambda v:(v['version_type']=='release',v['date_published']),reverse=True)
++    v=vs[0]
++    if '1.21.1' not in v['game_versions'] or 'neoforge' not in v['loaders']:raise ValueError(project)
++    f=next((f for f in v['files'] if f['primary']),v['files'][0])
++    env={'client':p['client_side'],'server':p['server_side']}
++    entry=dict(slug=p['slug'],title=p['title'],version=v['version_number'],version_id=v['id'],project_id=p['id'],dependencies=v['dependencies'],env=env,url='https://modrinth.com/mod/'+p['slug'],file={'path':'mods/'+f['filename'],'hashes':f['hashes'],'env':env,'downloads':[f['url']],'fileSize':f['size']})
++    known[p['id']]=entry
++    lock['mods'].append(entry)
++    print('Selected',p['slug'],v['version_number'],flush=True)
++    for dep in v['dependencies']:
++        if dep['dependency_type']=='required':add(dep['project_id'],dep['version_id'])
++if __name__=='__main__':
++    for project in ['skateboard-mod','cybernetic-system']:add(project)
++    path.write_text(json.dumps(lock,indent=2,ensure_ascii=False)+'\n')
++    index()
+diff --git a/tools/factory_templates.py b/tools/factory_templates.py
+new file mode 100644
+index 0000000..6708e2a
+--- /dev/null
++++ b/tools/factory_templates.py
+@@ -0,0 +1,29 @@
++"""Generate vanilla structure NBT for the three Relay Factories workshops."""
++from pathlib import Path
++import gzip, struct
++out = Path(__file__).resolve().parents[1]/'mod/src/relayFactories/resources/data/relayfactories/structure'
++out.mkdir(parents=True,exist_ok=True)
++def integer(i):return struct.pack('>i',i)
++def string(s):return struct.pack('>H',len(s.encode()))+s.encode()
++def tag(t,n,v):return bytes([t])+string(n)+v
++def array(t,items):return bytes([t])+integer(len(items))+b''.join(items)
++def ints(seq):return array(3,[integer(i) for i in seq])
++for name,w,l,wall,station in [('foundry',33,27,'bricks','blast_furnace'),('assembly',27,37,'gray_concrete','piston'),('arsenal',31,23,'polished_deepslate','smithing_table')]:
++ blocks={};palette=[]
++ def put(x,y,z,material):
++  if material not in palette:palette.append(material)
++  blocks[x,y,z]=palette.index(material)
++ for x in range(w):
++  for z in range(l):
++   put(x,0,z,'smooth_stone')
++   edge=x in (0,w-1) or z in (0,l-1)
++   for y in range(1,9):
++    material='air'
++    if y==8:material='iron_block' if x%8==0 else 'smooth_stone'
++    elif edge and not (z==0 and abs(x-w//2)<=2 and y<=4):material='glass' if y in (4,5) and x%6 and z%6 else wall
++    elif y==1 and 3<x<w-3 and x%8 in (1,2) and z%7 in (2,3):material=station
++    elif x%8==0 and z in (2,l-3):material='iron_block'
++    elif y==7 and x%8==0 and z%8==0:material='sea_lantern'
++    put(x,y,z,material)
++ content=tag(3,'DataVersion',integer(3955))+tag(9,'size',ints([w,9,l]))+tag(9,'palette',array(10,[tag(8,'Name',string('minecraft:'+v))+b'\0' for v in palette]))+tag(9,'blocks',array(10,[tag(9,'pos',ints(pos))+tag(3,'state',integer(v))+b'\0' for pos,v in blocks.items()]))+tag(9,'entities',array(10,[]))+b'\0'
++ (out/(name+'.nbt')).write_bytes(gzip.compress(tag(10,'',content),mtime=0))
+diff --git a/tools/package_release.py b/tools/package_release.py
+index f5e2670..6ad6b6f 100644
+--- a/tools/package_release.py
++++ b/tools/package_release.py
+@@ -1,10 +1,12 @@
+ #!/usr/bin/env python3
+ import hashlib,pathlib,shutil,zipfile,sys
+ ROOT=pathlib.Path(__file__).resolve().parents[1];dist=ROOT/'dist';dist.mkdir(exist_ok=True)
+-VERSION='0.51.3';source='--source' in sys.argv;jar=ROOT/f'mod/build/libs/bunkerrelay-{VERSION}.jar'
++VERSION='0.52.0';source='--source' in sys.argv;jar=ROOT/f'mod/build/libs/bunkerrelay-{VERSION}.jar'
+ lights=ROOT/f'mod/build/libs/relaylights-{VERSION}.jar'
++factories=ROOT/f'mod/build/libs/relayfactories-{VERSION}.jar'
+ if not source:
+  if not jar.is_file() or not lights.is_file():raise SystemExit('First build: cd mod && ./gradlew build')
++ shutil.copy2(factories,dist/factories.name)
+  shutil.copy2(jar,dist/jar.name)
+  shutil.copy2(lights,dist/lights.name)
+  with zipfile.ZipFile(dist/f'Bunker-Relay-{VERSION}.mrpack','w',zipfile.ZIP_DEFLATED) as z:
+@@ -54,6 +56,8 @@ if not source:
+   z.write(ROOT/'WORK_0.51.1.md','overrides/WORK_0.51.1.md')
+   z.write(ROOT/'WORK_0.51.2.md','overrides/WORK_0.51.2.md')
+   z.write(ROOT/'WORK_0.51.3.md','overrides/WORK_0.51.3.md')
++  z.write(ROOT/'WORK_0.52.md','overrides/WORK_0.52.md')
++  z.write(factories,'overrides/mods/'+factories.name)
+   z.write(lights,'overrides/mods/'+lights.name)
+   for path in (ROOT/'overrides').rglob('*'):
+    if path.is_file():z.write(path,path.relative_to(ROOT))

@@ -1,7 +1,7 @@
 name: Build Bunker Relay
 on:
   push:
-    branches: [bunker-relay-0.51.3]
+    branches: [bunker-relay-0.52.0]
   workflow_dispatch:
 permissions:
   contents: read
@@ -19,6 +19,12 @@ jobs:
           echo '4b72564da02a3fdfae1752e814000287e3a6d830ce5764fda7b5ad1e91542d90  Bunker-Relay-0.51.3.zip' | sha256sum -c -
           mkdir -p sources
           unzip -q Bunker-Relay-0.51.3.zip -d sources
+      - name: Apply patch and lock optional modules
+        working-directory: sources/Bunker-Relay
+        run: |
+          patch -p1 < ../../release.patch
+          python3 tools/factory_templates.py
+          python3 tools/expand_lock.py
       - name: Compile both mods
         working-directory: sources/Bunker-Relay/mod
         run: bash gradlew build
@@ -27,9 +33,19 @@ jobs:
         run: |
           python3 tools/package_release.py
           python3 tools/package_release.py --source
-          cp ../Bunker-Relay-0.51.3.zip dist/
+          cp ../Bunker-Relay-0.52.0.zip dist/
       - uses: actions/upload-artifact@v4
         with:
-          name: Bunker-Relay-0.51.3
+          name: Bunker-Relay-0.52.0
           path: sources/Bunker-Relay/dist/*
           if-no-files-found: error
+      - name: Dedicated server expedition test
+        working-directory: sources/Bunker-Relay
+        timeout-minutes: 25
+        run: |
+          mkdir -p mod/run
+          echo 'eula=true' > mod/run/eula.txt
+          python3 tools/download_mods.py mod/run/mods --side server
+          cd mod
+          JDK_JAVA_OPTIONS=-Dbunkerrelay.zone27Test=true timeout 18m bash gradlew runServer | tee server-test.log
+          grep -q RELAY_016_LIVE_PASS server-test.log
