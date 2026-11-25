@@ -3154,3 +3154,547 @@ index dc54381..4caf695 100644
      }
    }
  }
+diff --git a/README_RU.md b/README_RU.md
+index ccb0e70..3a4f8ca 100644
+--- a/README_RU.md
++++ b/README_RU.md
+@@ -1,4 +1,4 @@
+-# Bunker Relay 0.56.0
++# Bunker Relay 0.57.0
+ 
+ Изменения релиза см. в WORK_0.56.md.
+ 
+diff --git a/WORK_0.57.md b/WORK_0.57.md
+new file mode 100644
+index 0000000..5bbb4fe
+--- /dev/null
++++ b/WORK_0.57.md
+@@ -0,0 +1,6 @@
++# Bunker Relay 0.57.0
++
++- Зимние дома Towns and Towers размещаются по входной двери. Тайники стоят у входа.
++- Арены получили защищённое декоративное покрытие и тематические укрытия. Укладка бедрока по всему сектору отключена.
++- На аренах появляются бедствия Spore. Здоровье зависит от сложности и числа участников.
++- Переход во внутренний корпус подключён к сюжетной больнице. Возврат на улицу через медную плиту.
+diff --git a/mod/build.gradle b/mod/build.gradle
+index 104170c..9ea7b03 100644
+--- a/mod/build.gradle
++++ b/mod/build.gradle
+@@ -1,5 +1,5 @@
+ plugins { id 'java-library'; id 'net.neoforged.moddev' version '2.0.148' }
+-version = '0.56.0'
++version = '0.57.0'
+ group = 'dev.bunkerrelay'
+ base { archivesName = 'bunkerrelay' }
+ java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+diff --git a/mod/src/main/java/dev/bunkerrelay/BossArena.java b/mod/src/main/java/dev/bunkerrelay/BossArena.java
+index bc49924..c0adfe5 100644
+--- a/mod/src/main/java/dev/bunkerrelay/BossArena.java
++++ b/mod/src/main/java/dev/bunkerrelay/BossArena.java
+@@ -5,24 +5,43 @@ import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.world.level.block.*;
+ /** Distinct, open boss districts with a broad approach and cover. */
+ public final class BossArena {
++ static final int OUTER=ExpeditionGrid.HALF-3;
++ static void register(){} // Initializes the floor registrations before the registry event.
++ private static java.util.function.Supplier<Block> paving(String name){
++  return RelayTerminalBlock.BLOCKS.register(name,()->new Block(net.minecraft.world.level.block.state.BlockBehaviour.Properties.of()
++      .strength(-1,3600000).noLootTable()));
++ }
++ static final java.util.function.Supplier<Block> BRICK=paving("arena_brick"), MOSS=paving("arena_moss"), BASALT=paving("arena_basalt"), TILE=paving("arena_tile");
++ static Block surface(String theme,int x,int z){
++  boolean band=Math.abs(x)%12==0||Math.abs(z)%12==0;
++  return switch(theme){
++   case "forest" -> band?BRICK.get():MOSS.get();
++   case "ash","hell" -> band?BRICK.get():BASALT.get();
++   case "winter","infected" -> band?BRICK.get():TILE.get();
++   default -> band?BASALT.get():BRICK.get();
++  };
++ }
+  public static void build(ServerLevel level,RelayState s,BlockPos origin){
+   boolean forest=s.activeTheme.equals("forest"),ash=s.activeTheme.equals("ash"),lab=s.activeTheme.equals("infected");
+   Block floor=forest?Blocks.MOSSY_STONE_BRICKS:ash?Blocks.POLISHED_BLACKSTONE:lab?Blocks.SMOOTH_QUARTZ:Blocks.SMOOTH_STONE;
+   Block wall=forest?Blocks.DARK_OAK_LOG:ash?Blocks.DEEPSLATE_BRICKS:lab?Blocks.WHITE_CONCRETE:Blocks.GRAY_CONCRETE;
+   int radius=s.layoutVersion==3?30:18;
+   for(int x=-radius;x<=radius;x++)for(int z=-radius;z<=radius;z++){
+-   level.setBlock(origin.offset(x,-1,z),Blocks.BEDROCK.defaultBlockState(),2);
++   level.setBlock(origin.offset(x,-1,z),surface(s.activeTheme,x,z).defaultBlockState(),2);
+    for(int y=0;y<9;y++)level.setBlock(origin.offset(x,y,z),Blocks.AIR.defaultBlockState(),2);
+    boolean edge=Math.abs(x)==radius||Math.abs(z)==radius;
+    if(edge&&!(Math.abs(x)<=3||Math.abs(z)<=3))for(int y=0;y<4;y++)level.setBlock(origin.offset(x,y,z),(y==2&&lab?Blocks.LIGHT_BLUE_STAINED_GLASS:wall).defaultBlockState(),2);
+    if(Math.abs(x)==radius&&Math.abs(z)==radius)for(int y=4;y<9;y++)level.setBlock(origin.offset(x,y,z),wall.defaultBlockState(),2);
+   }
+   for(int x:new int[]{-12,12})for(int z:new int[]{-10,10}){
+-   for(int dx=-2;dx<=2;dx++)for(int dz=-2;dz<=2;dz++)for(int y=0;y<4;y++){
+-    Block b=forest?(y==3?Blocks.DARK_OAK_SLAB:Blocks.DARK_OAK_PLANKS):ash?(y==3?Blocks.IRON_BARS:Blocks.BLACKSTONE):lab?(y==0?Blocks.IRON_BLOCK:Blocks.CYAN_STAINED_GLASS):Blocks.ORANGE_TERRACOTTA;
+-    level.setBlock(origin.offset(x+dx,y,z+dz),b.defaultBlockState(),2);
+-   }
+-   level.setBlock(origin.offset(x,4,z),(ash?Blocks.SHROOMLIGHT:Blocks.SEA_LANTERN).defaultBlockState(),2);
++   Block post=switch(s.activeTheme){case "forest","winter" -> Blocks.STRIPPED_SPRUCE_LOG;
++    case "hell","ash" -> Blocks.POLISHED_BASALT; default -> Blocks.DEEPSLATE_BRICKS;};
++   for(int h=0;h<3;h++)level.setBlock(origin.offset(x,h,z),post.defaultBlockState(),2);
++   level.setBlock(origin.offset(x,3,z),Blocks.LANTERN.defaultBlockState(),2);
++   Block cover=switch(s.activeTheme){case "winter" -> Blocks.PACKED_ICE;case "forest" -> Blocks.MOSSY_COBBLESTONE;
++    case "ash","hell" -> Blocks.BLACKSTONE;case "infected" -> Blocks.WHITE_CONCRETE;default -> Blocks.CUT_COPPER;};
++   for(int n=1;n<=4;n++)level.setBlock(origin.offset(x+n*Integer.signum(x),0,z),cover.defaultBlockState(),2);
++   level.setBlock(origin.offset(x,0,z+Integer.signum(z)),Blocks.IRON_BARS.defaultBlockState(),2);
+   }
+   for(int x=-4;x<=4;x++)level.setBlock(origin.offset(x,5,-radius),wall.defaultBlockState(),2);
+   for(int step=0;step<18;step++)for(int dx=-3;dx<=3;dx++){
+@@ -33,20 +52,5 @@ public final class BossArena {
+    level.setBlock(new BlockPos(origin.getX()+radius+1,h,origin.getZ()),Blocks.LADDER.defaultBlockState().setValue(LadderBlock.FACING,Direction.EAST),2);
+   }
+  }
+- // Extend the fighting floor over the reserved parcel, leaving the five-block road on its borders.
+- static final int OUTER=ExpeditionGrid.HALF-3;
+- static void outerStrip(ServerLevel level,RelayState state,int strip){
+-  BlockPos origin=RaidBosses.arena(state);
+-  for(int x=-OUTER+strip*3;x<=Math.min(OUTER,-OUTER+strip*3+2);x++)for(int z=-OUTER;z<=OUTER;z++){
+-   if(Math.abs(x)<=30&&Math.abs(z)<=30)continue;
+-   var floor=origin.offset(x,-1,z);
+-   level.setBlock(floor,Blocks.BEDROCK.defaultBlockState(),2);
+-   for(int h=1;h<=7;h++)if(!level.isEmptyBlock(floor.above(h)))level.setBlock(floor.above(h),Blocks.AIR.defaultBlockState(),2);
+-   if(Math.abs(x)%24==12&&Math.abs(z)%24==12){
+-    level.setBlock(floor.above(),Blocks.CHISELED_STONE_BRICKS.defaultBlockState(),2);
+-    level.setBlock(floor.above(2),Blocks.LANTERN.defaultBlockState(),2);
+-   }
+-  }
+- }
+  private BossArena(){}
+ }
+diff --git a/mod/src/main/java/dev/bunkerrelay/BossIntegrationTest.java b/mod/src/main/java/dev/bunkerrelay/BossIntegrationTest.java
+index 17bccb5..962a2a2 100644
+--- a/mod/src/main/java/dev/bunkerrelay/BossIntegrationTest.java
++++ b/mod/src/main/java/dev/bunkerrelay/BossIntegrationTest.java
+@@ -26,7 +26,7 @@ final class BossIntegrationTest {
+         state.activeLoot=3;
+         state.bossY=level.getMaxBuildHeight()-24;
+         var player=new FakePlayer(level,new GameProfile(UUID.randomUUID(),"RelayBossTest"));
+-        for(String theme:List.of("industrial","infected","forest","ash")){
++        for(String theme:List.of("industrial","infected","forest","ash","winter","hell")){
+             state.activeTheme=theme;
+             state.bossId=null;
+             state.bossDefeated=false;
+@@ -39,6 +39,8 @@ final class BossIntegrationTest {
+             RaidBosses.encounter(server,state,level,List.of(player));
+             check(level.getEntity(state.bossId) instanceof Mob,theme+" spawn");
+             var boss=(Mob)level.getEntity(state.bossId);
++            check(net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(boss.getType()).getPath().equals(SporeSites.calamity(theme)),theme+" calamity species");
++            check(boss.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH).getBaseValue()==255,theme+" solo scaling");
+             check(RaidBosses.bar.getPlayers().contains(player),theme+" bar");
+             boss.setCustomName(Component.literal(RaidBosses.name(state)));
+             state.bossAbility=8;
+@@ -59,6 +61,7 @@ final class BossIntegrationTest {
+             RaidBosses.died(new LivingDeathEvent(boss,source));
+             check(level.getEntitiesOfClass(ItemEntity.class,new AABB(arena).inflate(8),item->item.getItem().is(BossTrophies.trophy(theme))).size()==1,
+                 theme+" one reward");
++            drops.forEach(ItemEntity::discard);
+             System.out.println("RELAY_BOSS_PASS theme="+theme);
+         }
+     }
+diff --git a/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java b/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java
+index e9dc3cd..e4ada63 100644
+--- a/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java
++++ b/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java
+@@ -29,7 +29,7 @@ public final class BunkerRelay {
+  public static ResourceKey<Level> key(String n){return ResourceKey.create(Registries.DIMENSION,ResourceLocation.fromNamespaceAndPath("bunkerrelay",n));}
+  private static BunkerRelay instance;
+  public BunkerRelay(net.neoforged.bus.api.IEventBus modBus){
+-  instance=this;PocketDevice.register();FieldFlashlight.register();RaidHorror.SOUNDS.register(modBus);RelayTerminalBlock.BLOCKS.register(modBus);
++  instance=this;PocketDevice.register();FieldFlashlight.register();RaidHorror.SOUNDS.register(modBus);BossArena.register();RelayTerminalBlock.BLOCKS.register(modBus);
+   BossTrophies.ITEMS.register("terminal",()->new net.minecraft.world.item.BlockItem(RelayTerminalBlock.TERMINAL.get(),new net.minecraft.world.item.Item.Properties()));
+   net.neoforged.neoforge.common.NeoForge.EVENT_BUS.addListener((net.neoforged.neoforge.event.entity.EntityJoinLevelEvent event)->{
+    if(!event.getLevel().isClientSide() && event.getEntity() instanceof com.tacz.guns.entity.EntityKineticBullet bullet
+diff --git a/mod/src/main/java/dev/bunkerrelay/ExpeditionBuilder.java b/mod/src/main/java/dev/bunkerrelay/ExpeditionBuilder.java
+index a80773e..e792639 100644
+--- a/mod/src/main/java/dev/bunkerrelay/ExpeditionBuilder.java
++++ b/mod/src/main/java/dev/bunkerrelay/ExpeditionBuilder.java
+@@ -3,7 +3,7 @@ import net.minecraft.core.*;
+ import net.minecraft.server.level.ServerLevel;
+ /** Prepare only the 5x5 arrival chunks, then let vanilla generate on exploration. */
+ public final class ExpeditionBuilder {
+- private final ServerLevel level;private final RelayState state;private int chunk,arenaStrip;
++ private final ServerLevel level;private final RelayState state;private int chunk;
+  private ExpeditionGrid.Planner planner;
+  public ExpeditionBuilder(ServerLevel l,RelayState s){level=l;state=s;}
+  public int percent(){return Math.min(99,chunk*100/(state.generating?33+ZoneLandmarks.COUNT:33));}
+@@ -22,9 +22,6 @@ public final class ExpeditionBuilder {
+    chunk++;return false;
+   }
+   if(chunk==32){RaidBosses.prepare(level,state);chunk++;return false;}
+-  if(state.generating && state.layoutVersion==3 && arenaStrip*3<=2*BossArena.OUTER){
+-   BossArena.outerStrip(level,state,arenaStrip++);return false;
+-  }
+   if(state.generating&&chunk<33+ZoneLandmarks.COUNT){
+    ZoneLandmarks.build(level,state,chunk-33);
+    chunk++;
+diff --git a/mod/src/main/java/dev/bunkerrelay/PolarIntegrationTest.java b/mod/src/main/java/dev/bunkerrelay/PolarIntegrationTest.java
+index 8566b61..bc17729 100644
+--- a/mod/src/main/java/dev/bunkerrelay/PolarIntegrationTest.java
++++ b/mod/src/main/java/dev/bunkerrelay/PolarIntegrationTest.java
+@@ -34,7 +34,7 @@ final class PolarIntegrationTest {
+         for(var room:rooms){
+             var at=new BlockPos(room.getInt("x"),room.getInt("y"),room.getInt("z"));
+             check(!PersonalLoot.templateItem(level,at,4).isEmpty(),"stocked landmark");
+-            check(level.getBlockState(BlockPos.of(room.getLong("origin")).offset(-5,0,4)).is(Blocks.CAMPFIRE),"warming station");
++            check(level.getBlockState(BlockPos.of(room.getLong("hearth"))).is(Blocks.CAMPFIRE),"warming station");
+         }
+         if(entry!=null){
+             check(entry.equals(arrival) && seed!=state.seed,"same-place regeneration");
+diff --git a/mod/src/main/java/dev/bunkerrelay/RaidBosses.java b/mod/src/main/java/dev/bunkerrelay/RaidBosses.java
+index 74b24a0..5255348 100644
+--- a/mod/src/main/java/dev/bunkerrelay/RaidBosses.java
++++ b/mod/src/main/java/dev/bunkerrelay/RaidBosses.java
+@@ -25,7 +25,7 @@ public final class RaidBosses {
+  }
+  public static void second(MinecraftServer server,RelayState s){if(!s.ready||s.bossGeneration!=s.generation||s.bossDefeated){reset();return;}var level=server.getLevel(BunkerRelay.key(s.activeDimension));if(level==null)return;var pos=arena(s);var players=server.getPlayerList().getPlayers().stream().filter(p->p.isAlive()&&!p.isSpectator()&&RaidRules.active(p)&&p.serverLevel()==level&&p.blockPosition().distSqr(pos)<140*140).toList();encounter(server,s,level,players);}
+  static void encounter(MinecraftServer server,RelayState s,ServerLevel level,java.util.List<ServerPlayer> players){var pos=arena(s);if(players.isEmpty()){reset();if(s.bossAbility!=0){s.bossAbility=0;s.setDirty();}return;}Mob boss;
+-  if(s.bossId==null){boss=SporeSites.boss(level,s.activeTheme);if(boss==null)return;boss.moveTo(pos.getX()+.5,pos.getY(),pos.getZ()+.5,0,0);boss.setCustomName(appearance(s,boss));boss.setCustomNameVisible(true);boss.setPersistenceRequired();boss.getAttribute(Attributes.MAX_HEALTH).setBaseValue(Math.max(boss.getMaxHealth(),120+60*s.activeDifficulty));var attack=boss.getAttribute(Attributes.ATTACK_DAMAGE);if(attack!=null)attack.setBaseValue(Math.max(attack.getBaseValue(),5+2*s.activeDifficulty));boss.setHealth(boss.getMaxHealth());boss.getPersistentData().putBoolean("relay_boss",true);boss.addTag("relay_scaled");if(appearance(s,boss).getStyle().getInsertion()!=null&&(s.activeTheme.equals("forest")||s.activeTheme.equals("ash"))){boss.setItemSlot(EquipmentSlot.MAINHAND,new ItemStack(s.activeTheme.equals("forest")?Items.IRON_AXE:Items.IRON_SWORD));boss.setDropChance(EquipmentSlot.MAINHAND,0);}if(!level.addFreshEntity(boss))return;s.bossId=boss.getUUID();s.setDirty();}
++  if(s.bossId==null){boss=SporeSites.boss(level,s.activeTheme);if(boss==null)return;boss.moveTo(pos.getX()+.5,pos.getY(),pos.getZ()+.5,0,0);boss.setCustomName(appearance(s,boss));boss.setCustomNameVisible(true);boss.setPersistenceRequired();boss.getAttribute(Attributes.MAX_HEALTH).setBaseValue(120+45*s.activeDifficulty+30*Math.clamp(players.size()-1,0,3));var attack=boss.getAttribute(Attributes.ATTACK_DAMAGE);if(attack!=null)attack.setBaseValue(5+2*s.activeDifficulty);boss.setHealth(boss.getMaxHealth());boss.getPersistentData().putBoolean("relay_boss",true);boss.addTag("relay_scaled");if(appearance(s,boss).getStyle().getInsertion()!=null&&(s.activeTheme.equals("forest")||s.activeTheme.equals("ash"))){boss.setItemSlot(EquipmentSlot.MAINHAND,new ItemStack(s.activeTheme.equals("forest")?Items.IRON_AXE:Items.IRON_SWORD));boss.setDropChance(EquipmentSlot.MAINHAND,0);}if(!level.addFreshEntity(boss))return;s.bossId=boss.getUUID();s.setDirty();}
+   else{var entity=level.getEntity(s.bossId);if(!(entity instanceof Mob found)||!found.isAlive()){reset();return;}boss=found;if(!appearance(s,boss).equals(boss.getCustomName()))boss.setCustomName(appearance(s,boss));}
+   if(bar==null)bar=new ServerBossEvent(Component.literal(name(s)),BossEvent.BossBarColor.RED,BossEvent.BossBarOverlay.NOTCHED_10);
+   bar.setProgress(Math.clamp(boss.getHealth()/boss.getMaxHealth(),0,1));
+@@ -43,7 +43,7 @@ public final class RaidBosses {
+    BossEffects.phase(level,boss.blockPosition(),s.activeTheme);
+    for(var player:players)RaidHud.alert(player,name(s)+": вторая фаза — приближается подкрепление!");
+    RaidDirector.spawnNear(target,s,s.activeTheme.equals("infected")?"stalker":"warden",16);
+-   RaidDirector.spawnNear(target,s,s.activeTheme.equals("ash")?"screamer":"stalker",20);
++   if(players.size()>1)RaidDirector.spawnNear(target,s,s.activeTheme.equals("ash")?"screamer":"stalker",20);
+   }
+   bar.setName(Component.literal(name(s)+" · "+(secondPhase?"Фаза II":"Фаза I")));
+   bar.setColor(secondPhase?BossEvent.BossBarColor.PURPLE:BossEvent.BossBarColor.RED);
+diff --git a/mod/src/main/java/dev/bunkerrelay/RaidDirector.java b/mod/src/main/java/dev/bunkerrelay/RaidDirector.java
+index 619ae25..a9b82a7 100644
+--- a/mod/src/main/java/dev/bunkerrelay/RaidDirector.java
++++ b/mod/src/main/java/dev/bunkerrelay/RaidDirector.java
+@@ -55,6 +55,9 @@ public final class RaidDirector extends SavedData {
+   var room=new CompoundTag();
+   room.putInt("x",point.getX());room.putInt("y",y);room.putInt("z",point.getZ());
+   room.putString("type",type);room.putString("template",site.template());room.putInt("variant",variant);
++  room.putLong("approach",site.approach().asLong());
++  room.putString("title",roomName(type));
++  InteriorSites.prepare(level,s,room,site.origin(),site.approach());
+   d.rooms.add(room);d.setDirty();
+   stockStoryChest(level,s,point.atY(y),type);
+  }
+diff --git a/mod/src/main/java/dev/bunkerrelay/RegionalIntegrationTest.java b/mod/src/main/java/dev/bunkerrelay/RegionalIntegrationTest.java
+index 2f41828..63c755c 100644
+--- a/mod/src/main/java/dev/bunkerrelay/RegionalIntegrationTest.java
++++ b/mod/src/main/java/dev/bunkerrelay/RegionalIntegrationTest.java
+@@ -40,11 +40,11 @@ final class RegionalIntegrationTest {
+                 var cache=new BlockPos(room.getInt("x"),room.getInt("y"),room.getInt("z"));
+                 check(room.getString("title").equals(plan.title()),"landmark "+plan.title());
+                 check(room.getString("template").equals(plan.template()),"correct source "+plan.title());
+-                check(level.getBlockState(cache.north(2)).is(Blocks.AIR)&&!PersonalLoot.templateItem(level,cache,4).isEmpty(),"open access and loot");
++                check(level.isEmptyBlock(plan.template().startsWith("kaisyn:")?BlockPos.of(room.getLong("approach")):cache.north(2))&&!PersonalLoot.templateItem(level,cache,4).isEmpty(),"open access and loot");
+                 var origin=BlockPos.of(room.getLong("origin"));
+                 var approach=BlockPos.of(room.getLong("approach"));
+                 var facing=net.minecraft.core.Direction.getNearest(approach.getX()-origin.getX(),0,approach.getZ()-origin.getZ());
+-                var cabinet=origin.relative(facing,2).relative(facing.getClockWise(),5);
++                var cabinet=BlockPos.of(room.getLong("cabinet"));
+                 check(!PersonalLoot.templateItem(level,cabinet,0).isEmpty(),"regional supplies inside "+plan.title());
+                 check(level.getBlockEntity(cabinet) instanceof net.minecraft.world.Nameable named && named.hasCustomName()
+                     && !PersonalLoot.templateItem(level,cabinet,18).isEmpty(),"named specialist crate "+plan.title());
+diff --git a/mod/src/main/java/dev/bunkerrelay/SporeSites.java b/mod/src/main/java/dev/bunkerrelay/SporeSites.java
+index 2184686..cc98f0f 100644
+--- a/mod/src/main/java/dev/bunkerrelay/SporeSites.java
++++ b/mod/src/main/java/dev/bunkerrelay/SporeSites.java
+@@ -10,17 +10,16 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlac
+ 
+ final class SporeSites {
+     static Mob boss(ServerLevel level,String theme){
+-        String id=switch(theme){
+-            case "infected" -> "hevoker";
+-            case "forest" -> "wendigo";
+-            case "winter" -> "wendigo";
+-            case "ash" -> "hollen";
+-            default -> "grober";
++        return SporeEncounters.create(level,calamity(theme));
++    }
++
++    static String calamity(String theme){
++        return switch(theme){
++            case "forest" -> "sieger";
++            case "infected","winter" -> "howitzer";
++            case "hell" -> "verfall";
++            default -> "stahl";
+         };
+-        var elite=SporeEncounters.create(level,switch(theme){case "winter"->"wendigo";case "forest"->"sieger";case "infected"->"howitzer";default->"gazenbreacher";});
+-        if(elite!=null)return elite;
+-        return BuiltInRegistries.ENTITY_TYPE.getOptional(ResourceLocation.fromNamespaceAndPath("spore",id))
+-            .map(type->type.create(level)).filter(Mob.class::isInstance).map(Mob.class::cast).orElse(null);
+     }
+ 
+     static boolean place(ServerLevel level,BlockPos origin,int variant){
+diff --git a/mod/src/main/java/dev/bunkerrelay/SporeStorySites.java b/mod/src/main/java/dev/bunkerrelay/SporeStorySites.java
+index bfb41bd..ad88fa3 100644
+--- a/mod/src/main/java/dev/bunkerrelay/SporeStorySites.java
++++ b/mod/src/main/java/dev/bunkerrelay/SporeStorySites.java
+@@ -12,7 +12,7 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlac
+ import net.minecraft.world.level.levelgen.structure.templatesystem.BlockIgnoreProcessor;
+ 
+ final class SporeStorySites {
+-    record Site(BlockPos origin,String template,BlockPos approach){}
++    record Site(BlockPos origin,String template,BlockPos approach,BlockPos cabinet,BlockPos exteriorCache){}
+ 
+     static Site build(ServerLevel level,RelayState state,int x,int z,String type,int variant){
+         String id=switch(type){
+@@ -35,7 +35,9 @@ final class SporeStorySites {
+         var template=level.getStructureManager().get(templateId(id)).orElse(null);
+         if(template==null)return null;
+         var size=template.getSize();
+-        int halfX=Math.max(8,size.getX()/2),halfZ=Math.max(6,size.getZ()/2);
++        boolean imported=id.startsWith("kaisyn:");
++        int halfX=imported?size.getX()/2:Math.max(8,size.getX()/2);
++        int halfZ=imported?size.getZ()/2:Math.max(6,size.getZ()/2);
+         int floor=StructureLevels.floor(level,state,footprint,x,z,halfX,halfZ,size.getY()+2);
+         var origin=new BlockPos(x,floor,z);
+         // Depths from the matching Spore start pools, measured from their surface anchor.
+@@ -55,8 +57,19 @@ final class SporeStorySites {
+             case "prison" -> 28;
+             default -> 0;
+         };
+-        var corner=origin.offset(-size.getX()/2,-Math.min(basement,floor-level.getMinBuildHeight()),-size.getZ()/2);
+         var settings=new StructurePlaceSettings().setIgnoreEntities(true);
++        net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate.StructureBlockInfo door=null;
++        if(imported){
++            for(var wood:java.util.List.of(Blocks.SPRUCE_DOOR,Blocks.OAK_DOOR,Blocks.BIRCH_DOOR,Blocks.DARK_OAK_DOOR,
++                    Blocks.ACACIA_DOOR,Blocks.JUNGLE_DOOR,Blocks.CRIMSON_DOOR,Blocks.WARPED_DOOR)){
++                for(var info:template.filterBlocks(BlockPos.ZERO,settings,wood)){
++                    if(info.state().getValue(net.minecraft.world.level.block.DoorBlock.HALF)==net.minecraft.world.level.block.state.properties.DoubleBlockHalf.LOWER
++                        && (door==null||info.pos().getY()<door.pos().getY()))door=info;
++                }
++            }
++            if(door!=null)basement=door.pos().getY();
++        }
++        var corner=origin.offset(-size.getX()/2,-Math.min(basement,floor-level.getMinBuildHeight()),-size.getZ()/2);
+         if(!templateId(id).getNamespace().equals("spore")){
+             settings.addProcessor(new BlockIgnoreProcessor(java.util.List.of(Blocks.STRUCTURE_BLOCK,Blocks.JIGSAW,
+                 Blocks.SPAWNER,Blocks.CHEST,Blocks.TRAPPED_CHEST,Blocks.BARREL,Blocks.DISPENSER,Blocks.DROPPER)));
+@@ -87,15 +100,36 @@ final class SporeStorySites {
+         boolean landmark=footprint.equals("landmark");
+         Direction entrance=landmark?new Direction[]{Direction.NORTH,Direction.EAST,Direction.WEST}[variant]:Direction.NORTH;
+         int approachDepth=entrance.getAxis()==Direction.Axis.X?halfX:halfZ;
++        if(imported){
++            // Approach the outside face of the authored doorway without cutting through the house.
++            var doorway=door==null?origin.relative(entrance,approachDepth):corner.offset(door.pos());
++            if(door!=null){
++                entrance=door.state().getValue(net.minecraft.world.level.block.DoorBlock.FACING);
++                if(doorway.relative(entrance).distSqr(origin)<doorway.relative(entrance.getOpposite()).distSqr(origin))
++                    entrance=entrance.getOpposite();
++            }
++            var approach=doorway.relative(entrance,2);
++            var side=entrance.getClockWise();
++            var cabinet=approach.relative(side,2);
++            var cache=approach.relative(side.getOpposite(),2);
++            for(var pos:java.util.List.of(doorway.relative(entrance),approach,cabinet,cache)){
++                SurfacePlacement.grade(level,pos.getX(),pos.getZ(),0,0,pos.getY());
++                if(!level.getBlockState(pos.below()).isSolidRender(level,pos.below()))
++                    level.setBlock(pos.below(),Blocks.COBBLESTONE.defaultBlockState(),2);
++            }
++            stockContainer(level,state,cabinet,id,kind,medical);
++            return new Site(origin,id,approach,cabinet,cache);
++        }
+         // The template supplies the shell; Relay supplies an accessible route and its objective room.
+         for(int dz=-approachDepth-1;dz<=5;dz++){
+             int width=dz>=-4?6:1;
+             for(int dx=-width;dx<=width;dx++){
+                 var at=route(origin,entrance,dx,dz);
+-                level.setBlock(at.below(),(dx==0?accent:Blocks.POLISHED_ANDESITE).defaultBlockState(),2);
++                if(!level.getBlockState(at.below()).isFaceSturdy(level,at.below(),Direction.UP))
++                    level.setBlock(at.below(),Blocks.COBBLESTONE.defaultBlockState(),2);
+                 for(int h=0;h<3;h++)level.setBlock(at.above(h),Blocks.AIR.defaultBlockState(),2);
+             }
+-            if(dz%5==0)level.setBlock(route(origin,entrance,-1,dz).below(),Blocks.SEA_LANTERN.defaultBlockState(),2);
++
+         }
+         for(int side:new int[]{-1,1}){
+             var post=route(origin,entrance,side*2,-approachDepth-1);
+@@ -112,7 +146,7 @@ final class SporeStorySites {
+                 level.setBlock(origin.offset(dx,0,dz),Blocks.WATER.defaultBlockState(),2);
+         }
+         stockContainer(level,state,route(origin,entrance,5,-2),id,kind,medical);
+-        return new Site(origin,id,approach);
++        return new Site(origin,id,approach,route(origin,entrance,5,-2),null);
+     }
+ 
+     private static void stockContainer(ServerLevel level,RelayState state,BlockPos at,String template,SupplySites.Kind kind,boolean medical){
+diff --git a/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java b/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java
+index e491170..e218563 100644
+--- a/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java
++++ b/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java
+@@ -133,20 +133,21 @@ final class ZoneLandmarks {
+         if(site==null)return;
+         int compartment=Math.floorMod(RaidDirector.roll(state.seed,site.origin().getX(),site.origin().getZ()),3);
+         if(plan.medical&&entrance==1&&compartment==2)compartment=0;
+-        if(condition!=LandmarkCondition.REGULAR){
++        if(condition!=LandmarkCondition.REGULAR && site.exteriorCache()==null){
+             var direction=new Direction[]{Direction.NORTH,Direction.EAST,Direction.WEST}[entrance];
+             var marker=site.approach().relative(direction.getOpposite()).relative(direction.getClockWise(),2).above(2);
+             level.setBlock(marker,condition.marker.defaultBlockState(),2);
+         }
+         var original=site.origin().south(4);
+         var cache=switch(compartment){case 1->site.origin().offset(4,0,3);case 2->site.origin().offset(-4,0,3);default->original;};
+-        if(!cache.equals(original)){
++        if(site.exteriorCache()!=null)cache=site.exteriorCache();
++        else if(!cache.equals(original)){
+             level.setBlock(original,net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(),2);
+             level.setBlock(cache,net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(),2);
+         }
+         SupplySites.cache(level,state,cache,plan.loot);
+         if(state.activeTheme.equals("winter")){
+-            var hearth=site.origin().offset(-5,0,4);
++            var hearth=site.exteriorCache()==null?site.origin().offset(-5,0,4):site.approach().relative(Direction.getNearest(site.approach().getX()-site.origin().getX(),0,site.approach().getZ()-site.origin().getZ()),3);
+             level.setBlock(hearth,net.minecraft.world.level.block.Blocks.CAMPFIRE.defaultBlockState(),3);
+         }
+         if(condition==LandmarkCondition.INFESTED)SporeCorpses.scatter(level,state,site.origin(),cache);
+@@ -157,7 +158,7 @@ final class ZoneLandmarks {
+             var label=inventory.get(2).copy();
+             label.set(DataComponents.CUSTOM_NAME,Component.literal(plan.title));
+             label.set(DataComponents.LORE,new net.minecraft.world.item.component.ItemLore(java.util.List.of(
+-                Component.literal("Отсек · "+(compartment==0?"в дальнем зале":compartment==1?"справа от центра":"слева от центра")))));
++                Component.literal(site.exteriorCache()!=null?"Припасы у входа":"Отсек · "+(compartment==0?"в дальнем зале":compartment==1?"справа от центра":"слева от центра")))));
+             inventory.set(2,label);
+             var request=BunkerRequests.forSite(plan.template);
+             if(request!=null)inventory.set(11,request.item());
+@@ -187,6 +188,8 @@ final class ZoneLandmarks {
+             }
+         }
+         var room=new CompoundTag();
++        room.putLong("cabinet",site.cabinet().asLong());
++        if(state.activeTheme.equals("winter"))room.putLong("hearth",site.exteriorCache()==null?site.origin().offset(-5,0,4).asLong():site.approach().relative(Direction.getNearest(site.approach().getX()-site.origin().getX(),0,site.approach().getZ()-site.origin().getZ()),3).asLong());
+         room.putString("type","landmark");
+         room.putString("title",plan.title);
+         room.putString("template",plan.template);
+diff --git a/mod/src/main/resources/META-INF/neoforge.mods.toml b/mod/src/main/resources/META-INF/neoforge.mods.toml
+index d378fe3..6697900 100644
+--- a/mod/src/main/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/main/resources/META-INF/neoforge.mods.toml
+@@ -3,7 +3,7 @@ loaderVersion="[4,)"
+ license="MIT"
+ [[mods]]
+ modId="bunkerrelay"
+-version="0.56.0"
++version="0.57.0"
+ displayName="Bunker Relay"
+ description="Cooperative bunker, garage and procedural expeditions. Early prototype."
+ [[dependencies.bunkerrelay]]
+@@ -56,7 +56,7 @@ side="BOTH"
+ [[dependencies.bunkerrelay]]
+ modId="relaylights"
+ type="required"
+-versionRange="[0.56.0]"
++versionRange="[0.57.0]"
+ ordering="AFTER"
+ side="BOTH"
+ 
+@@ -66,6 +66,6 @@ config="bunkerrelay.mixins.json"
+ [[dependencies.bunkerrelay]]
+ modId="relayfactories"
+ type="required"
+-versionRange="[0.56.0]"
++versionRange="[0.57.0]"
+ ordering="AFTER"
+ side="BOTH"
+diff --git a/mod/src/main/resources/assets/bunkerrelay/blockstates/arena_basalt.json b/mod/src/main/resources/assets/bunkerrelay/blockstates/arena_basalt.json
+new file mode 100644
+index 0000000..f7b7264
+--- /dev/null
++++ b/mod/src/main/resources/assets/bunkerrelay/blockstates/arena_basalt.json
+@@ -0,0 +1 @@
++{"variants": {"": {"model": "minecraft:block/polished_blackstone_bricks"}}}
+diff --git a/mod/src/main/resources/assets/bunkerrelay/blockstates/arena_brick.json b/mod/src/main/resources/assets/bunkerrelay/blockstates/arena_brick.json
+new file mode 100644
+index 0000000..de0ef31
+--- /dev/null
++++ b/mod/src/main/resources/assets/bunkerrelay/blockstates/arena_brick.json
+@@ -0,0 +1 @@
++{"variants": {"": {"model": "minecraft:block/stone_bricks"}}}
+diff --git a/mod/src/main/resources/assets/bunkerrelay/blockstates/arena_moss.json b/mod/src/main/resources/assets/bunkerrelay/blockstates/arena_moss.json
+new file mode 100644
+index 0000000..324f057
+--- /dev/null
++++ b/mod/src/main/resources/assets/bunkerrelay/blockstates/arena_moss.json
+@@ -0,0 +1 @@
++{"variants": {"": {"model": "minecraft:block/mossy_stone_bricks"}}}
+diff --git a/mod/src/main/resources/assets/bunkerrelay/blockstates/arena_tile.json b/mod/src/main/resources/assets/bunkerrelay/blockstates/arena_tile.json
+new file mode 100644
+index 0000000..b9e45b0
+--- /dev/null
++++ b/mod/src/main/resources/assets/bunkerrelay/blockstates/arena_tile.json
+@@ -0,0 +1 @@
++{"variants": {"": {"model": "minecraft:block/smooth_quartz"}}}
+diff --git a/mod/src/main/resources/data/minecraft/tags/block/dragon_immune.json b/mod/src/main/resources/data/minecraft/tags/block/dragon_immune.json
+new file mode 100644
+index 0000000..15d6d93
+--- /dev/null
++++ b/mod/src/main/resources/data/minecraft/tags/block/dragon_immune.json
+@@ -0,0 +1 @@
++{"replace": false, "values": ["bunkerrelay:arena_brick", "bunkerrelay:arena_moss", "bunkerrelay:arena_basalt", "bunkerrelay:arena_tile"]}
+diff --git a/mod/src/main/resources/data/minecraft/tags/block/wither_immune.json b/mod/src/main/resources/data/minecraft/tags/block/wither_immune.json
+new file mode 100644
+index 0000000..15d6d93
+--- /dev/null
++++ b/mod/src/main/resources/data/minecraft/tags/block/wither_immune.json
+@@ -0,0 +1 @@
++{"replace": false, "values": ["bunkerrelay:arena_brick", "bunkerrelay:arena_moss", "bunkerrelay:arena_basalt", "bunkerrelay:arena_tile"]}
+diff --git a/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml b/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml
+index b502e76..358f416 100644
+--- a/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml
+@@ -4,7 +4,7 @@ license="MIT"
+ 
+ [[mods]]
+ modId="relayfactories"
+-version="0.56.0"
++version="0.57.0"
+ displayName="Relay Factories"
+ description="Factory structures for industrial expeditions."
+ 
+diff --git a/mod/src/relayLights/resources/META-INF/neoforge.mods.toml b/mod/src/relayLights/resources/META-INF/neoforge.mods.toml
+index e200aa7..6048d54 100644
+--- a/mod/src/relayLights/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/relayLights/resources/META-INF/neoforge.mods.toml
+@@ -4,7 +4,7 @@ license="MIT"
+ 
+ [[mods]]
+ modId="relaylights"
+-version="0.56.0"
++version="0.57.0"
+ displayName="Relay Lights"
+ description="Directional lights with personal and multiplayer modes."
+ 
+diff --git a/modrinth.index.json b/modrinth.index.json
+index f2b1755..c461c18 100644
+--- a/modrinth.index.json
++++ b/modrinth.index.json
+@@ -1,7 +1,7 @@
+ {
+   "formatVersion": 1,
+   "game": "minecraft",
+-  "versionId": "0.56.0",
++  "versionId": "0.57.0",
+   "name": "Bunker Relay",
+   "summary": "Cooperative expeditions, ECHO encounters, threats, extraction and persistent bunker.",
+   "files": [
+diff --git a/tools/package_release.py b/tools/package_release.py
+index 8eb368b..16ffffa 100644
+--- a/tools/package_release.py
++++ b/tools/package_release.py
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env python3
+ import hashlib,pathlib,shutil,zipfile,sys
+ ROOT=pathlib.Path(__file__).resolve().parents[1];dist=ROOT/'dist';dist.mkdir(exist_ok=True)
+-VERSION='0.56.0';source='--source' in sys.argv;jar=ROOT/f'mod/build/libs/bunkerrelay-{VERSION}.jar'
++VERSION='0.57.0';source='--source' in sys.argv;jar=ROOT/f'mod/build/libs/bunkerrelay-{VERSION}.jar'
+ lights=ROOT/f'mod/build/libs/relaylights-{VERSION}.jar'
+ factories=ROOT/f'mod/build/libs/relayfactories-{VERSION}.jar'
+ if not source:
+@@ -61,6 +61,7 @@ if not source:
+   z.write(ROOT/'WORK_0.54.md','overrides/WORK_0.54.md')
+   z.write(ROOT/'WORK_0.55.md','overrides/WORK_0.55.md')
+   z.write(ROOT/'WORK_0.56.md','overrides/WORK_0.56.md')
++  z.write(ROOT/'WORK_0.57.md','overrides/WORK_0.57.md')
+   z.write(factories,'overrides/mods/'+factories.name)
+   z.write(lights,'overrides/mods/'+lights.name)
+   for path in (ROOT/'overrides').rglob('*'):
