@@ -420,7 +420,7 @@ index 0000000..2c35a9b
 +            if(feet.equals(gate))destination=inside.south(3);
 +            else if(feet.equals(inside.south()))destination=BlockPos.of(room.getLong("approach"));
 +            else continue;
-+            player.teleportTo(destination.getX()+0.5,destination.getY(),destination.getZ()+0.5);
++            player.moveTo(destination.getX()+0.5,destination.getY(),destination.getZ()+0.5,player.getYRot(),player.getXRot()); player.connection.teleport(player.getX(),player.getY(),player.getZ(),player.getYRot(),player.getXRot()); player.fallDistance=0;
 +            RaidRules.tell(player,feet.equals(gate)?room.getString("title")+" · для выхода вернитесь на медную плиту":"Вы вернулись на улицу.");
 +            return;
 +        }
