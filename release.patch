@@ -12,15 +12,17 @@ index b847b42..8f4220c 100644
  
 diff --git a/WORK_0.52.md b/WORK_0.52.md
 new file mode 100644
-index 0000000..7b15cb0
+index 0000000..e76f318
 --- /dev/null
 +++ b/WORK_0.52.md
-@@ -0,0 +1,5 @@
+@@ -0,0 +1,7 @@
 +# Bunker Relay 0.52.0
 +Скупка из рюкзака и со склада больше не зависит от бюджета. Счёт игрока по-прежнему защищён от переполнения.
 +Улицы соседних городских участков получают переход над свободным пролётом при подходящих берегах. Выделенный участок босса получил расширенный ринг с полом из бедрока. Высокие уровни угрозы допускают более сильных заражённых.
 +В промзоне размещаются три шаблона отдельного мода Relay Factories. У больницы, военной базы и склада гражданской обороны есть медная плита перехода во внутренние помещения с личными тематическими тайниками. Плита у входа внутри возвращает наружу.
 +Через терминал доступен «Адский разлом», открытая базальтовая зона пятой сложности с адскими материалами. Для M700 и SCAR-H добавлены рецепты с точным механизмом Create и редкими материалами. Изменены множители урона MP5, M700 и SCAR-H.
++
++Выбор площадок по сиду чередует продольную ось и внешние ряды. Бункер, размер сетки и координаты сброса сохраняются. Скейтборд и Cybernetic System устанавливаются отдельными зависимостями. Экзоброня MekaSuit использует установленный Mekanism. Обновлённые рецепты брони формируются по ресурсам закреплённых версий.
 diff --git a/mod/build.gradle b/mod/build.gradle
 index 10ff768..e37afd0 100644
 --- a/mod/build.gradle
@@ -132,6 +134,55 @@ index 843ca5d..08ef91d 100644
      if(ticks%40==0){ZoneLandmarks.visit(p,s);ExpeditionRoads.visit(p,s);ReconChart.visit(p,s);if(s.sectorBuildings)SectorBuildings.discover(p,s);else ExpeditionContent.nearby(p,s);}
     }
     if(ticks%20==0&&safe(p.level())){p.setRemainingFireTicks(0);p.setAirSupply(p.getMaxAirSupply());p.getFoodData().setFoodLevel(20);if(p.getY()<p.level().getMinBuildHeight()+2)sendHome(p,s);}
+diff --git a/mod/src/main/java/dev/bunkerrelay/BunkerRequests.java b/mod/src/main/java/dev/bunkerrelay/BunkerRequests.java
+index 8768941..2c39527 100644
+--- a/mod/src/main/java/dev/bunkerrelay/BunkerRequests.java
++++ b/mod/src/main/java/dev/bunkerrelay/BunkerRequests.java
+@@ -43,7 +43,7 @@ final class BunkerRequests {
+     static Request forSite(String template) {
+         return switch (template) {
+             case "hospital" -> Request.MEDIC;
+-            case "mines", "mega_biomass_tower", "kaisyn:outpost/camps/savanna_plateau/side/workshop" -> Request.ENGINEER;
++            case "relayfactories:assembly","relayfactories:foundry","mines", "mega_biomass_tower", "kaisyn:outpost/camps/savanna_plateau/side/workshop" -> Request.ENGINEER;
+             default -> null;
+         };
+     }
+diff --git a/mod/src/main/java/dev/bunkerrelay/CrossingIntegrationTest.java b/mod/src/main/java/dev/bunkerrelay/CrossingIntegrationTest.java
+new file mode 100644
+index 0000000..0c929df
+--- /dev/null
++++ b/mod/src/main/java/dev/bunkerrelay/CrossingIntegrationTest.java
+@@ -0,0 +1,30 @@
++package dev.bunkerrelay;
++import net.minecraft.core.BlockPos;
++import net.minecraft.server.MinecraftServer;
++import net.minecraft.world.level.block.Blocks;
++
++final class CrossingIntegrationTest {
++    static void verify(MinecraftServer server) {
++        var world=server.getLevel(BunkerRelay.key("city"));
++        var sample=new RelayState();
++        sample.activeSize=2048;
++        sample.activeTheme="industrial";
++        // Two elevated quays, the reserved 32-block gap, a low wall and a sloping landing.
++        var middle=new BlockPos(96,world.getMaxBuildHeight()-15,40);
++        for(int i=-17;i<=17;i++)for(int k=-2;k<=2;k++){
++            var at=middle.offset(i,0,k);
++            world.getChunkAt(at);
++            if(Math.abs(i)==17)world.setBlock(at.above(i>0?4:0),Blocks.WHITE_CONCRETE.defaultBlockState(),2);
++            else world.setBlock(at.below(6),Blocks.WATER.defaultBlockState(),2);
++        }
++        world.setBlock(middle.west(17).above(),Blocks.STONE_BRICK_WALL.defaultBlockState(),2);
++        SectorCrossings.visit(world,sample,middle);
++        for(int i=-17;i<=17;i++)for(int k=-2;k<=2;k++){
++            var deck=middle.offset(i,Math.round((i+17)*4f/34),k);
++            if(!world.getBlockState(deck).is(k==0?Blocks.LIGHT_GRAY_CONCRETE:Blocks.SMOOTH_STONE)
++                ||!world.isEmptyBlock(deck.above()))throw new IllegalStateException("Broken crossing "+deck);
++        }
++        System.out.println("RELAY_052_BRIDGE_PASS");
++    }
++    private CrossingIntegrationTest(){}
++}
 diff --git a/mod/src/main/java/dev/bunkerrelay/EconomyIntegrationTest.java b/mod/src/main/java/dev/bunkerrelay/EconomyIntegrationTest.java
 index 3286397..e020223 100644
 --- a/mod/src/main/java/dev/bunkerrelay/EconomyIntegrationTest.java
@@ -167,6 +218,29 @@ index fe8793e..7b38072 100644
      }
  
      boolean room(ServerLevel level,BlockPos center,boolean natural) {
+diff --git a/mod/src/main/java/dev/bunkerrelay/ExpeditionGrid.java b/mod/src/main/java/dev/bunkerrelay/ExpeditionGrid.java
+index 761eaca..408bdd1 100644
+--- a/mod/src/main/java/dev/bunkerrelay/ExpeditionGrid.java
++++ b/mod/src/main/java/dev/bunkerrelay/ExpeditionGrid.java
+@@ -14,6 +14,8 @@ final class ExpeditionGrid {
+ 
+     static void plan(ServerLevel level,RelayState state){
+         int limit=(state.activeSize/2-HALF)/SIDE;
++        var pattern=new Random(state.seed ^ 0x5e37abd1L);
++        int orientation=pattern.nextInt(4);
+         var cells=new ArrayList<BlockPos>();
+         for(int x=-limit;x<=limit;x++)for(int z=-limit;z<=limit;z++)
+             if(x!=0||z!=0)cells.add(new BlockPos(x,0,z));
+@@ -27,6 +29,9 @@ final class ExpeditionGrid {
+                 if(StructureLevels.overlapsHistorical(level,state,point,42)||!clearPlot(level,point))continue;
+                 examined++;
+                 int cost=terrainCost(level,point);
++                int axis=(orientation&1)==0?cell.getX():cell.getZ();
++                // Some cycles cluster low-cost sites around a spine; others favour an outer ring.
++                cost+=orientation<2?Math.abs(axis)*2:Math.abs(Math.abs(axis)-Math.max(1,limit/2))*2;
+                 if(cost<bestCost){best=candidate;bestCost=cost;}
+                 if(cost==0)break;
+             }
 diff --git a/mod/src/main/java/dev/bunkerrelay/ExpeditionReset.java b/mod/src/main/java/dev/bunkerrelay/ExpeditionReset.java
 index 8cfddc4..bdfcdaf 100644
 --- a/mod/src/main/java/dev/bunkerrelay/ExpeditionReset.java
@@ -192,6 +266,19 @@ index be60af3..d9a84a1 100644
          var center=player.chunkPosition();
          var links=links(state,RaidDirector.get(player.server));
          Block surface=switch(state.activeTheme){
+diff --git a/mod/src/main/java/dev/bunkerrelay/FieldSecurity.java b/mod/src/main/java/dev/bunkerrelay/FieldSecurity.java
+index 450f78d..0abad3c 100644
+--- a/mod/src/main/java/dev/bunkerrelay/FieldSecurity.java
++++ b/mod/src/main/java/dev/bunkerrelay/FieldSecurity.java
+@@ -19,7 +19,7 @@ final class FieldSecurity {
+         if(chest==null)return;
+         String type=switch(template){
+             case "prison","military_camp" -> LOCK;
+-            case "kaisyn:outpost/camps/savanna_plateau/side/workshop","kaisyn:outpost/forts/desert/base_plate" -> CODE;
++            case "relayfactories:assembly","kaisyn:outpost/camps/savanna_plateau/side/workshop","kaisyn:outpost/forts/desert/base_plate" -> CODE;
+             default -> null;
+         };
+         if(type!=null){chest.getPersistentData().putBoolean(type,true);chest.setChanged();}
 diff --git a/mod/src/main/java/dev/bunkerrelay/InteriorSites.java b/mod/src/main/java/dev/bunkerrelay/InteriorSites.java
 new file mode 100644
 index 0000000..4c9c83b
@@ -324,6 +411,19 @@ index 28a194b..6a52ff1 100644
          if(tier>=4&&random.nextInt(100)<tier)result.add(gun(level,tier-1,random));
          return result;
      }
+diff --git a/mod/src/main/java/dev/bunkerrelay/RaidRules.java b/mod/src/main/java/dev/bunkerrelay/RaidRules.java
+index ea823b1..08f5e11 100644
+--- a/mod/src/main/java/dev/bunkerrelay/RaidRules.java
++++ b/mod/src/main/java/dev/bunkerrelay/RaidRules.java
+@@ -142,7 +142,7 @@ public final class RaidRules {
+   }
+   if(FieldSecurity.locked(p.serverLevel(),s,pos)){
+    e.setCanceled(true);
+-   if(e.getHand()==InteractionHand.MAIN_HAND)tell(p,s.activeTheme.equals("ash")?"Сейф заперт. Ключ у командира, код — в форте.":"Сейф заперт. Ключ у командира, код — в ремонтной мастерской.");
++   if(e.getHand()==InteractionHand.MAIN_HAND)tell(p,s.activeTheme.equals("ash")?"Сейф заперт. Ключ у командира, код — в форте.":"Сейф заперт. Ключ у командира, код — в сборочном цехе.");
+    return;
+   }
+   if(!p.level().getBlockState(pos).is(net.minecraft.world.level.block.Blocks.LODESTONE))return;
 diff --git a/mod/src/main/java/dev/bunkerrelay/RelayEconomy.java b/mod/src/main/java/dev/bunkerrelay/RelayEconomy.java
 index ce56503..adcc69d 100644
 --- a/mod/src/main/java/dev/bunkerrelay/RelayEconomy.java
@@ -410,10 +510,10 @@ index 4ffc26a..a2e1a35 100644
          int left=count;
 diff --git a/mod/src/main/java/dev/bunkerrelay/SectorCrossings.java b/mod/src/main/java/dev/bunkerrelay/SectorCrossings.java
 new file mode 100644
-index 0000000..895692e
+index 0000000..537ba9c
 --- /dev/null
 +++ b/mod/src/main/java/dev/bunkerrelay/SectorCrossings.java
-@@ -0,0 +1,76 @@
+@@ -0,0 +1,83 @@
 +package dev.bunkerrelay;
 +
 +import net.minecraft.core.BlockPos;
@@ -428,7 +528,7 @@ index 0000000..895692e
 +    private static final int WIDTH = 2;
 +
 +    static void visit(ServerLevel level, RelayState state, BlockPos player) {
-+        if (state.activeTheme.equals("forest")) return;
++        if (!java.util.Set.of("industrial","infected","ash").contains(state.activeTheme)) return;
 +        for (Direction axis : new Direction[]{Direction.EAST, Direction.SOUTH}) {
 +            boolean east = axis == Direction.EAST;
 +            int origin = east ? state.centerX : state.centerZ;
@@ -457,7 +557,7 @@ index 0000000..895692e
 +        for(int i=-BANK;i<=BANK;i++) for(int k:new int[]{-WIDTH,WIDTH})
 +            if(!level.hasChunkAt(middle.relative(axis,i).relative(side,k))) return false;
 +        int from=height(level,left), to=height(level,right);
-+        if(Math.abs(to-from)>BANK || !street(level,left.atY(from)) || !street(level,right.atY(to))) return false;
++        if(Math.abs(to-from)>BANK || (!street(level,left.atY(from)) && !street(level,right.atY(to)))) return false;
 +        // Validate the full span before placing anything. Never cut buildings or open containers.
 +        for(int i=-BANK;i<=BANK;i++){
 +            int y=from+Math.round((to-from)*(i+BANK)/(2f*BANK));
@@ -465,21 +565,28 @@ index 0000000..895692e
 +            if(StructureLevels.overlapsHistorical(level,state,centre,WIDTH)) return false;
 +            for(int k=-WIDTH;k<=WIDTH;k++){
 +                var at=centre.relative(side,k);
-+                if(!level.isEmptyBlock(at.above())||!level.isEmptyBlock(at.above(2))) return false;
++                var obstruction=level.getBlockState(at.above());
++                boolean curb=Math.abs(i)>=BANK-2 && obstruction.is(net.minecraft.tags.BlockTags.WALLS);
++                if((!obstruction.isAir()&&!curb)||!level.isEmptyBlock(at.above(2))) return false;
 +                if(level.getBlockEntity(at)!=null) return false;
 +                if(Math.abs(i)==BANK && !level.getBlockState(at).isSolidRender(level,at))return false;
 +            }
 +        }
-+        for(int i=1-BANK;i<BANK;i++){
++        for(int i=-BANK;i<=BANK;i++){
 +            int y=from+Math.round((to-from)*(i+BANK)/(2f*BANK));
-+            for(int k=-WIDTH;k<=WIDTH;k++)level.setBlock(middle.relative(axis,i).relative(side,k).atY(y),
++            for(int k=-WIDTH;k<=WIDTH;k++){
++                var deck=middle.relative(axis,i).relative(side,k).atY(y);
++                if(level.getBlockState(deck.above()).is(net.minecraft.tags.BlockTags.WALLS))level.setBlock(deck.above(),Blocks.AIR.defaultBlockState(),2);
++                level.setBlock(deck,
 +                (k==0?Blocks.LIGHT_GRAY_CONCRETE:Blocks.SMOOTH_STONE).defaultBlockState(),2);
++            }
 +        }
 +        return true;
 +    }
 +
 +    private static int height(ServerLevel level,BlockPos at){
-+        return level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,at.getX(),at.getZ())-1;
++        int top=level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,at.getX(),at.getZ())-1;
++        return level.getBlockState(at.atY(top)).is(net.minecraft.tags.BlockTags.WALLS)?top-1:top;
 +    }
 +
 +    private static boolean street(ServerLevel level,BlockPos pos){
@@ -603,6 +710,18 @@ index 2978eea..f312714 100644
          System.out.println("RELAY_WAREHOUSE_PASS");
      }
  
+diff --git a/mod/src/main/java/dev/bunkerrelay/Zone27IntegrationTest.java b/mod/src/main/java/dev/bunkerrelay/Zone27IntegrationTest.java
+index 3b2016a..15d2de6 100644
+--- a/mod/src/main/java/dev/bunkerrelay/Zone27IntegrationTest.java
++++ b/mod/src/main/java/dev/bunkerrelay/Zone27IntegrationTest.java
+@@ -6,6 +6,7 @@ import net.minecraft.world.level.block.Blocks;
+ 
+ final class Zone27IntegrationTest {
+     static void start(MinecraftServer server,RelayState state){
++        CrossingIntegrationTest.verify(server);
+         var legacy=server.getLevel(BunkerRelay.key(state.activeDimension));
+         var site=new BlockPos(240,75,240);
+         for(int dx=-6;dx<=6;dx++)for(int dz=-6;dz<=6;dz++)
 diff --git a/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java b/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java
 index 3370f34..daec898 100644
 --- a/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java
@@ -848,7 +967,7 @@ index 50a92a8..cab487c 100644
  description="Directional lights with personal and multiplayer modes."
  
 diff --git a/modrinth.index.json b/modrinth.index.json
-index 062c2d3..07a6a7a 100644
+index 062c2d3..a688a11 100644
 --- a/modrinth.index.json
 +++ b/modrinth.index.json
 @@ -1,7 +1,7 @@
@@ -860,6 +979,110 @@ index 062c2d3..07a6a7a 100644
    "name": "Bunker Relay",
    "summary": "Cooperative expeditions, ECHO encounters, threats, extraction and persistent bunker.",
    "files": [
+@@ -799,6 +799,36 @@
+         "https://cdn.modrinth.com/data/NcUtCpym/versions/55gtOc9Y/xaeroworldmap-neoforge-1.21.1-1.44.2.jar"
+       ],
+       "fileSize": 1418918
++    },
++    {
++      "path": "mods/skateboardmod-1.0.2-1.21.1-neoforge.jar",
++      "hashes": {
++        "sha1": "00b8f1f13a33e57279726e2385d29fb563da7f16",
++        "sha512": "94ebaa7efbe551163e74ec0777036881140caeaef07fdc1e6299cb38c757ed34ed7df0d3c4832d4cd1c734714c98eabe1ea7dfb504537ce2ec19eaf87c5f92cc"
++      },
++      "env": {
++        "client": "required",
++        "server": "required"
++      },
++      "downloads": [
++        "https://cdn.modrinth.com/data/p8Z9FKwB/versions/DQCiWQaH/skateboardmod-1.0.2-1.21.1-neoforge.jar"
++      ],
++      "fileSize": 38692
++    },
++    {
++      "path": "mods/cybernetic_system-2.0.8-neoforge-1.21.1.jar",
++      "hashes": {
++        "sha512": "c7014b717bf503ac731b775f04e78593819622ff02fd8d6677b693065bb2933ce3c9ac47cb101d0a9ebcdb99a0dcbd0476ad973b351737d45c4c354146e47ebf",
++        "sha1": "b1e86bb854932610d559a72b695fe59e06ba7f78"
++      },
++      "env": {
++        "client": "required",
++        "server": "required"
++      },
++      "downloads": [
++        "https://cdn.modrinth.com/data/VUE19tql/versions/NogMjmCH/cybernetic_system-2.0.8-neoforge-1.21.1.jar"
++      ],
++      "fileSize": 2254681
+     }
+   ],
+   "dependencies": {
+diff --git a/pack.lock.json b/pack.lock.json
+index b9cc427..dbafd9c 100644
+--- a/pack.lock.json
++++ b/pack.lock.json
+@@ -1906,6 +1906,62 @@
+         ],
+         "fileSize": 1418918
+       }
++    },
++    {
++      "slug": "skateboard-mod",
++      "title": "Skateboard",
++      "version": "1.0.0",
++      "version_id": "DQCiWQaH",
++      "project_id": "p8Z9FKwB",
++      "dependencies": [],
++      "env": {
++        "client": "required",
++        "server": "required"
++      },
++      "url": "https://modrinth.com/mod/skateboard-mod",
++      "file": {
++        "path": "mods/skateboardmod-1.0.2-1.21.1-neoforge.jar",
++        "hashes": {
++          "sha1": "00b8f1f13a33e57279726e2385d29fb563da7f16",
++          "sha512": "94ebaa7efbe551163e74ec0777036881140caeaef07fdc1e6299cb38c757ed34ed7df0d3c4832d4cd1c734714c98eabe1ea7dfb504537ce2ec19eaf87c5f92cc"
++        },
++        "env": {
++          "client": "required",
++          "server": "required"
++        },
++        "downloads": [
++          "https://cdn.modrinth.com/data/p8Z9FKwB/versions/DQCiWQaH/skateboardmod-1.0.2-1.21.1-neoforge.jar"
++        ],
++        "fileSize": 38692
++      }
++    },
++    {
++      "slug": "cybernetic-system",
++      "title": "Cybernetic System",
++      "version": "2.0.8",
++      "version_id": "NogMjmCH",
++      "project_id": "VUE19tql",
++      "dependencies": [],
++      "env": {
++        "client": "required",
++        "server": "required"
++      },
++      "url": "https://modrinth.com/mod/cybernetic-system",
++      "file": {
++        "path": "mods/cybernetic_system-2.0.8-neoforge-1.21.1.jar",
++        "hashes": {
++          "sha512": "c7014b717bf503ac731b775f04e78593819622ff02fd8d6677b693065bb2933ce3c9ac47cb101d0a9ebcdb99a0dcbd0476ad973b351737d45c4c354146e47ebf",
++          "sha1": "b1e86bb854932610d559a72b695fe59e06ba7f78"
++        },
++        "env": {
++          "client": "required",
++          "server": "required"
++        },
++        "downloads": [
++          "https://cdn.modrinth.com/data/VUE19tql/versions/NogMjmCH/cybernetic_system-2.0.8-neoforge-1.21.1.jar"
++        ],
++        "fileSize": 2254681
++      }
+     }
+   ]
+ }
 diff --git a/tools/expand_lock.py b/tools/expand_lock.py
 new file mode 100644
 index 0000000..bf47f75
@@ -960,3 +1183,51 @@ index f5e2670..6ad6b6f 100644
    z.write(lights,'overrides/mods/'+lights.name)
    for path in (ROOT/'overrides').rglob('*'):
     if path.is_file():z.write(path,path.relative_to(ROOT))
+diff --git a/tools/progression_recipes.py b/tools/progression_recipes.py
+new file mode 100644
+index 0000000..10326d9
+--- /dev/null
++++ b/tools/progression_recipes.py
+@@ -0,0 +1,42 @@
++"""Gate existing suit/implant crafting recipes while retaining their original machinery and ingredients."""
++import json, hashlib, io, urllib.request, zipfile, re
++from pathlib import Path
++ROOT=Path(__file__).resolve().parents[1]
++lock=json.loads((ROOT/'pack.lock.json').read_text())['mods']
++for slug in ['mekanism','cybernetic-system']:
++    mod=next(m for m in lock if m['slug']==slug)
++    f=mod['file']
++    raw=urllib.request.urlopen(f['downloads'][0],timeout=100).read()
++    assert hashlib.sha512(raw).hexdigest()==f['hashes']['sha512']
++    with zipfile.ZipFile(io.BytesIO(raw)) as jar:
++        changed=0
++        for path in jar.namelist():
++            if not re.fullmatch(r'data/[^/]+/recipe/.*\.json',path):continue
++            obj=json.loads(jar.read(path))
++            result=obj.get('result',{})
++            if not isinstance(result,dict):continue
++            item=result.get('id','')
++            if not isinstance(item,str):continue
++            mech='mekasuit' in item
++            upgrade=any(k in item for k in ('implant','helmet','chestplate','leggings','boots','exoskeleton'))
++            if not (mech or (slug=='cybernetic-system' and upgrade)):continue
++            extra={'item':'minecraft:netherite_ingot' if mech else 'minecraft:blaze_rod'}
++            if obj.get('type')=='minecraft:crafting_shaped':
++                rows=obj['pattern']
++                hole=next(((y,x) for y,row in enumerate(rows) for x,c in enumerate(row) if c==' '),None)
++                if hole is None and len(rows)<3:
++                    rows.append(' '*len(rows[0]));hole=(len(rows)-1,0)
++                if hole is None:
++                    # Full grids already consume nine slots. Upgrade one base metal.
++                    key=next((k for k,v in obj['key'].items() if isinstance(v,dict) and v.get('item') in ('minecraft:iron_ingot','minecraft:diamond','minecraft:gold_ingot')),None)
++                    if not key:continue
++                    obj['key'][key]=extra
++                else:
++                    key=next(c for c in 'XYZQJK' if c not in obj['key'])
++                    y,x=hole;rows[y]=rows[y][:x]+key+rows[y][x+1:];obj['key'][key]=extra
++            elif obj.get('type')=='minecraft:crafting_shapeless' and len(obj['ingredients'])<9:obj['ingredients'].append(extra)
++            else:continue
++            dest=ROOT/'mod/src/main/resources'/path
++            dest.parent.mkdir(parents=True,exist_ok=True);dest.write_text(json.dumps(obj,indent=2)+'\n')
++            changed+=1
++        print('Progression recipes:',slug,changed,flush=True)
