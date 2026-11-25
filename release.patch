@@ -2447,3 +2447,553 @@ index b776896..3d3adbd 100644
    z.write(factories,'overrides/mods/'+factories.name)
    z.write(lights,'overrides/mods/'+lights.name)
    for path in (ROOT/'overrides').rglob('*'):
+diff --git a/README_RU.md b/README_RU.md
+index 8ae0af0..ccb0e70 100644
+--- a/README_RU.md
++++ b/README_RU.md
+@@ -1,6 +1,6 @@
+-# Bunker Relay 0.55.0
++# Bunker Relay 0.56.0
+ 
+-Изменения релиза см. в WORK_0.55.md.
++Изменения релиза см. в WORK_0.56.md.
+ 
+ Убрано ограничение дальности всего светового пятна по одному лучу из центра. Ручной и оружейный фонари освещают видимые поверхности внутри конуса до 22 блоков. Для света напарника и вида от третьего лица затенение приближённо рассчитывается по глубине видимой сцены. Геометрия вне экрана в этой проверке не участвует.
+ 
+diff --git a/WORK_0.56.md b/WORK_0.56.md
+new file mode 100644
+index 0000000..c6af05f
+--- /dev/null
++++ b/WORK_0.56.md
+@@ -0,0 +1,4 @@
++# Bunker Relay 0.56.0
++Через терминал доступна «Полярная станция» в снежной тайге. Сложность заражённого города — 3, станции — 4, пустоши — 5. На станции личный запас тепла снижается на открытом воздухе; ночью, в непогоду и в ледяной воде холод опаснее. Кожаная броня замедляет охлаждение на воздухе, крыша помогает восстановиться, горящие костры и работающие печи согревают быстрее. При сильном переохлаждении игрок получает урон. Запас тепла принадлежит текущей вылазке.
++
++В полярной зоне пять ориентиров, один меняется по сиду. Есть зимовье связистов, рыболовная артель, ледяная шахта Spore, санитарный отсек из YUNG’s Better Dungeons и мастерские из Towns and Towers. У ориентиров разведены костры. В остальных пяти регионах расширены наборы тематических построек. Размер зоны и координаты регенерации сохраняются.
+diff --git a/mod/build.gradle b/mod/build.gradle
+index aed537f..104170c 100644
+--- a/mod/build.gradle
++++ b/mod/build.gradle
+@@ -1,5 +1,5 @@
+ plugins { id 'java-library'; id 'net.neoforged.moddev' version '2.0.148' }
+-version = '0.55.0'
++version = '0.56.0'
+ group = 'dev.bunkerrelay'
+ base { archivesName = 'bunkerrelay' }
+ java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+diff --git a/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java b/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java
+index 08ef91d..4e8cdee 100644
+--- a/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java
++++ b/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java
+@@ -53,7 +53,7 @@ public final class BunkerRelay {
+   NeoForge.EVENT_BUS.addListener(this::login);NeoForge.EVENT_BUS.addListener(this::logout);NeoForge.EVENT_BUS.addListener(this::respawn);NeoForge.EVENT_BUS.addListener(net.neoforged.bus.api.EventPriority.HIGH,this::interact);
+   NeoForge.EVENT_BUS.addListener(this::damage);NeoForge.EVENT_BUS.addListener(this::spawn);NeoForge.EVENT_BUS.addListener(this::explosion);NeoForge.EVENT_BUS.addListener(this::dimensionTravel);NeoForge.EVENT_BUS.addListener(ExpeditionContent::joined);NeoForge.EVENT_BUS.addListener(SporeEncounters::drops);NeoForge.EVENT_BUS.addListener(this::filterHostiles);NeoForge.EVENT_BUS.addListener(this::expeditionPlacement);
+  }
+- private static final Set<String> ZONES=Set.of("expedition","city","wilds","forest_expedition","infected_city","ashlands","hell_raid");
++ private static final Set<String> ZONES=Set.of("expedition","city","wilds","forest_expedition","infected_city","ashlands","hell_raid","polar_station");
+  public static boolean expedition(Level l){return l.dimension().location().getNamespace().equals("bunkerrelay")&&ZONES.contains(l.dimension().location().getPath());}
+  private boolean safe(Level l){return l.dimension().equals(BUNKER)||l.dimension().equals(HUB)||l.dimension().equals(GARAGE);}
+  private ResourceKey<Level> home(RelayState s){return s.hubV2?HUB:BUNKER;}
+@@ -211,7 +211,7 @@ public final class BunkerRelay {
+  }
+  private int launch(CommandSourceStack c,RelayState s){var server=c.getServer();
+   for(String name:ZONES){var l=server.getLevel(key(name));if(l!=null){String blocker=VehicleGuard.resetBlocker(l);if(blocker!=null)return fail(c,blocker);}}
+-  if(!s.theme.equals("forest")&&!net.neoforged.fml.ModList.get().isLoaded("lostcities"))return fail(c,"Для городских зон нужен Lost Cities; иначе выберите forest.");
++  if(java.util.Set.of("industrial","infected","ash").contains(s.theme)&&!net.neoforged.fml.ModList.get().isLoaded("lostcities"))return fail(c,"Для городских зон нужен Lost Cities; иначе выберите forest.");
+   if(s.generating)return fail(c,"Обновление уже идёт.");
+   begin(server,s,true);return 1;
+  }
+@@ -311,6 +311,7 @@ public final class BunkerRelay {
+    if(expedition(p.level())){
+     if(invalidZone(p,s)){sendHome(p,s);continue;}
+     if(!SectorPlan.contains(s.centerX,s.centerZ,s.activeSize,p.getX(),p.getZ())){teleport(p,p.serverLevel(),arrival(s));RaidRules.tell(p,"Граница зоны: возвращение к эвакуации.");}
++    if(ticks%100==0)PolarCold.tick(p,s);
+     if(ticks%4==0)InteriorSites.walk(p,s);
+     if(ticks%40==0){ZoneLandmarks.visit(p,s);ExpeditionRoads.visit(p,s);ReconChart.visit(p,s);if(s.sectorBuildings)SectorBuildings.discover(p,s);else ExpeditionContent.nearby(p,s);}
+    }
+diff --git a/mod/src/main/java/dev/bunkerrelay/EncounterPressure.java b/mod/src/main/java/dev/bunkerrelay/EncounterPressure.java
+index 236d057..7f569a1 100644
+--- a/mod/src/main/java/dev/bunkerrelay/EncounterPressure.java
++++ b/mod/src/main/java/dev/bunkerrelay/EncounterPressure.java
+@@ -13,6 +13,7 @@ enum EncounterPressure {
+     FOREST(6, 2, 1, 25, 32, Set.of("inf_human","inf_husk","inf_hazmat")),
+     INDUSTRIAL(11, 5, 2, 42, 46, Set.of("inf_husk","inf_pillager","inf_hazmat","stalker")),
+     INFECTED(15, 7, 4, 29, 70, Set.of("inf_human","inf_hazmat","slasher","spitter","leaper","stalker")),
++    WINTER(15,7,4,34,45,Set.of("slasher","stalker","brute","leaper")),
+     ASH(16, 8, 4, 38, 38, Set.of("brute","protector","spitter","knight","wendigo"));
+ 
+     private static final double RADIUS = 48;
+@@ -53,7 +54,7 @@ enum EncounterPressure {
+         return switch(this){
+             case FOREST -> Math.min(base,2);
+             case INDUSTRIAL -> base;
+-            case INFECTED -> base+1;
++            case WINTER, INFECTED -> base+1;
+             case ASH -> valuable?base+1:Math.min(base,2);
+         };
+     }
+@@ -63,6 +64,7 @@ enum EncounterPressure {
+             case FOREST -> "inf_husk";
+             case INDUSTRIAL -> "inf_pillager";
+             case INFECTED -> "slasher";
++            case WINTER -> valuable?"brute":"stalker";
+             case ASH -> valuable?"protector":"inf_husk";
+         };
+     }
+diff --git a/mod/src/main/java/dev/bunkerrelay/ExpeditionReset.java b/mod/src/main/java/dev/bunkerrelay/ExpeditionReset.java
+index bdfcdaf..062ff6f 100644
+--- a/mod/src/main/java/dev/bunkerrelay/ExpeditionReset.java
++++ b/mod/src/main/java/dev/bunkerrelay/ExpeditionReset.java
+@@ -9,7 +9,7 @@ import net.minecraft.world.level.storage.LevelResource;
+ 
+ final class ExpeditionReset {
+     private static final Map<String,String> THEMES=Map.of("industrial","city","infected","infected_city",
+-        "hell","hell_raid","ash","ashlands","forest","forest_expedition");
++        "winter","polar_station","hell","hell_raid","ash","ashlands","forest","forest_expedition");
+ 
+     static String dimension(String theme){return THEMES.get(theme);}
+ 
+diff --git a/mod/src/main/java/dev/bunkerrelay/LiveRefreshTest.java b/mod/src/main/java/dev/bunkerrelay/LiveRefreshTest.java
+index 9de8927..67dff86 100644
+--- a/mod/src/main/java/dev/bunkerrelay/LiveRefreshTest.java
++++ b/mod/src/main/java/dev/bunkerrelay/LiveRefreshTest.java
+@@ -44,6 +44,7 @@ final class LiveRefreshTest {
+ 
+     static void verify(MinecraftServer server,RelayState state){
+         var zone=server.getLevel(BunkerRelay.key(state.activeDimension));
++        if(state.activeTheme.equals("winter")){PolarIntegrationTest.verify(server,state);return;}
+         check(state.ready&&state.generation==generation+1,"next generation ready");
+         check(state.centerX==entry.getX()&&state.centerZ==entry.getZ()&&state.spawnY==entry.getY(),"same coordinates and height");
+         check(zone.getBlockState(terrain).is(Blocks.DIAMOND_BLOCK),"terrain outside structures preserved");
+@@ -95,7 +96,8 @@ final class LiveRefreshTest {
+             System.out.println("RELAY_SPORE_STORY_PASS");
+         }
+         System.out.println("RELAY_016_LIVE_PASS retained_terrain=true rebuilt_structure=true running=true");
+-        server.halt(false);
++        if(Boolean.getBoolean("bunkerrelay.zone27Test"))PolarIntegrationTest.launch(server,state);
++        else server.halt(false);
+     }
+ 
+     private static void check(boolean value,String message){if(!value)throw new IllegalStateException("LIVE_REFRESH "+message);}
+diff --git a/mod/src/main/java/dev/bunkerrelay/PolarCold.java b/mod/src/main/java/dev/bunkerrelay/PolarCold.java
+new file mode 100644
+index 0000000..528d675
+--- /dev/null
++++ b/mod/src/main/java/dev/bunkerrelay/PolarCold.java
+@@ -0,0 +1,43 @@
++package dev.bunkerrelay;
++
++import net.minecraft.core.BlockPos;
++import net.minecraft.network.chat.Component;
++import net.minecraft.server.level.ServerPlayer;
++import net.minecraft.world.item.Items;
++import net.minecraft.world.level.block.Blocks;
++import net.minecraft.world.level.block.state.properties.BlockStateProperties;
++
++final class PolarCold {
++    static void tick(ServerPlayer player,RelayState state){
++        if(!state.ready || state.generating || !state.activeTheme.equals("winter") ||
++            !player.level().dimension().equals(BunkerRelay.key("polar_station")) ||
++            player.isCreative() || player.isSpectator() || !RaidRules.active(player))return;
++        var raid=RaidRules.record(player);
++        if(!raid.getString("status").equals("ACTIVE") || raid.getInt("generation")!=state.generation)return;
++        var level=player.serverLevel();
++        int before=raid.contains("polarWarmth")?raid.getInt("polarWarmth"):100;
++        boolean heater=false;
++        var feet=player.blockPosition();
++        for(var pos:BlockPos.betweenClosed(feet.offset(-2,-1,-2),feet.offset(2,1,2))){
++            var block=level.getBlockState(pos);
++            if((block.is(Blocks.CAMPFIRE)||block.is(Blocks.FURNACE)||block.is(Blocks.SMOKER))
++                && block.getValue(BlockStateProperties.LIT)){heater=true;break;}
++        }
++        int leather=0;
++        for(var piece:player.getArmorSlots()){
++            if(piece.is(Items.LEATHER_BOOTS)||piece.is(Items.LEATHER_LEGGINGS)||
++                piece.is(Items.LEATHER_CHESTPLATE)||piece.is(Items.LEATHER_HELMET))leather++;
++        }
++        boolean sheltered=!level.canSeeSky(feet.above());
++        int change=heater?10:player.isInWater()?-7:sheltered?3:
++            -Math.max(1,3+(level.isNight()?2:0)+(level.isRaining()?1:0)-leather);
++        int warmth=Math.clamp(before+change,0,100);
++        raid.putInt("polarWarmth",warmth);
++        if(before!=warmth)RaidJournal.get(player.server).setDirty();
++        if(warmth<=10)player.hurt(player.damageSources().freeze(),1f);
++        if(before/10!=warmth/10 || warmth<=10)player.displayClientMessage(Component.literal(
++            "Тепло · "+warmth+"% · "+(heater?"обогрев":player.isInWater()?"ледяная вода":sheltered?"укрытие":"мороз")),true);
++    }
++
++    private PolarCold(){}
++}
+diff --git a/mod/src/main/java/dev/bunkerrelay/PolarIntegrationTest.java b/mod/src/main/java/dev/bunkerrelay/PolarIntegrationTest.java
+new file mode 100644
+index 0000000..8566b61
+--- /dev/null
++++ b/mod/src/main/java/dev/bunkerrelay/PolarIntegrationTest.java
+@@ -0,0 +1,72 @@
++package dev.bunkerrelay;
++
++import com.mojang.authlib.GameProfile;
++import java.util.UUID;
++import net.minecraft.core.BlockPos;
++import net.minecraft.nbt.CompoundTag;
++import net.minecraft.server.MinecraftServer;
++import net.minecraft.world.inventory.ClickType;
++import net.minecraft.world.level.block.Blocks;
++import net.neoforged.neoforge.common.util.FakePlayer;
++
++final class PolarIntegrationTest {
++    private static BlockPos entry;
++    private static long seed;
++    static void launch(MinecraftServer server,RelayState state){
++        var player=new FakePlayer(server.getLevel(BunkerRelay.HUB),new GameProfile(UUID.randomUUID(),"WinterTerminal"));
++        var terminal=HubBuilder.TERMINAL;
++        player.moveTo(terminal.getX(),terminal.getY(),terminal.getZ());
++        var menu=new TerminalMenu(12,player.getInventory(),player);
++        player.containerMenu=menu;
++        menu.clicked(22,0,ClickType.PICKUP,player);
++        menu.clicked(10+ZoneProfile.WINTER.ordinal(),0,ClickType.PICKUP,player);
++        menu.clicked(24,0,ClickType.PICKUP,player);
++        check(state.generating && state.activeTheme.equals("winter"),"terminal selection");
++    }
++
++    static void verify(MinecraftServer server,RelayState state){
++        var level=server.getLevel(BunkerRelay.key("polar_station"));
++        var arrival=new BlockPos(state.centerX,state.spawnY,state.centerZ);
++        check(state.activeDimension.equals("polar_station") && state.activeDifficulty==4 && state.activeLoot==4,"difficulty");
++        check(level.getBlockState(arrival).is(Blocks.LODESTONE),"extraction");
++        var rooms=RaidDirector.get(server).rooms.stream().filter(r->r.getString("type").equals("landmark")).toList();
++        check(rooms.size()==5,"five polar sites");
++        for(var room:rooms){
++            var at=new BlockPos(room.getInt("x"),room.getInt("y"),room.getInt("z"));
++            check(!PersonalLoot.templateItem(level,at,4).isEmpty(),"stocked landmark");
++            check(level.getBlockState(BlockPos.of(room.getLong("origin")).offset(-5,0,4)).is(Blocks.CAMPFIRE),"warming station");
++        }
++        if(entry!=null){
++            check(entry.equals(arrival) && seed!=state.seed,"same-place regeneration");
++            System.out.println("RELAY_POLAR_PASS terminal=true cold=true shelter=true heat=true loot=true live=true");
++            server.halt(false);
++            return;
++        }
++        var player=new FakePlayer(level,new GameProfile(UUID.randomUUID(),"WinterThermal"));
++        var sample=arrival.offset(6,0,6).atY(level.getMaxBuildHeight()-8);
++        player.moveTo(sample.getX()+.5,sample.getY(),sample.getZ()+.5);
++        var raid=new CompoundTag();
++        raid.putString("status","ACTIVE");raid.putInt("generation",state.generation);
++        RaidJournal.get(server).raids.put(player.getUUID(),raid);
++        try{
++            PolarCold.tick(player,state);
++            int exposed=raid.getInt("polarWarmth");
++            check(exposed>0 && exposed<100,"exposed");
++            level.setBlock(sample.above(2),Blocks.STONE.defaultBlockState(),3);
++            PolarCold.tick(player,state);
++            check(raid.getInt("polarWarmth")>exposed,"sheltered");
++            raid.putInt("polarWarmth",40);
++            level.setBlock(sample.east(),Blocks.CAMPFIRE.defaultBlockState(),3);
++            PolarCold.tick(player,state);
++            check(raid.getInt("polarWarmth")==50,"warm fire");
++        }finally{
++            RaidJournal.get(server).raids.remove(player.getUUID());
++            level.removeBlock(sample.above(2),false);level.removeBlock(sample.east(),false);
++        }
++        entry=arrival;seed=state.seed;
++        launch(server,state);
++    }
++
++    private static void check(boolean ok,String message){if(!ok)throw new IllegalStateException("Polar test: "+message);}
++    private PolarIntegrationTest(){}
++}
+diff --git a/mod/src/main/java/dev/bunkerrelay/RaidBosses.java b/mod/src/main/java/dev/bunkerrelay/RaidBosses.java
+index 4cfb171..74b24a0 100644
+--- a/mod/src/main/java/dev/bunkerrelay/RaidBosses.java
++++ b/mod/src/main/java/dev/bunkerrelay/RaidBosses.java
+@@ -13,7 +13,7 @@ import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+ public final class RaidBosses {
+  static ServerBossEvent bar;
+  public static void reset(){if(bar!=null)bar.removeAllPlayers();bar=null;}
+- public static String name(RelayState s){return switch(s.activeTheme){case "infected"->"Носитель Эхо";case "forest"->"Лесной егерь";case "ash"->"Пепельный кузнец";default->"Страж карантина";};}
++ public static String name(RelayState s){return switch(s.activeTheme){case "infected"->"Носитель Эхо";case "forest"->"Лесной егерь";case "winter"->"Белый бродяга";case "ash"->"Пепельный кузнец";default->"Страж карантина";};}
+  private static Component appearance(RelayState state,Mob boss){
+   if(net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(boss.getType()).getNamespace().equals("spore"))return Component.literal(name(state));
+   String theme=switch(state.activeTheme){case "infected","forest","ash"->state.activeTheme;default->"industrial";};
+diff --git a/mod/src/main/java/dev/bunkerrelay/RaidLoot.java b/mod/src/main/java/dev/bunkerrelay/RaidLoot.java
+index d7816bb..de6e96b 100644
+--- a/mod/src/main/java/dev/bunkerrelay/RaidLoot.java
++++ b/mod/src/main/java/dev/bunkerrelay/RaidLoot.java
+@@ -93,6 +93,7 @@ public final class RaidLoot {
+ 
+     private static String[] regionalMaterials(ZoneProfile profile){
+         return switch(profile){
++            case WINTER -> new String[]{"spruce_log","coal","cooked_salmon","leather","rabbit_hide","white_wool","torch"};
+             case FOREST -> FOREST;
+             case INDUSTRIAL -> INDUSTRIAL;
+             case INFECTED -> INFECTED;
+diff --git a/mod/src/main/java/dev/bunkerrelay/RegionalIntegrationTest.java b/mod/src/main/java/dev/bunkerrelay/RegionalIntegrationTest.java
+index 4fdc6ac..2f41828 100644
+--- a/mod/src/main/java/dev/bunkerrelay/RegionalIntegrationTest.java
++++ b/mod/src/main/java/dev/bunkerrelay/RegionalIntegrationTest.java
+@@ -28,7 +28,7 @@ final class RegionalIntegrationTest {
+                 if(variants.add(candidate.template()))check(level.getStructureManager()
+                     .get(SporeStorySites.templateId(candidate.template())).isPresent(),"missing "+candidate.template());
+             }
+-            check(variants.size()==7,"seeded structure pool "+profile.id);
++            check(variants.size()==8,"seeded structure pool "+profile.id);
+             state.activeTheme=profile.id;
+             state.centerX=4000+profile.ordinal()*1500;
+             state.centerZ=4000;
+@@ -100,7 +100,7 @@ final class RegionalIntegrationTest {
+         check(RelayEconomy.CATALOG.stream().filter(offer->RelayEconomy.merchant(offer)==RelayEconomy.Merchant.MEDIC).count()==2,"medic offers");
+         var pda=new PocketDevice.Menu(9,doctor.getInventory(),doctor,PocketDevice.Page.RAID);
+         check(pda.getSlot(10).getItem().getHoverName().getString().equals("Ориентиры"),"PDA map removed");
+-        System.out.println("RELAY_REGIONAL_PASS profiles=true templates=25 medicine=true food=true medic=true");
++        System.out.println("RELAY_REGIONAL_PASS profiles=true templates="+templates.size()+" medicine=true food=true medic=true");
+     }
+ 
+     private static void check(boolean condition,String message){
+diff --git a/mod/src/main/java/dev/bunkerrelay/RelayState.java b/mod/src/main/java/dev/bunkerrelay/RelayState.java
+index ba8152f..d045a7c 100644
+--- a/mod/src/main/java/dev/bunkerrelay/RelayState.java
++++ b/mod/src/main/java/dev/bunkerrelay/RelayState.java
+@@ -36,7 +36,7 @@ public final class RelayState extends SavedData {
+  private static RelayState load(CompoundTag t,HolderLookup.Provider r){
+   RelayState s=new RelayState();s.bossY=t.getInt("bossY");s.bossGeneration=t.contains("bossGeneration")?t.getInt("bossGeneration"):-1;s.bossAbility=t.getInt("bossAbility");s.bossDefeated=t.getBoolean("bossDefeated");s.bossId=t.hasUUID("bossId")?t.getUUID("bossId"):null;s.exitSignalY=t.getInt("exitSignalY");s.exitSignalGeneration=t.contains("exitSignalGeneration")?t.getInt("exitSignalGeneration"):-1;s.initialized=t.getBoolean("initialized");s.generating=t.getBoolean("generating");s.ready=t.getBoolean("ready");s.hubV2=t.getBoolean("hubV2");s.legacyAvailable=t.contains("legacyAvailable")?t.getBoolean("legacyAvailable"):s.initialized&&!s.hubV2;
+   s.difficulty=Math.clamp(t.getInt("difficulty"),1,5);s.loot=Math.clamp(t.getInt("loot"),1,5);s.generation=t.getInt("generation");s.seed=t.getLong("seed");
+-  String theme=t.getString("theme");s.theme=java.util.Set.of("industrial","ash","infected","forest").contains(theme)?theme:"industrial";
++  String theme=t.getString("theme");s.theme=ZoneProfile.of(theme).id;
+   s.activeDifficulty=s.difficulty;s.activeLoot=s.loot;s.activeTheme=s.theme;
+   if(t.contains("activeDimension")){
+    s.activeDimension=t.getString("activeDimension");s.activeTheme=t.getString("activeTheme");s.activeDifficulty=Math.clamp(t.getInt("activeDifficulty"),1,5);s.activeLoot=Math.clamp(t.getInt("activeLoot"),1,5);
+diff --git a/mod/src/main/java/dev/bunkerrelay/RouteEvents.java b/mod/src/main/java/dev/bunkerrelay/RouteEvents.java
+index 2153805..1bf28ad 100644
+--- a/mod/src/main/java/dev/bunkerrelay/RouteEvents.java
++++ b/mod/src/main/java/dev/bunkerrelay/RouteEvents.java
+@@ -16,6 +16,7 @@ final class RouteEvents {
+ 
+     private static Signal signal(RelayState state){
+         return switch(ZoneProfile.of(state.activeTheme)){
++            case WINTER -> new Signal("Полярный маяк","Зимовщики оставили запас у сигнальной вехи.",SupplySites.Kind.CANTEEN);
+             case FOREST -> new Signal("Потерянный разведчик","Слабый сигнал с полевой тропы. Проверьте оставленный груз.",SupplySites.Kind.CANTEEN);
+             case INDUSTRIAL -> new Signal("Аварийная передача","Промышленный передатчик работает от резерва, рядом остался технический ящик.",SupplySites.Kind.FACTORY);
+             case INFECTED -> new Signal("Сигнал санбригады","У дороги слышен аварийный маяк медиков.",SupplySites.Kind.CANTEEN);
+diff --git a/mod/src/main/java/dev/bunkerrelay/SporeSites.java b/mod/src/main/java/dev/bunkerrelay/SporeSites.java
+index 930b9a7..2184686 100644
+--- a/mod/src/main/java/dev/bunkerrelay/SporeSites.java
++++ b/mod/src/main/java/dev/bunkerrelay/SporeSites.java
+@@ -13,10 +13,11 @@ final class SporeSites {
+         String id=switch(theme){
+             case "infected" -> "hevoker";
+             case "forest" -> "wendigo";
++            case "winter" -> "wendigo";
+             case "ash" -> "hollen";
+             default -> "grober";
+         };
+-        var elite=SporeEncounters.create(level,switch(theme){case "forest"->"sieger";case "infected"->"howitzer";default->"gazenbreacher";});
++        var elite=SporeEncounters.create(level,switch(theme){case "winter"->"wendigo";case "forest"->"sieger";case "infected"->"howitzer";default->"gazenbreacher";});
+         if(elite!=null)return elite;
+         return BuiltInRegistries.ENTITY_TYPE.getOptional(ResourceLocation.fromNamespaceAndPath("spore",id))
+             .map(type->type.create(level)).filter(Mob.class::isInstance).map(Mob.class::cast).orElse(null);
+diff --git a/mod/src/main/java/dev/bunkerrelay/TerminalMenu.java b/mod/src/main/java/dev/bunkerrelay/TerminalMenu.java
+index 806752d..b930edb 100644
+--- a/mod/src/main/java/dev/bunkerrelay/TerminalMenu.java
++++ b/mod/src/main/java/dev/bunkerrelay/TerminalMenu.java
+@@ -59,8 +59,8 @@ public final class TerminalMenu extends ChestMenu {
+   for(int slot=0;slot<54;slot++)if(!slots.get(slot))buttons.setItem(slot,ItemStack.EMPTY);
+   if(page==3){
+    for(var profile:ZoneProfile.values())
+-    icon(10+profile.ordinal(),Items.MAP,(zone==profile?"• ":"")+profile.title,"Выбрать район вылазки");
+-   icon(15,Items.COMPASS,"Размер · "+expeditionSize,"Сменить размер");
++    icon(10+profile.ordinal(),Items.MAP,(zone==profile?"• ":"")+profile.title,profile==ZoneProfile.WINTER?"Мороз · под крышей теплее, горящий костёр согревает":"Выбрать район вылазки");
++   icon(16,Items.COMPASS,"Размер · "+expeditionSize,"Сменить размер");
+    for(var option:ExpeditionContracts.Type.values())if(option.available(zone))
+     icon(18+option.ordinal(),Items.PAPER,(contract==option?"• ":"")+option.title,option.hint);
+    boolean night=ExpeditionLight.offer(s,zone);
+@@ -110,7 +110,7 @@ public final class TerminalMenu extends ChestMenu {
+    if(slot>=10&&slot<10+ZoneProfile.values().length){
+     zone=ZoneProfile.values()[slot-10];
+     if(!contract.available(zone))contract=ExpeditionContracts.Type.STANDARD;
+-   }else if(slot==15)expeditionSize=expeditionSize==2048?4096:expeditionSize==4096?8192:2048;
++   }else if(slot==16)expeditionSize=expeditionSize==2048?4096:expeditionSize==4096?8192:2048;
+    else if(slot>=18&&slot<=21)contract=ExpeditionContracts.Type.values()[slot-18];
+    else if(slot==26)ExpeditionLight.reroll(RelayState.get(owner.server),zone);
+    else if(slot==24){
+diff --git a/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java b/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java
+index e7adcbf..e491170 100644
+--- a/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java
++++ b/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java
+@@ -45,6 +45,12 @@ final class ZoneLandmarks {
+ 
+     static List<Plan> plans(String theme){
+         return switch(ZoneProfile.of(theme)){
++            case WINTER -> List.of(
++                polar("Зимовье связистов","cartographer",SupplySites.Kind.WAREHOUSE),
++                polar("Рыболовная артель","fisher",SupplySites.Kind.CANTEEN),
++                new Plan("Законсервированная ледяная шахта","iceberg_mines",SupplySites.Kind.FACTORY,false),
++                polar("Ремонтная станция","toolsmith",SupplySites.Kind.FACTORY),
++                new Plan("Подлёдный санитарный отсек","betterdungeons:zombie_dungeon/floor2/room/floor2_room_1",SupplySites.Kind.CANTEEN,true));
+             case FOREST -> FOREST;
+             case INDUSTRIAL -> INDUSTRIAL;
+             case INFECTED -> INFECTED;
+@@ -59,9 +65,20 @@ final class ZoneLandmarks {
+         var profile=ZoneProfile.of(theme);
+         int slot=switch(profile){case INDUSTRIAL, INFECTED, ASH -> 4; default -> 3;};
+         if(index!=slot)return base;
+-        int choice=Math.floorMod(RaidDirector.roll(seed,index,profile.ordinal()),3);
++        int choice=Math.floorMod(RaidDirector.roll(seed,index,profile.ordinal()),4);
+         if(choice==0)return base;
++        if(choice==3)return switch(profile){
++            case FOREST -> village("Мастерская лесного оружейника","birch_forest_romanian/houses/birch_forest_weaponsmith_1",SupplySites.Kind.ARMORY);
++            case INDUSTRIAL -> new Plan("Аварийный отсек завода","betterdungeons:zombie_dungeon/floor1/room/floor1_room_2",SupplySites.Kind.FACTORY,false);
++            case INFECTED -> new Plan("Карантинный стационар","betterdungeons:zombie_dungeon/floor2/room/floor2_room_3",SupplySites.Kind.CANTEEN,true);
++            case ASH -> new Plan("Костяной каземат","betterdungeons:skeleton_dungeon/3x3/3x3_3",SupplySites.Kind.ARMORY,false);
++            case HELL -> village("Забойная артель пиглинов","exclusives/piglin/houses/piglin_butchery_1",SupplySites.Kind.CANTEEN);
++            case WINTER -> polar("Северная оружейная","weaponsmith",SupplySites.Kind.ARMORY);
++        };
+         return switch(profile){
++            case WINTER -> choice==1
++                ? polar("Архив полярников","library",SupplySites.Kind.WAREHOUSE)
++                : polar("Склад зимней одежды","leatherworker",SupplySites.Kind.WAREHOUSE);
+             case INDUSTRIAL -> choice==1
+                 ? new Plan("Заводская больница","hospital",SupplySites.Kind.CANTEEN,true)
+                 : village("Ремонтная мастерская","badlands_pueblo/houses/badlands_toolsmith_and_weaponsmith_1",SupplySites.Kind.FACTORY);
+@@ -80,6 +97,10 @@ final class ZoneLandmarks {
+         };
+     }
+ 
++    private static Plan polar(String title,String house,SupplySites.Kind kind){
++        return village(title,"snowy_taiga_viking/houses/snowy_taiga_"+house+"_1",kind);
++    }
++
+     private static Plan village(String title,String template,SupplySites.Kind kind){
+         return new Plan(title,"kaisyn:village/"+template,kind,false);
+     }
+@@ -124,6 +145,10 @@ final class ZoneLandmarks {
+             level.setBlock(cache,net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(),2);
+         }
+         SupplySites.cache(level,state,cache,plan.loot);
++        if(state.activeTheme.equals("winter")){
++            var hearth=site.origin().offset(-5,0,4);
++            level.setBlock(hearth,net.minecraft.world.level.block.Blocks.CAMPFIRE.defaultBlockState(),3);
++        }
+         if(condition==LandmarkCondition.INFESTED)SporeCorpses.scatter(level,state,site.origin(),cache);
+         if(level.getBlockEntity(cache) instanceof LootrChestBlockEntity chest){
+             chest.getPersistentData().putString("relay_landmark",plan.title);
+diff --git a/mod/src/main/java/dev/bunkerrelay/ZoneProfile.java b/mod/src/main/java/dev/bunkerrelay/ZoneProfile.java
+index 0baee0b..8d5a204 100644
+--- a/mod/src/main/java/dev/bunkerrelay/ZoneProfile.java
++++ b/mod/src/main/java/dev/bunkerrelay/ZoneProfile.java
+@@ -3,7 +3,8 @@ package dev.bunkerrelay;
+ enum ZoneProfile {
+     FOREST("forest","Лес",1,2),
+     INDUSTRIAL("industrial","Промзона",2,3),
+-    INFECTED("infected","Заражённый город",3,4),
++    INFECTED("infected","Заражённый город",3,3),
++    WINTER("winter","Полярная станция",4,4),
+     ASH("ash","Пустошь",5,5),
+     HELL("hell","Адский разлом",5,5);
+ 
+diff --git a/mod/src/main/resources/META-INF/neoforge.mods.toml b/mod/src/main/resources/META-INF/neoforge.mods.toml
+index 5764b26..d378fe3 100644
+--- a/mod/src/main/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/main/resources/META-INF/neoforge.mods.toml
+@@ -3,7 +3,7 @@ loaderVersion="[4,)"
+ license="MIT"
+ [[mods]]
+ modId="bunkerrelay"
+-version="0.55.0"
++version="0.56.0"
+ displayName="Bunker Relay"
+ description="Cooperative bunker, garage and procedural expeditions. Early prototype."
+ [[dependencies.bunkerrelay]]
+@@ -56,7 +56,7 @@ side="BOTH"
+ [[dependencies.bunkerrelay]]
+ modId="relaylights"
+ type="required"
+-versionRange="[0.55.0]"
++versionRange="[0.56.0]"
+ ordering="AFTER"
+ side="BOTH"
+ 
+@@ -66,6 +66,6 @@ config="bunkerrelay.mixins.json"
+ [[dependencies.bunkerrelay]]
+ modId="relayfactories"
+ type="required"
+-versionRange="[0.55.0]"
++versionRange="[0.56.0]"
+ ordering="AFTER"
+ side="BOTH"
+diff --git a/mod/src/main/resources/data/bunkerrelay/dimension/polar_station.json b/mod/src/main/resources/data/bunkerrelay/dimension/polar_station.json
+new file mode 100644
+index 0000000..dc54381
+--- /dev/null
++++ b/mod/src/main/resources/data/bunkerrelay/dimension/polar_station.json
+@@ -0,0 +1,11 @@
++{
++  "type": "minecraft:overworld",
++  "generator": {
++    "type": "minecraft:noise",
++    "settings": "bunkerrelay:forest",
++    "biome_source": {
++      "type": "minecraft:fixed",
++      "biome": "minecraft:snowy_taiga"
++    }
++  }
++}
+diff --git a/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml b/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml
+index 1620bae..b502e76 100644
+--- a/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml
+@@ -4,7 +4,7 @@ license="MIT"
+ 
+ [[mods]]
+ modId="relayfactories"
+-version="0.55.0"
++version="0.56.0"
+ displayName="Relay Factories"
+ description="Factory structures for industrial expeditions."
+ 
+diff --git a/mod/src/relayLights/resources/META-INF/neoforge.mods.toml b/mod/src/relayLights/resources/META-INF/neoforge.mods.toml
+index 00c4cfd..e200aa7 100644
+--- a/mod/src/relayLights/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/relayLights/resources/META-INF/neoforge.mods.toml
+@@ -4,7 +4,7 @@ license="MIT"
+ 
+ [[mods]]
+ modId="relaylights"
+-version="0.55.0"
++version="0.56.0"
+ displayName="Relay Lights"
+ description="Directional lights with personal and multiplayer modes."
+ 
+diff --git a/modrinth.index.json b/modrinth.index.json
+index a0f7dd8..f2b1755 100644
+--- a/modrinth.index.json
++++ b/modrinth.index.json
+@@ -1,7 +1,7 @@
+ {
+   "formatVersion": 1,
+   "game": "minecraft",
+-  "versionId": "0.55.0",
++  "versionId": "0.56.0",
+   "name": "Bunker Relay",
+   "summary": "Cooperative expeditions, ECHO encounters, threats, extraction and persistent bunker.",
+   "files": [
+diff --git a/tools/package_release.py b/tools/package_release.py
+index 3d3adbd..8eb368b 100644
+--- a/tools/package_release.py
++++ b/tools/package_release.py
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env python3
+ import hashlib,pathlib,shutil,zipfile,sys
+ ROOT=pathlib.Path(__file__).resolve().parents[1];dist=ROOT/'dist';dist.mkdir(exist_ok=True)
+-VERSION='0.55.0';source='--source' in sys.argv;jar=ROOT/f'mod/build/libs/bunkerrelay-{VERSION}.jar'
++VERSION='0.56.0';source='--source' in sys.argv;jar=ROOT/f'mod/build/libs/bunkerrelay-{VERSION}.jar'
+ lights=ROOT/f'mod/build/libs/relaylights-{VERSION}.jar'
+ factories=ROOT/f'mod/build/libs/relayfactories-{VERSION}.jar'
+ if not source:
+@@ -60,6 +60,7 @@ if not source:
+   z.write(ROOT/'WORK_0.53.md','overrides/WORK_0.53.md')
+   z.write(ROOT/'WORK_0.54.md','overrides/WORK_0.54.md')
+   z.write(ROOT/'WORK_0.55.md','overrides/WORK_0.55.md')
++  z.write(ROOT/'WORK_0.56.md','overrides/WORK_0.56.md')
+   z.write(factories,'overrides/mods/'+factories.name)
+   z.write(lights,'overrides/mods/'+lights.name)
+   for path in (ROOT/'overrides').rglob('*'):
