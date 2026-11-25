@@ -51,3 +51,4 @@ jobs:
           JDK_JAVA_OPTIONS=-Dbunkerrelay.zone27Test=true timeout 18m bash gradlew runServer | tee server-test.log
           grep -q RELAY_052_BRIDGE_PASS server-test.log
           grep -q RELAY_016_LIVE_PASS server-test.log
+          grep -q RELAY_POLAR_PASS server-test.log
