@@ -4725,3 +4725,291 @@ index e3f28ff..33bcdba 100644
    z.write(arsenal,'overrides/mods/'+arsenal.name)
    z.write(factories,'overrides/mods/'+factories.name)
    z.write(lights,'overrides/mods/'+lights.name)
+diff --git a/README_RU.md b/README_RU.md
+index 388d43c..4e5fca6 100644
+--- a/README_RU.md
++++ b/README_RU.md
+@@ -1,4 +1,4 @@
+-# Bunker Relay 0.60.0
++# Bunker Relay 0.61.0
+ 
+ Изменения релиза см. в WORK_0.56.md.
+ 
+diff --git a/WORK_0.61.md b/WORK_0.61.md
+new file mode 100644
+index 0000000..a1fdb3c
+--- /dev/null
++++ b/WORK_0.61.md
+@@ -0,0 +1,3 @@
++# 0.61.0
++
++Рельеф открытого грунта меняется по сиду вылазки. Высота насыпей до 4–8 блоков в зависимости от зоны. Предыдущая толщина слоя учитывается при повторной генерации.
+diff --git a/mod/build.gradle b/mod/build.gradle
+index 46fa5fa..8b087c1 100644
+--- a/mod/build.gradle
++++ b/mod/build.gradle
+@@ -1,5 +1,5 @@
+ plugins { id 'java-library'; id 'net.neoforged.moddev' version '2.0.148' }
+-version = '0.60.0'
++version = '0.61.0'
+ group = 'dev.bunkerrelay'
+ base { archivesName = 'bunkerrelay' }
+ java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+diff --git a/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java b/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java
+index ae2e6fc..bf54d46 100644
+--- a/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java
++++ b/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java
+@@ -312,6 +312,7 @@ public final class BunkerRelay {
+    if(expedition(p.level())){
+     if(invalidZone(p,s)){sendHome(p,s);continue;}
+     if(!SectorPlan.contains(s.centerX,s.centerZ,s.activeSize,p.getX(),p.getZ())){teleport(p,p.serverLevel(),arrival(s));RaidRules.tell(p,"Граница зоны: возвращение к эвакуации.");}
++    if(ticks%4==0)ExpeditionTerrain.visit(p,s);
+     if(ticks%100==0)PolarCold.tick(p,s);
+     if(ticks%4==0)InteriorSites.walk(p,s);
+     if(ticks%40==0){ZoneLandmarks.visit(p,s);ExpeditionRoads.visit(p,s);ReconChart.visit(p,s);if(s.sectorBuildings)SectorBuildings.discover(p,s);else ExpeditionContent.nearby(p,s);}
+diff --git a/mod/src/main/java/dev/bunkerrelay/ExpeditionBuilder.java b/mod/src/main/java/dev/bunkerrelay/ExpeditionBuilder.java
+index e792639..ae183e1 100644
+--- a/mod/src/main/java/dev/bunkerrelay/ExpeditionBuilder.java
++++ b/mod/src/main/java/dev/bunkerrelay/ExpeditionBuilder.java
+@@ -13,7 +13,7 @@ public final class ExpeditionBuilder {
+    if(!planner.step(level,state))return false;
+    planner=null;
+   }
+-  if(chunk<25){level.getChunk((state.centerX>>4)+chunk%5-2,(state.centerZ>>4)+chunk/5-2);chunk++;return false;}
++  if(chunk<25){level.getChunk((state.centerX>>4)+chunk%5-2,(state.centerZ>>4)+chunk/5-2);ExpeditionTerrain.shape(level,state,(state.centerX>>4)+chunk%5-2,(state.centerZ>>4)+chunk/5-2);chunk++;return false;}
+   if(chunk<28){FieldRoutes.build(level,state,chunk-25);chunk++;return false;}
+   if(chunk<32){
+    int index=chunk-28;
+diff --git a/mod/src/main/java/dev/bunkerrelay/ExpeditionTerrain.java b/mod/src/main/java/dev/bunkerrelay/ExpeditionTerrain.java
+new file mode 100644
+index 0000000..3349e4f
+--- /dev/null
++++ b/mod/src/main/java/dev/bunkerrelay/ExpeditionTerrain.java
+@@ -0,0 +1,84 @@
++package dev.bunkerrelay;
++
++import net.minecraft.core.BlockPos;
++import net.minecraft.server.level.ServerLevel;
++import net.minecraft.server.level.ServerPlayer;
++import net.minecraft.world.level.block.Block;
++import net.minecraft.world.level.block.Blocks;
++import net.minecraft.world.level.levelgen.Heightmap;
++
++/** Seeded surface relief. Store only the material and depth this pass added. */
++final class ExpeditionTerrain {
++    private static final Block[] SURFACES={Blocks.GRASS_BLOCK,Blocks.DIRT,Blocks.PODZOL,Blocks.COARSE_DIRT,
++        Blocks.SAND,Blocks.RED_SAND,Blocks.GRAVEL,Blocks.STONE,Blocks.TERRACOTTA,Blocks.SNOW_BLOCK,
++        Blocks.NETHERRACK,Blocks.BLACKSTONE,Blocks.BASALT,Blocks.MYCELIUM,Blocks.MOSS_BLOCK};
++
++    static void visit(ServerPlayer player,RelayState state){
++        if(!state.ready||state.generating)return;
++        var level=player.serverLevel();
++        var center=player.chunkPosition();
++        for(int radius=0;radius<=3;radius++)for(int dx=-radius;dx<=radius;dx++)for(int dz=-radius;dz<=radius;dz++){
++            if(Math.max(Math.abs(dx),Math.abs(dz))!=radius)continue;
++            if(shape(level,state,center.x+dx,center.z+dz))return;
++        }
++    }
++
++    static boolean shape(ServerLevel level,RelayState state,int cx,int cz){
++        if(!level.hasChunk(cx,cz)||!SectorPlan.contains(state.centerX,state.centerZ,state.activeSize,(cx<<4)+8,(cz<<4)+8))return false;
++        var chunk=level.getChunk(cx,cz);
++        String key="terrain61/"+level.dimension().location()+"/"+net.minecraft.world.level.ChunkPos.asLong(cx,cz);
++        var tag=state.roadChunks.getCompound(key);
++        if(tag.contains("seed")&&tag.getLong("seed")==state.seed)return false;
++        int mx=(cx<<4)+8,mz=(cz<<4)+8;
++        boolean protectedPlot=!chunk.getAllReferences().isEmpty()||!chunk.getBlockEntitiesPos().isEmpty();
++        for(int j=0;!protectedPlot&&state.layoutVersion==3&&j<ExpeditionGrid.PLOTS;j++){
++            var plot=ExpeditionGrid.point(state,j);
++            protectedPlot=Math.abs(mx-plot.getX())<64&&Math.abs(mz-plot.getZ())<64;
++        }
++        if(protectedPlot){
++            tag.putLong("seed",state.seed);state.roadChunks.put(key,tag);state.setDirty();return true;
++        }
++        int[] layers=tag.getIntArray("layers");
++        if(layers.length!=256)layers=new int[256];
++        boolean occupied=level.players().stream().anyMatch(p->Math.abs(p.getX()-((cx<<4)+8))<12&&Math.abs(p.getZ()-((cz<<4)+8))<12);
++        if(occupied)return false;
++        double phase=(state.seed&65535)*Math.PI/32768,phaseZ=((state.seed>>>16)&65535)*Math.PI/32768;
++        int amplitude=switch(state.activeTheme){case "winter","ash"->8;case "forest","hell"->6;default->4;};
++        for(int i=0;i<256;i++){
++            int x=(cx<<4)+(i&15),z=(cz<<4)+(i>>4);
++            int rx=x-state.centerX,rz=z-state.centerZ;
++            if(Math.max(Math.abs(rx),Math.abs(rz))<18||ExpeditionRoads.road(rx)||ExpeditionRoads.road(rz))continue;
++            int top=chunk.getHeight(Heightmap.Types.WORLD_SURFACE,x&15,z&15);
++            var pos=new BlockPos(x,top,z);
++            boolean snow=level.getBlockState(pos).is(Blocks.SNOW);
++            if(snow){pos=pos.below();top--;}
++            int old=layers[i],depth=old&15,material=0,base=top-depth;
++            if(depth>0){
++                material=(old>>>4)&15;
++                if(base!=(old>>8))continue;
++            }else{
++                while(material<SURFACES.length&&!level.getBlockState(pos).is(SURFACES[material]))material++;
++                if(material==SURFACES.length)continue;
++            }
++            Block surface=SURFACES[material];
++            Block fill=(surface==Blocks.GRASS_BLOCK||surface==Blocks.PODZOL||surface==Blocks.MOSS_BLOCK||surface==Blocks.MYCELIUM)?Blocks.DIRT:surface;
++            if(!level.getBlockState(pos).is(surface))continue;
++            boolean intact=true;
++            for(int y=1;y<depth;y++)if(!level.getBlockState(pos.below(y)).is(fill)){intact=false;break;}
++            if(!intact)continue;
++            double wave=Math.sin(rx*.072+phase)+Math.cos(rz*.058+phaseZ)+.45*Math.sin((rx+rz)*.11+phaseZ);
++            int target=(int)Math.round(Math.max(0,wave/2.45)*amplitude);
++            if(base+target+2>=level.getMaxBuildHeight()||target==depth)continue;
++            var snowState=level.getBlockState(pos.above());
++            if(snow)level.removeBlock(pos.above(),false);
++            for(int y=depth;y>target;y--)level.removeBlock(pos.atY(base+y),false);
++            for(int y=Math.max(1,depth);y<target;y++)level.setBlock(pos.atY(base+y),fill.defaultBlockState(),2);
++            level.setBlock(pos.atY(base+target),surface.defaultBlockState(),2);
++            if(snow)level.setBlock(pos.atY(base+target+1),snowState,2);
++            layers[i]=target==0?0:(base<<8)|(material<<4)|target;
++        }
++        if(java.util.Arrays.stream(layers).anyMatch(v->v!=0))tag.putIntArray("layers",layers);else tag.remove("layers");tag.putLong("seed",state.seed);
++        state.roadChunks.put(key,tag);state.setDirty();return true;
++    }
++    private ExpeditionTerrain(){}
++}
+diff --git a/mod/src/main/java/dev/bunkerrelay/LiveRefreshTest.java b/mod/src/main/java/dev/bunkerrelay/LiveRefreshTest.java
+index 29559a0..1d3adce 100644
+--- a/mod/src/main/java/dev/bunkerrelay/LiveRefreshTest.java
++++ b/mod/src/main/java/dev/bunkerrelay/LiveRefreshTest.java
+@@ -74,6 +74,27 @@ final class LiveRefreshTest {
+             walker.moveTo(testRoad.getX()+.5,testRoad.getY()+1,testRoad.getZ()+.5);
+             ExpeditionRoads.visit(walker,state);
+             check(zone.getBlockState(testRoad).is(Blocks.DIRT_PATH),"forest trail generated on exploration");
++            // An isolated natural surface exercises the same live chunk pass as exploration.
++            int cx=(state.centerX>>4)+5,cz=(state.centerZ>>4)+5;
++            for(int k=0;k<12;k++){
++                var candidate=zone.getChunk(cx,cz);
++                if(candidate.getAllReferences().isEmpty()&&candidate.getBlockEntitiesPos().isEmpty())break;
++                cx+=12;
++            }
++            var sample=new BlockPos(cx*16+4,zone.getMaxBuildHeight()-16,cz*16+4);
++            long savedSeed=state.seed;
++            zone.setBlock(sample,Blocks.GRASS_BLOCK.defaultBlockState(),2);
++            boolean raised=false,lowered=false;
++            try{
++                for(int n=0;n<96&&!lowered;n++){
++                    state.seed=RaidDirector.roll(savedSeed,n,61);
++                    ExpeditionTerrain.shape(zone,state,cx,cz);
++                    boolean high=!zone.isEmptyBlock(sample.above());
++                    if(raised&&!high)lowered=true;
++                    raised|=high;
++                }
++                check(raised&&lowered&&zone.getBlockState(sample).is(Blocks.GRASS_BLOCK),"terrain rises and recedes");
++            }finally{state.seed=savedSeed;zone.removeBlock(sample,false);}
+             System.out.println("RELAY_GRID_PASS");
+             var allRooms=RaidDirector.get(server).rooms;
+             var rooms=allRooms.stream().filter(room->!room.getString("type").equals("landmark")).toList();
+diff --git a/mod/src/main/resources/META-INF/neoforge.mods.toml b/mod/src/main/resources/META-INF/neoforge.mods.toml
+index a413d90..1d0c0a1 100644
+--- a/mod/src/main/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/main/resources/META-INF/neoforge.mods.toml
+@@ -3,7 +3,7 @@ loaderVersion="[4,)"
+ license="MIT"
+ [[mods]]
+ modId="bunkerrelay"
+-version="0.60.0"
++version="0.61.0"
+ displayName="Bunker Relay"
+ description="Cooperative bunker, garage and procedural expeditions. Early prototype."
+ [[dependencies.bunkerrelay]]
+@@ -56,7 +56,7 @@ side="BOTH"
+ [[dependencies.bunkerrelay]]
+ modId="relaylights"
+ type="required"
+-versionRange="[0.60.0]"
++versionRange="[0.61.0]"
+ ordering="AFTER"
+ side="BOTH"
+ 
+@@ -66,13 +66,13 @@ config="bunkerrelay.mixins.json"
+ [[dependencies.bunkerrelay]]
+ modId="relayfactories"
+ type="required"
+-versionRange="[0.60.0]"
++versionRange="[0.61.0]"
+ ordering="AFTER"
+ side="BOTH"
+ 
+ [[dependencies.bunkerrelay]]
+ modId="relayarsenal"
+ type="required"
+-versionRange="[0.60.0]"
++versionRange="[0.61.0]"
+ ordering="AFTER"
+ side="BOTH"
+diff --git a/mod/src/relayArsenal/resources/META-INF/neoforge.mods.toml b/mod/src/relayArsenal/resources/META-INF/neoforge.mods.toml
+index f908cce..20e1598 100644
+--- a/mod/src/relayArsenal/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/relayArsenal/resources/META-INF/neoforge.mods.toml
+@@ -4,7 +4,7 @@ license="MIT"
+ 
+ [[mods]]
+ modId="relayarsenal"
+-version="0.60.0"
++version="0.61.0"
+ displayName="Relay Arsenal"
+ description="Historical TaCZ arsenal for Bunker Relay."
+ 
+diff --git a/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml b/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml
+index 429cbaa..abcd645 100644
+--- a/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml
+@@ -4,7 +4,7 @@ license="MIT"
+ 
+ [[mods]]
+ modId="relayfactories"
+-version="0.60.0"
++version="0.61.0"
+ displayName="Relay Factories"
+ description="Factory structures for industrial expeditions."
+ 
+diff --git a/mod/src/relayLights/resources/META-INF/neoforge.mods.toml b/mod/src/relayLights/resources/META-INF/neoforge.mods.toml
+index 8e2f2f6..a36aacc 100644
+--- a/mod/src/relayLights/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/relayLights/resources/META-INF/neoforge.mods.toml
+@@ -4,7 +4,7 @@ license="MIT"
+ 
+ [[mods]]
+ modId="relaylights"
+-version="0.60.0"
++version="0.61.0"
+ displayName="Relay Lights"
+ description="Directional lights with personal and multiplayer modes."
+ 
+diff --git a/modrinth.index.json b/modrinth.index.json
+index 3babb3f..f5cdd3d 100644
+--- a/modrinth.index.json
++++ b/modrinth.index.json
+@@ -1,7 +1,7 @@
+ {
+   "formatVersion": 1,
+   "game": "minecraft",
+-  "versionId": "0.60.0",
++  "versionId": "0.61.0",
+   "name": "Bunker Relay",
+   "summary": "Cooperative expeditions, ECHO encounters, threats, extraction and persistent bunker.",
+   "files": [
+diff --git a/tools/package_release.py b/tools/package_release.py
+index 33bcdba..afe5b47 100644
+--- a/tools/package_release.py
++++ b/tools/package_release.py
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env python3
+ import hashlib,pathlib,shutil,zipfile,sys
+ ROOT=pathlib.Path(__file__).resolve().parents[1];dist=ROOT/'dist';dist.mkdir(exist_ok=True)
+-VERSION='0.60.0';source='--source' in sys.argv;jar=ROOT/f'mod/build/libs/bunkerrelay-{VERSION}.jar'
++VERSION='0.61.0';source='--source' in sys.argv;jar=ROOT/f'mod/build/libs/bunkerrelay-{VERSION}.jar'
+ lights=ROOT/f'mod/build/libs/relaylights-{VERSION}.jar'
+ factories=ROOT/f'mod/build/libs/relayfactories-{VERSION}.jar'
+ if not source:
+@@ -67,6 +67,7 @@ if not source:
+   z.write(ROOT/'WORK_0.58.md','overrides/WORK_0.58.md')
+   z.write(ROOT/'WORK_0.59.md','overrides/WORK_0.59.md')
+   z.write(ROOT/'WORK_0.60.md','overrides/WORK_0.60.md')
++  z.write(ROOT/'WORK_0.61.md','overrides/WORK_0.61.md')
+   z.write(arsenal,'overrides/mods/'+arsenal.name)
+   z.write(factories,'overrides/mods/'+factories.name)
+   z.write(lights,'overrides/mods/'+lights.name)
