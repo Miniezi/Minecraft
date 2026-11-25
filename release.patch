@@ -2997,3 +2997,160 @@ index 3d3adbd..8eb368b 100644
    z.write(factories,'overrides/mods/'+factories.name)
    z.write(lights,'overrides/mods/'+lights.name)
    for path in (ROOT/'overrides').rglob('*'):
+diff --git a/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java b/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java
+index 4e8cdee..e9dc3cd 100644
+--- a/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java
++++ b/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java
+@@ -299,7 +299,7 @@ public final class BunkerRelay {
+     if(Boolean.getBoolean("bunkerrelay.update11ResetVerify"))Update11IntegrationTest.verify(server,s);
+     System.out.println("RELAY_ZONE_READY "+s.activeDimension+" "+s.activeSize);if(smokePhase>0)smokeCheck(server,s);
+    }else if(builder.percent()/25>progress){progress=builder.percent()/25;broadcast(server,"Подготовка входа: "+builder.percent()+"%. Остальной мир генерируется при исследовании.");}
+-  }catch(Exception error){builder=null;s.generating=false;s.ready=false;s.setDirty();broadcast(server,"Ошибка подготовки зоны. Базы сохранены; подробности в журнале.");error.printStackTrace();if(smokePhase>0)throw new IllegalStateException("Smoke failed",error);}}
++  }catch(Exception error){builder=null;s.generating=false;s.ready=false;s.setDirty();broadcast(server,"Ошибка подготовки зоны. Базы сохранены; подробности в журнале.");error.printStackTrace();if(smokePhase>0 || Boolean.getBoolean("bunkerrelay.zone27Test"))throw new IllegalStateException("Expedition test failed",error);}}
+   if(ticks%20==0){BasePower.second(server,s);RaidDirector.second(server,s);RaidMission.second(server,s);Navigation.signal(server,s);RaidBosses.second(server,s);MiniBosses.second(server,s);}
+   if(ticks%4==0)Airdrop.animate(server,s,ticks%20);
+   for(var p:server.getPlayerList().getPlayers()){
+diff --git a/mod/src/main/java/dev/bunkerrelay/ExpeditionBuilder.java b/mod/src/main/java/dev/bunkerrelay/ExpeditionBuilder.java
+index 1f14df4..a80773e 100644
+--- a/mod/src/main/java/dev/bunkerrelay/ExpeditionBuilder.java
++++ b/mod/src/main/java/dev/bunkerrelay/ExpeditionBuilder.java
+@@ -4,10 +4,15 @@ import net.minecraft.server.level.ServerLevel;
+ /** Prepare only the 5x5 arrival chunks, then let vanilla generate on exploration. */
+ public final class ExpeditionBuilder {
+  private final ServerLevel level;private final RelayState state;private int chunk,arenaStrip;
++ private ExpeditionGrid.Planner planner;
+  public ExpeditionBuilder(ServerLevel l,RelayState s){level=l;state=s;}
+  public int percent(){return Math.min(99,chunk*100/(state.generating?33+ZoneLandmarks.COUNT:33));}
+  public boolean tick(){
+-  if(chunk==0&&state.generating)ExpeditionGrid.plan(level,state);
++  if(chunk==0&&state.generating){
++   if(planner==null)planner=new ExpeditionGrid.Planner(state);
++   if(!planner.step(level,state))return false;
++   planner=null;
++  }
+   if(chunk<25){level.getChunk((state.centerX>>4)+chunk%5-2,(state.centerZ>>4)+chunk/5-2);chunk++;return false;}
+   if(chunk<28){FieldRoutes.build(level,state,chunk-25);chunk++;return false;}
+   if(chunk<32){
+diff --git a/mod/src/main/java/dev/bunkerrelay/ExpeditionGrid.java b/mod/src/main/java/dev/bunkerrelay/ExpeditionGrid.java
+index 408bdd1..f2e2733 100644
+--- a/mod/src/main/java/dev/bunkerrelay/ExpeditionGrid.java
++++ b/mod/src/main/java/dev/bunkerrelay/ExpeditionGrid.java
+@@ -12,38 +12,47 @@ final class ExpeditionGrid {
+     static final int HALF=SIDE/2;
+     static final int PLOTS=9+ZoneLandmarks.COUNT;
+ 
+-    static void plan(ServerLevel level,RelayState state){
+-        int limit=(state.activeSize/2-HALF)/SIDE;
+-        var pattern=new Random(state.seed ^ 0x5e37abd1L);
+-        int orientation=pattern.nextInt(4);
+-        var cells=new ArrayList<BlockPos>();
+-        for(int x=-limit;x<=limit;x++)for(int z=-limit;z<=limit;z++)
+-            if(x!=0||z!=0)cells.add(new BlockPos(x,0,z));
+-        Collections.shuffle(cells,new Random(state.seed));
+-        var plan=new CompoundTag();
+-        for(int index=0;index<PLOTS;index++){
+-            int best=-1,bestCost=Integer.MAX_VALUE,examined=0;
+-            for(int candidate=cells.size()-1;candidate>=0&&examined<4;candidate--){
++    static final class Planner {
++        private final ArrayList<BlockPos> cells=new ArrayList<>();
++        private final CompoundTag plots=new CompoundTag();
++        private final int limit,orientation;
++        private int slot,candidate,examined,best=-1,bestCost=Integer.MAX_VALUE;
++
++        Planner(RelayState state){
++            limit=(state.activeSize/2-HALF)/SIDE;
++            orientation=new Random(state.seed ^ 0x5e37abd1L).nextInt(4);
++            for(int x=-limit;x<=limit;x++)for(int z=-limit;z<=limit;z++)
++                if(x!=0||z!=0)cells.add(new BlockPos(x,0,z));
++            Collections.shuffle(cells,new Random(state.seed));
++            candidate=cells.size()-1;
++        }
++
++        boolean step(ServerLevel level,RelayState state){
++            if(candidate>=0){
+                 var cell=cells.get(candidate);
+                 var point=new BlockPos(state.centerX+cell.getX()*SIDE,0,state.centerZ+cell.getZ()*SIDE);
+-                if(StructureLevels.overlapsHistorical(level,state,point,42)||!clearPlot(level,point))continue;
+-                examined++;
+-                int cost=terrainCost(level,point);
+-                int axis=(orientation&1)==0?cell.getX():cell.getZ();
+-                // Some cycles cluster low-cost sites around a spine; others favour an outer ring.
+-                cost+=orientation<2?Math.abs(axis)*2:Math.abs(Math.abs(axis)-Math.max(1,limit/2))*2;
+-                if(cost<bestCost){best=candidate;bestCost=cost;}
+-                if(cost==0)break;
++                if(!StructureLevels.overlapsHistorical(level,state,point,42)&&clearPlot(level,point)){
++                    examined++;
++                    int axis=(orientation&1)==0?cell.getX():cell.getZ();
++                    int cost=terrainCost(level,point)+(orientation<2?Math.abs(axis)*2:Math.abs(Math.abs(axis)-Math.max(1,limit/2))*2);
++                    if(cost<bestCost){best=candidate;bestCost=cost;}
++                }
++                candidate--;
++                if(candidate>=0&&examined<4&&bestCost!=0)return false;
+             }
+-            if(best>=0){
+-                var chosen=cells.remove(best);
+-                plan.putLong("plot"+index,new BlockPos(state.centerX+chosen.getX()*SIDE,0,state.centerZ+chosen.getZ()*SIDE).asLong());
++            if(best<0)throw new IllegalStateException("Недостаточно свободных участков для новой вылазки");
++            var chosen=cells.remove(best);
++            plots.putLong("plot"+slot++,new BlockPos(state.centerX+chosen.getX()*SIDE,0,state.centerZ+chosen.getZ()*SIDE).asLong());
++            if(slot==PLOTS){
++                state.expeditionPlots=plots;
++                state.layoutVersion=3;
++                state.setDirty();
++                return true;
+             }
+-            if(!plan.contains("plot"+index))throw new IllegalStateException("Недостаточно свободных участков для новой вылазки");
++            candidate=cells.size()-1;
++            examined=0;best=-1;bestCost=Integer.MAX_VALUE;
++            return false;
+         }
+-        state.expeditionPlots=plan;
+-        state.layoutVersion=3;
+-        state.setDirty();
+     }
+ 
+     private static int terrainCost(ServerLevel level,BlockPos point){
+diff --git a/mod/src/main/resources/data/bunkerrelay/dimension/polar_station.json b/mod/src/main/resources/data/bunkerrelay/dimension/polar_station.json
+index dc54381..4caf695 100644
+--- a/mod/src/main/resources/data/bunkerrelay/dimension/polar_station.json
++++ b/mod/src/main/resources/data/bunkerrelay/dimension/polar_station.json
+@@ -1,11 +1,34 @@
+ {
+   "type": "minecraft:overworld",
+   "generator": {
+-    "type": "minecraft:noise",
+-    "settings": "bunkerrelay:forest",
+-    "biome_source": {
+-      "type": "minecraft:fixed",
+-      "biome": "minecraft:snowy_taiga"
++    "type": "minecraft:flat",
++    "settings": {
++      "biome": "minecraft:snowy_taiga",
++      "features": true,
++      "lakes": false,
++      "structure_overrides": [],
++      "layers": [
++        {
++          "block": "minecraft:bedrock",
++          "height": 1
++        },
++        {
++          "block": "minecraft:stone",
++          "height": 117
++        },
++        {
++          "block": "minecraft:dirt",
++          "height": 3
++        },
++        {
++          "block": "minecraft:grass_block",
++          "height": 1
++        },
++        {
++          "block": "minecraft:snow",
++          "height": 1
++        }
++      ]
+     }
+   }
+ }
