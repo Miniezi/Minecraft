@@ -206,9 +206,22 @@ index 3286397..e020223 100644
    var journal=RaidJournal.get(server);journal.raids.put(ID,new CompoundTag());RelayEconomy.buy(p,ammo);RelayEconomy.sell(p,iron);check(RelayEconomy.balance(p)==9733&&count(p,iron.stack(p))==8,"active raid trade forbidden");journal.raids.remove(ID);
    p.getInventory().clearContent();var menu=new RelayEconomy.MarketMenu(7,p.getInventory(),p,false);menu.clicked(9,0,ClickType.QUICK_MOVE,p);menu.clicked(9,0,ClickType.SWAP,p);check(RelayEconomy.balance(p)==9733&&p.getInventory().isEmpty(),"icons protected");menu.clicked(9,0,ClickType.PICKUP,p);check(RelayEconomy.balance(p)==9730&&count(p,ammoStack)==1,"LMB immediate single purchase");
 diff --git a/mod/src/main/java/dev/bunkerrelay/EncounterPressure.java b/mod/src/main/java/dev/bunkerrelay/EncounterPressure.java
-index fe8793e..7b38072 100644
+index fe8793e..236d057 100644
 --- a/mod/src/main/java/dev/bunkerrelay/EncounterPressure.java
 +++ b/mod/src/main/java/dev/bunkerrelay/EncounterPressure.java
+@@ -11,9 +11,9 @@ import net.minecraft.world.phys.AABB;
+ 
+ enum EncounterPressure {
+     FOREST(6, 2, 1, 25, 32, Set.of("inf_human","inf_husk","inf_hazmat")),
+-    INDUSTRIAL(9, 4, 2, 42, 46, Set.of("inf_husk","inf_pillager","inf_hazmat","stalker")),
+-    INFECTED(12, 6, 3, 29, 70, Set.of("inf_human","inf_hazmat","slasher","spitter","leaper","stalker")),
+-    ASH(10, 4, 2, 38, 38, Set.of("brute","protector","spitter","inf_husk"));
++    INDUSTRIAL(11, 5, 2, 42, 46, Set.of("inf_husk","inf_pillager","inf_hazmat","stalker")),
++    INFECTED(15, 7, 4, 29, 70, Set.of("inf_human","inf_hazmat","slasher","spitter","leaper","stalker")),
++    ASH(16, 8, 4, 38, 38, Set.of("brute","protector","spitter","knight","wendigo"));
+ 
+     private static final double RADIUS = 48;
+     final int limit, naturalLimit, waveSize, exposedChance, coveredChance;
 @@ -29,7 +29,7 @@ enum EncounterPressure {
      }
  
@@ -424,6 +437,63 @@ index ea823b1..08f5e11 100644
     return;
    }
    if(!p.level().getBlockState(pos).is(net.minecraft.world.level.block.Blocks.LODESTONE))return;
+diff --git a/mod/src/main/java/dev/bunkerrelay/RegionalIntegrationTest.java b/mod/src/main/java/dev/bunkerrelay/RegionalIntegrationTest.java
+index 2c169ed..981840f 100644
+--- a/mod/src/main/java/dev/bunkerrelay/RegionalIntegrationTest.java
++++ b/mod/src/main/java/dev/bunkerrelay/RegionalIntegrationTest.java
+@@ -26,7 +26,7 @@ final class RegionalIntegrationTest {
+             state.centerX=4000+profile.ordinal()*1500;
+             state.centerZ=4000;
+             state.activeLoot=profile.max;
+-            for(int index:new int[]{0,3,4}){
++            for(int index:new int[]{0,1,2,3,4}){
+                 var plan=ZoneLandmarks.plans(profile.id).get(index);
+                 ZoneLandmarks.build(level,state,index);
+                 var room=RaidDirector.get(server).rooms.getLast();
+@@ -41,6 +41,25 @@ final class RegionalIntegrationTest {
+                 check(condition==LandmarkCondition.REGULAR||!PersonalLoot.templateItem(level,cache,10).isEmpty(),"alternate loot");
+                 var request=BunkerRequests.forSite(plan.template());
+                 if(request!=null)check(Warehouse.matches(PersonalLoot.templateItem(level,cache,11),request.item()),"request field supply");
++                if (java.util.Set.of("hospital","cell","military_camp").contains(plan.template())) {
++                    var gate=BlockPos.of(room.getLong("insideGate"));
++                    var inside=BlockPos.of(room.getLong("insideFloor"));
++                    check(room.contains("insideGate") && level.getBlockState(gate.below()).is(Blocks.OXIDIZED_COPPER),"walk-in gate");
++                    var visitor=new FakePlayer(level,new GameProfile(UUID.randomUUID(),"InteriorTest"));
++                    var journal=RaidJournal.get(server);
++                    journal.raids.put(visitor.getUUID(),new net.minecraft.nbt.CompoundTag());
++                    boolean ready=state.ready;state.ready=true;
++                    try {
++                        visitor.moveTo(gate.getX()+.5,gate.getY(),gate.getZ()+.5);
++                        InteriorSites.walk(visitor,state);
++                        check(visitor.blockPosition().equals(inside.south(3)),"walk-in teleport");
++                        var chestPos=inside.offset(11,0,4);
++                        check(!PersonalLoot.templateItem(level,chestPos,plan.medical()?1:4).isEmpty(),"personal interior supplies");
++                        visitor.moveTo(inside.getX()+.5,inside.getY(),inside.getZ()+1.5);
++                        InteriorSites.walk(visitor,state);
++                        check(visitor.blockPosition().equals(BlockPos.of(room.getLong("approach"))),"interior exit");
++                    } finally {journal.raids.remove(visitor.getUUID());state.ready=ready;}
++                }
+                 if(plan.medical()&&profile.max>=3)
+                     check(PersonalLoot.templateItem(level,cache,4).is(Medicine.BANDAGE.get())
+                         &&PersonalLoot.templateItem(level,cache,5).is(Medicine.MEDKIT.get()),"hospital medicine");
+@@ -48,7 +67,7 @@ final class RegionalIntegrationTest {
+ 
+         }
+         state.centerX=originalX;state.centerZ=originalZ;state.activeTheme=originalTheme;
+-        check(templates.size()==20,"twenty distinct large sites");
++        check(templates.size()==ZoneProfile.values().length*ZoneLandmarks.COUNT,"distinct landmark for every zone and plot");
+         state.ready=true;
+         var doctor=new FakePlayer(level,new GameProfile(UUID.randomUUID(),"RelayMedic"));
+         doctor.setHealth(8);
+@@ -66,7 +85,7 @@ final class RegionalIntegrationTest {
+         check(RelayEconomy.CATALOG.stream().filter(offer->RelayEconomy.merchant(offer)==RelayEconomy.Merchant.MEDIC).count()==2,"medic offers");
+         var pda=new PocketDevice.Menu(9,doctor.getInventory(),doctor,PocketDevice.Page.RAID);
+         check(pda.getSlot(10).getItem().getHoverName().getString().equals("Ориентиры"),"PDA map removed");
+-        System.out.println("RELAY_REGIONAL_PASS profiles=true templates=20 medicine=true food=true medic=true");
++        System.out.println("RELAY_REGIONAL_PASS profiles=true templates=25 medicine=true food=true medic=true");
+     }
+ 
+     private static void check(boolean condition,String message){
 diff --git a/mod/src/main/java/dev/bunkerrelay/RelayEconomy.java b/mod/src/main/java/dev/bunkerrelay/RelayEconomy.java
 index ce56503..adcc69d 100644
 --- a/mod/src/main/java/dev/bunkerrelay/RelayEconomy.java
