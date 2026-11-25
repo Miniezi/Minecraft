@@ -2191,3 +2191,259 @@ index 15686d1..b776896 100644
    z.write(factories,'overrides/mods/'+factories.name)
    z.write(lights,'overrides/mods/'+lights.name)
    for path in (ROOT/'overrides').rglob('*'):
+diff --git a/README_RU.md b/README_RU.md
+index 1adcef0..8ae0af0 100644
+--- a/README_RU.md
++++ b/README_RU.md
+@@ -1,6 +1,6 @@
+-# Bunker Relay 0.54.0
++# Bunker Relay 0.55.0
+ 
+-Изменения релиза см. в WORK_0.54.md.
++Изменения релиза см. в WORK_0.55.md.
+ 
+ Убрано ограничение дальности всего светового пятна по одному лучу из центра. Ручной и оружейный фонари освещают видимые поверхности внутри конуса до 22 блоков. Для света напарника и вида от третьего лица затенение приближённо рассчитывается по глубине видимой сцены. Геометрия вне экрана в этой проверке не участвует.
+ 
+diff --git a/WORK_0.55.md b/WORK_0.55.md
+new file mode 100644
+index 0000000..b290f81
+--- /dev/null
++++ b/WORK_0.55.md
+@@ -0,0 +1,2 @@
++# Bunker Relay 0.55.0
++У личных ящиков появились названия и дополнительные припасы по назначению постройки. В больнице есть перевязочные и аптечные шкафы, на военной базе — ящики оружейника и интенданта. В мастерских встречаются детали для сборки и электромонтажа. У лабораторий, литейных, архивов и шахт есть свои наборы. Внутри бункера провиант и полевое снаряжение лежат в разных помещениях. Новые наборы создаются при генерации.
+diff --git a/mod/build.gradle b/mod/build.gradle
+index ecfcab9..aed537f 100644
+--- a/mod/build.gradle
++++ b/mod/build.gradle
+@@ -1,5 +1,5 @@
+ plugins { id 'java-library'; id 'net.neoforged.moddev' version '2.0.148' }
+-version = '0.54.0'
++version = '0.55.0'
+ group = 'dev.bunkerrelay'
+ base { archivesName = 'bunkerrelay' }
+ java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+diff --git a/mod/src/main/java/dev/bunkerrelay/InteriorSites.java b/mod/src/main/java/dev/bunkerrelay/InteriorSites.java
+index 396e07a..e0f8201 100644
+--- a/mod/src/main/java/dev/bunkerrelay/InteriorSites.java
++++ b/mod/src/main/java/dev/bunkerrelay/InteriorSites.java
+@@ -54,7 +54,12 @@ final class InteriorSites {
+                 RaidLoot.specialist(chest,level,state,at,side>0?SupplySites.Kind.WAREHOUSE:SupplySites.Kind.CANTEEN);
+                 level.setBlock(at.east(),Blocks.CRAFTING_TABLE.defaultBlockState(),2);
+             }
+-            PersonalLoot.convert(level,at,chest);
++            var crate=switch(theme){
++                case "hospital" -> side<0?SiteCrate.DRESSINGS:SiteCrate.PHARMACY;
++                case "military" -> side<0?SiteCrate.ARMORER:SiteCrate.QUARTERMASTER;
++                default -> side<0?SiteCrate.RATIONS:SiteCrate.FIELD;
++            };
++            crate.finish(level,at,chest,state);
+         }
+     }
+ 
+diff --git a/mod/src/main/java/dev/bunkerrelay/RegionalIntegrationTest.java b/mod/src/main/java/dev/bunkerrelay/RegionalIntegrationTest.java
+index 4dce9cf..4fdc6ac 100644
+--- a/mod/src/main/java/dev/bunkerrelay/RegionalIntegrationTest.java
++++ b/mod/src/main/java/dev/bunkerrelay/RegionalIntegrationTest.java
+@@ -46,6 +46,8 @@ final class RegionalIntegrationTest {
+                 var facing=net.minecraft.core.Direction.getNearest(approach.getX()-origin.getX(),0,approach.getZ()-origin.getZ());
+                 var cabinet=origin.relative(facing,2).relative(facing.getClockWise(),5);
+                 check(!PersonalLoot.templateItem(level,cabinet,0).isEmpty(),"regional supplies inside "+plan.title());
++                check(level.getBlockEntity(cabinet) instanceof net.minecraft.world.Nameable named && named.hasCustomName()
++                    && !PersonalLoot.templateItem(level,cabinet,18).isEmpty(),"named specialist crate "+plan.title());
+                 if(plan.medical())check(PersonalLoot.templateItem(level,cabinet,4).is(Medicine.BANDAGE.get()),"medical cabinet "+plan.title());
+                 var condition=LandmarkCondition.read(room.getString("condition"));
+                 check(condition==LandmarkCondition.choose(state.seed,BlockPos.of(room.getLong("origin"))),"seeded condition");
+diff --git a/mod/src/main/java/dev/bunkerrelay/SiteCrate.java b/mod/src/main/java/dev/bunkerrelay/SiteCrate.java
+new file mode 100644
+index 0000000..e17e357
+--- /dev/null
++++ b/mod/src/main/java/dev/bunkerrelay/SiteCrate.java
+@@ -0,0 +1,64 @@
++package dev.bunkerrelay;
++
++import net.minecraft.core.BlockPos;
++import net.minecraft.network.chat.Component;
++import net.minecraft.server.level.ServerLevel;
++import net.minecraft.util.RandomSource;
++import net.minecraft.world.item.Item;
++import net.minecraft.world.item.ItemStack;
++import net.minecraft.world.item.Items;
++import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
++import net.minecraft.world.level.block.entity.ChestBlockEntity;
++
++enum SiteCrate {
++    DRESSINGS("Перевязочный шкаф",Items.WHITE_WOOL,Items.STRING),
++    PHARMACY("Аптечный шкаф",Items.GLASS_BOTTLE,Items.HONEY_BOTTLE),
++    LAB("Контейнер лабораторных проб",Items.SPIDER_EYE,Items.GLASS_BOTTLE),
++    FOUNDRY("Ящик литейщика",Items.RAW_IRON,Items.CHARCOAL),
++    ASSEMBLY("Ящик сборщика",Items.PISTON,Items.IRON_NUGGET),
++    ELECTRICAL("Электромонтажный ящик",Items.COPPER_INGOT,Items.REPEATER),
++    ARMORER("Ящик оружейника",Items.IRON_INGOT,Items.FLINT),
++    QUARTERMASTER("Ящик интенданта",Items.LEATHER,Items.CHAIN),
++    ARCHIVE("Архивный ящик",Items.PAPER,Items.BOOK),
++    FIELD("Полевое снаряжение",Items.TORCH,Items.LEAD),
++    RATIONS("Ящик сухпайков",Items.DRIED_KELP,Items.COOKED_BEEF),
++    MINE("Ящик шахтёра",Items.COAL,Items.IRON_PICKAXE);
++
++    final String title;
++    private final Item first;
++    private final Item second;
++
++    SiteCrate(String title,Item first,Item second){
++        this.title=title;
++        this.first=first;
++        this.second=second;
++    }
++
++    static SiteCrate select(String template,SupplySites.Kind kind,boolean clinic,boolean alternate){
++        if(clinic)return alternate?PHARMACY:DRESSINGS;
++        if(template.equals("lab")||template.contains("biomass"))return LAB;
++        if(template.contains("foundry"))return FOUNDRY;
++        if(template.contains("assembly"))return alternate?ELECTRICAL:ASSEMBLY;
++        if(template.contains("mine"))return MINE;
++        if(template.contains("library")||template.contains("cartographer"))return ARCHIVE;
++        return switch(kind){
++            case ARMORY -> alternate?ARMORER:QUARTERMASTER;
++            case FACTORY -> alternate?ASSEMBLY:ELECTRICAL;
++            case CANTEEN -> RATIONS;
++            case WAREHOUSE -> alternate?FIELD:ARCHIVE;
++        };
++    }
++
++    void finish(ServerLevel level,BlockPos at,ChestBlockEntity chest,RelayState state){
++        var random=RandomSource.create(state.seed^at.asLong());
++        chest.setItem(18,new ItemStack(first,1+random.nextInt(3)));
++        chest.setItem(19,new ItemStack(second,Math.min(second.getDefaultMaxStackSize(),1+random.nextInt(2))));
++        if(this==DRESSINGS)chest.setItem(20,new ItemStack(Medicine.BANDAGE.get(),2));
++        if(this==PHARMACY && state.activeLoot>=3)chest.setItem(20,new ItemStack(Medicine.MEDKIT.get()));
++        PersonalLoot.convert(level,at,chest);
++        if(level.getBlockEntity(at) instanceof BaseContainerBlockEntity personal){
++            personal.setCustomName(Component.literal(title));
++            personal.setChanged();
++        }
++    }
++}
+diff --git a/mod/src/main/java/dev/bunkerrelay/SporeStorySites.java b/mod/src/main/java/dev/bunkerrelay/SporeStorySites.java
+index cb60544..bfb41bd 100644
+--- a/mod/src/main/java/dev/bunkerrelay/SporeStorySites.java
++++ b/mod/src/main/java/dev/bunkerrelay/SporeStorySites.java
+@@ -74,7 +74,7 @@ final class SporeStorySites {
+                     container.setLootTable(null);
+                     container.clearContent();
+                 }
+-                stockContainer(level,state,at,kind,medical);
++                stockContainer(level,state,at,id,kind,medical);
+             }
+         }
+ 
+@@ -111,15 +111,16 @@ final class SporeStorySites {
+             for(int dx=-5;dx<=-3;dx++)for(int dz=1;dz<=3;dz++)
+                 level.setBlock(origin.offset(dx,0,dz),Blocks.WATER.defaultBlockState(),2);
+         }
+-        stockContainer(level,state,route(origin,entrance,5,-2),kind,medical);
++        stockContainer(level,state,route(origin,entrance,5,-2),id,kind,medical);
+         return new Site(origin,id,approach);
+     }
+ 
+-    private static void stockContainer(ServerLevel level,RelayState state,BlockPos at,SupplySites.Kind kind,boolean medical){
++    private static void stockContainer(ServerLevel level,RelayState state,BlockPos at,String template,SupplySites.Kind kind,boolean medical){
+         level.setBlock(at,Blocks.CHEST.defaultBlockState(),2);
+         if(level.getBlockEntity(at) instanceof net.minecraft.world.level.block.entity.ChestBlockEntity chest){
+             RaidLoot.structureChest(chest,level,state,at,kind,medical);
+-            PersonalLoot.convert(level,at,chest);
++            boolean alternate=(RaidDirector.roll(state.seed,at.getX(),at.getZ())&1)!=0;
++            SiteCrate.select(template,kind,medical,alternate).finish(level,at,chest,state);
+         }
+     }
+ 
+diff --git a/mod/src/main/resources/META-INF/neoforge.mods.toml b/mod/src/main/resources/META-INF/neoforge.mods.toml
+index 8a0fb34..5764b26 100644
+--- a/mod/src/main/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/main/resources/META-INF/neoforge.mods.toml
+@@ -3,7 +3,7 @@ loaderVersion="[4,)"
+ license="MIT"
+ [[mods]]
+ modId="bunkerrelay"
+-version="0.54.0"
++version="0.55.0"
+ displayName="Bunker Relay"
+ description="Cooperative bunker, garage and procedural expeditions. Early prototype."
+ [[dependencies.bunkerrelay]]
+@@ -56,7 +56,7 @@ side="BOTH"
+ [[dependencies.bunkerrelay]]
+ modId="relaylights"
+ type="required"
+-versionRange="[0.54.0]"
++versionRange="[0.55.0]"
+ ordering="AFTER"
+ side="BOTH"
+ 
+@@ -66,6 +66,6 @@ config="bunkerrelay.mixins.json"
+ [[dependencies.bunkerrelay]]
+ modId="relayfactories"
+ type="required"
+-versionRange="[0.54.0]"
++versionRange="[0.55.0]"
+ ordering="AFTER"
+ side="BOTH"
+diff --git a/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml b/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml
+index 37e61a0..1620bae 100644
+--- a/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml
+@@ -4,7 +4,7 @@ license="MIT"
+ 
+ [[mods]]
+ modId="relayfactories"
+-version="0.54.0"
++version="0.55.0"
+ displayName="Relay Factories"
+ description="Factory structures for industrial expeditions."
+ 
+diff --git a/mod/src/relayLights/resources/META-INF/neoforge.mods.toml b/mod/src/relayLights/resources/META-INF/neoforge.mods.toml
+index 291a798..00c4cfd 100644
+--- a/mod/src/relayLights/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/relayLights/resources/META-INF/neoforge.mods.toml
+@@ -4,7 +4,7 @@ license="MIT"
+ 
+ [[mods]]
+ modId="relaylights"
+-version="0.54.0"
++version="0.55.0"
+ displayName="Relay Lights"
+ description="Directional lights with personal and multiplayer modes."
+ 
+diff --git a/modrinth.index.json b/modrinth.index.json
+index b835725..a0f7dd8 100644
+--- a/modrinth.index.json
++++ b/modrinth.index.json
+@@ -1,7 +1,7 @@
+ {
+   "formatVersion": 1,
+   "game": "minecraft",
+-  "versionId": "0.54.0",
++  "versionId": "0.55.0",
+   "name": "Bunker Relay",
+   "summary": "Cooperative expeditions, ECHO encounters, threats, extraction and persistent bunker.",
+   "files": [
+diff --git a/tools/package_release.py b/tools/package_release.py
+index b776896..3d3adbd 100644
+--- a/tools/package_release.py
++++ b/tools/package_release.py
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env python3
+ import hashlib,pathlib,shutil,zipfile,sys
+ ROOT=pathlib.Path(__file__).resolve().parents[1];dist=ROOT/'dist';dist.mkdir(exist_ok=True)
+-VERSION='0.54.0';source='--source' in sys.argv;jar=ROOT/f'mod/build/libs/bunkerrelay-{VERSION}.jar'
++VERSION='0.55.0';source='--source' in sys.argv;jar=ROOT/f'mod/build/libs/bunkerrelay-{VERSION}.jar'
+ lights=ROOT/f'mod/build/libs/relaylights-{VERSION}.jar'
+ factories=ROOT/f'mod/build/libs/relayfactories-{VERSION}.jar'
+ if not source:
+@@ -59,6 +59,7 @@ if not source:
+   z.write(ROOT/'WORK_0.52.md','overrides/WORK_0.52.md')
+   z.write(ROOT/'WORK_0.53.md','overrides/WORK_0.53.md')
+   z.write(ROOT/'WORK_0.54.md','overrides/WORK_0.54.md')
++  z.write(ROOT/'WORK_0.55.md','overrides/WORK_0.55.md')
+   z.write(factories,'overrides/mods/'+factories.name)
+   z.write(lights,'overrides/mods/'+lights.name)
+   for path in (ROOT/'overrides').rglob('*'):
