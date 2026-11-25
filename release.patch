@@ -3698,3 +3698,452 @@ index 8eb368b..16ffffa 100644
    z.write(factories,'overrides/mods/'+factories.name)
    z.write(lights,'overrides/mods/'+lights.name)
    for path in (ROOT/'overrides').rglob('*'):
+diff --git a/README_RU.md b/README_RU.md
+index 3a4f8ca..a8a09db 100644
+--- a/README_RU.md
++++ b/README_RU.md
+@@ -1,4 +1,4 @@
+-# Bunker Relay 0.57.0
++# Bunker Relay 0.58.0
+ 
+ Изменения релиза см. в WORK_0.56.md.
+ 
+diff --git a/WORK_0.58.md b/WORK_0.58.md
+new file mode 100644
+index 0000000..0477f8e
+--- /dev/null
++++ b/WORK_0.58.md
+@@ -0,0 +1,6 @@
++# Bunker Relay 0.58.0
++
++- Шанс оружия бедствия 20–36%, мини-босса 5–9% по уровню лута. Один бросок на противника. Оружие разряжено, с модулями и бонусом урона.
++- Специализация мини-босса определяет припасы. Исследовательские трофеи бедствий сохранены.
++- Отдельный Relay Arsenal добавляет исторические варианты M1897, M1911 и Kar98k с моделями и баллистикой TaCZ. Все три доступны у оружейника.
++- Скейтборд отдельного Skateboard Mod доступен у механика, мёд — у медика.
+diff --git a/mod/build.gradle b/mod/build.gradle
+index 9ea7b03..7870d63 100644
+--- a/mod/build.gradle
++++ b/mod/build.gradle
+@@ -1,5 +1,5 @@
+ plugins { id 'java-library'; id 'net.neoforged.moddev' version '2.0.148' }
+-version = '0.57.0'
++version = '0.58.0'
+ group = 'dev.bunkerrelay'
+ base { archivesName = 'bunkerrelay' }
+ java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+@@ -55,3 +55,16 @@ tasks.register('relayFactoriesJar', Jar) {
+     from sourceSets.relayFactories.output
+ }
+ tasks.named('assemble') { dependsOn tasks.named('relayFactoriesJar') }
++
++sourceSets {
++    relayArsenal {
++        compileClasspath += sourceSets.main.compileClasspath
++        runtimeClasspath += sourceSets.main.runtimeClasspath
++    }
++}
++neoForge.mods { relayarsenal { sourceSet sourceSets.relayArsenal } }
++tasks.register('relayArsenalJar', Jar) {
++    archiveBaseName = 'relayarsenal'
++    from sourceSets.relayArsenal.output
++}
++tasks.named('assemble') { dependsOn tasks.named('relayArsenalJar') }
+diff --git a/mod/src/main/java/dev/bunkerrelay/BossIntegrationTest.java b/mod/src/main/java/dev/bunkerrelay/BossIntegrationTest.java
+index 962a2a2..c8a56c5 100644
+--- a/mod/src/main/java/dev/bunkerrelay/BossIntegrationTest.java
++++ b/mod/src/main/java/dev/bunkerrelay/BossIntegrationTest.java
+@@ -26,7 +26,25 @@ final class BossIntegrationTest {
+         state.activeLoot=3;
+         state.bossY=level.getMaxBuildHeight()-24;
+         var player=new FakePlayer(level,new GameProfile(UUID.randomUUID(),"RelayBossTest"));
++        var buyer=new FakePlayer(server.getLevel(BunkerRelay.HUB),new GameProfile(UUID.randomUUID(),"ArsenalBuyer"));
++        RelayEconomy.account(buyer).putLong("balance",50000);
++        for(String id:List.of("trench_m1897","service_m1911","field_kar98","skateboard","honey_flask")){
++            var offer=RelayEconomy.offers(buyer).stream().filter(o->o.id().equals(id)).findFirst().orElseThrow();
++            var stack=offer.stack(buyer);
++            if(stack.getItem() instanceof com.tacz.guns.api.item.IGun gun)
++                check(com.tacz.guns.api.TimelessAPI.getCommonGunIndex(gun.getGunId(stack)).isPresent(),"historical gun index "+id);
++            RelayEconomy.trade(buyer,offer,false,1);
++            check(RelayEconomy.owned(buyer,offer)==1,"merchant purchase "+id);
++        }
+         for(String theme:List.of("industrial","infected","forest","ash","winter","hell")){
++            for(boolean major:List.of(true,false)){
++                var weapon=TrophyWeapons.create(level,theme,major,"Приз",major?12:5);
++                var gun=(com.tacz.guns.api.item.IGun)weapon.getItem();
++                boolean fitted=java.util.Arrays.stream(com.tacz.guns.api.item.attachment.AttachmentType.values())
++                    .filter(type->type!=com.tacz.guns.api.item.attachment.AttachmentType.NONE)
++                    .anyMatch(type->!gun.getAttachment(level.registryAccess(),weapon,type).isEmpty());
++                check(fitted && TrophyWeapons.bonus(weapon)==(major?12:5),"trophy attachments "+theme+" "+major);
++            }
+             state.activeTheme=theme;
+             state.bossId=null;
+             state.bossDefeated=false;
+diff --git a/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java b/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java
+index e4ada63..1d2f1c0 100644
+--- a/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java
++++ b/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java
+@@ -43,6 +43,7 @@ public final class BunkerRelay {
+      case "tacz:scar_h" -> 1.06f;
+      default -> 1f;
+     };
++    multiplier*=1f+TrophyWeapons.bonus(stack)/100f;
+     if(multiplier!=1f)bullet.setShotDamageMultiplier(multiplier);
+    }
+   });
+diff --git a/mod/src/main/java/dev/bunkerrelay/MiniBosses.java b/mod/src/main/java/dev/bunkerrelay/MiniBosses.java
+index de39d33..2c8799a 100644
+--- a/mod/src/main/java/dev/bunkerrelay/MiniBosses.java
++++ b/mod/src/main/java/dev/bunkerrelay/MiniBosses.java
+@@ -200,6 +200,16 @@ final class MiniBosses {
+         if(data.contains("relay_guard_site")&&event.getSource().getEntity() instanceof ServerPlayer player&&RaidRules.active(player))
+             FieldSecurity.key(level,state,BlockPos.of(data.getLong("relay_guard_site")));
+         BossEffects.strike(level,entity.blockPosition(),kind.theme,3);
++        var supply = switch(kind) {
++            case ECHO, CLINIC -> new ItemStack(Medicine.BANDAGE.get(),2);
++            case SIGNAL, ARMORY -> com.tacz.guns.api.item.builder.AmmoItemBuilder.create()
++                .setId(net.minecraft.resources.ResourceLocation.parse("tacz:9mm")).setCount(8 + level.random.nextInt(9)).build();
++            case WAREHOUSE, FACTORY, VAULT -> new ItemStack(Items.IRON_INGOT,2 + level.random.nextInt(3));
++            case CANTEEN -> new ItemStack(Items.HONEY_BOTTLE);
++            case ARCHIVE, AIRDROP -> new ItemStack(Items.EXPERIENCE_BOTTLE,2);
++        };
++        entity.spawnAtLocation(supply);
++        TrophyWeapons.drop(entity,kind.theme,state.activeLoot,false,kind.name);
+         entity.spawnAtLocation(new ItemStack(kind.reward,kind==Kind.CANTEEN?2:1));
+     }
+ 
+diff --git a/mod/src/main/java/dev/bunkerrelay/RaidBosses.java b/mod/src/main/java/dev/bunkerrelay/RaidBosses.java
+index 5255348..23a190c 100644
+--- a/mod/src/main/java/dev/bunkerrelay/RaidBosses.java
++++ b/mod/src/main/java/dev/bunkerrelay/RaidBosses.java
+@@ -86,14 +86,7 @@ public final class RaidBosses {
+   entity.spawnAtLocation(new ItemStack(BossTrophies.trophy(s.activeTheme),s.activeDifficulty>=5?2:1));
+   entity.spawnAtLocation(new ItemStack(Items.DIAMOND,1+s.activeLoot));
+   entity.spawnAtLocation(new ItemStack(Items.EXPERIENCE_BOTTLE,3+s.activeLoot));
+-  String module=switch(s.activeTheme){case "forest"->"scope_mk5hd";case "ash"->"extended_mag_3";case "infected"->"muzzle_silencer_sg";default->"laser_ngal";};
+-  entity.spawnAtLocation(com.tacz.guns.api.item.builder.AttachmentItemBuilder.create().setId(net.minecraft.resources.ResourceLocation.parse("tacz:"+module)).build());
+-  String gun=switch(s.activeTheme){case "forest"->"svd";case "ash"->"rpk";case "infected"->"spas_12";default->"hk416d";};
+-  var weapon=com.tacz.guns.api.item.builder.GunItemBuilder.create().setId(net.minecraft.resources.ResourceLocation.parse("tacz:"+gun)).setAmmoCount(0).build(level.registryAccess());
+-  if(!weapon.isEmpty()){
+-   weapon.set(net.minecraft.core.component.DataComponents.CUSTOM_NAME,Component.literal("Трофейное оружие · "+name(s)));
+-   entity.spawnAtLocation(weapon);
+-  }
++  TrophyWeapons.drop(entity,s.activeTheme,s.activeLoot,true,name(s));
+   for(var p:level.getServer().getPlayerList().getPlayers())if(p.serverLevel()==level&&RaidRules.active(p))
+    RaidRules.chat(p,name(s)+" повержен. Добыча · "+entity.blockPosition().toShortString());
+  }
+diff --git a/mod/src/main/java/dev/bunkerrelay/RelayEconomy.java b/mod/src/main/java/dev/bunkerrelay/RelayEconomy.java
+index adcc69d..d9d61df 100644
+--- a/mod/src/main/java/dev/bunkerrelay/RelayEconomy.java
++++ b/mod/src/main/java/dev/bunkerrelay/RelayEconomy.java
+@@ -22,7 +22,7 @@ public final class RelayEconomy {
+   public ItemStack stack(ServerPlayer p){
+    if(item.startsWith("ammo/"))return AmmoItemBuilder.create().setId(ResourceLocation.parse("tacz:"+item.substring(5))).setCount(quantity).build();
+    if(item.startsWith("attachment/"))return AttachmentItemBuilder.create().setId(ResourceLocation.parse("tacz:"+item.substring(11))).build();
+-   if(item.startsWith("gun/"))return GunItemBuilder.create().setId(ResourceLocation.parse("tacz:"+item.substring(4))).setAmmoCount(0).build(p.registryAccess());
++   if(item.startsWith("gun/"))return GunItemBuilder.create().setId(ResourceLocation.parse(item.substring(4).contains(":")?item.substring(4):"tacz:"+item.substring(4))).setAmmoCount(0).build(p.registryAccess());
+    return new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.parse(item)),quantity);
+   }
+  }
+@@ -225,6 +225,11 @@ public final class RelayEconomy {
+   list.add(new Offer("mek_advanced","Продвинутая схема","mekanism:advanced_control_circuit",1,228,64,2,false));categories.put("mek_advanced",Merchant.MECHANISMS);
+   list.add(new Offer("mek_elite","Элитная схема","mekanism:elite_control_circuit",1,520,125,1,false));categories.put("mek_elite",Merchant.MECHANISMS);
+   list.add(new Offer("field_flashlight","Ручной фонарь · клавиша K","relaylights:flashlight",1,64,16,4,true));categories.put("field_flashlight",Merchant.SUPPLIES);
++  list.add(new Offer("trench_m1897","Winchester M1897 · окопный","gun/relayarsenal:trench_m1897",1,1350,270,2,true));
++  list.add(new Offer("service_m1911","M1911 · табельный","gun/relayarsenal:service_m1911",1,680,136,2,true));
++  list.add(new Offer("field_kar98","Kar98k · полевой","gun/relayarsenal:field_kar98",1,1750,350,2,true));
++  list.add(new Offer("skateboard","Скейтборд","skateboardmod:skateboard",1,390,78,4,true));categories.put("skateboard",Merchant.MECHANISMS);
++  list.add(new Offer("honey_flask","Мёд в бутылке","minecraft:honey_bottle",1,34,6,8,true));categories.put("honey_flask",Merchant.MEDIC);
+   return list.stream().map(o->{
+    int factor=o.id().equals("glock")?85:o.item().startsWith("gun/")?180:o.item().startsWith("attachment/")?140:
+        o.item().startsWith("ammo/")?115:merchant(o)==Merchant.MEDIC?90:merchant(o)==Merchant.MECHANISMS?130:110;
+diff --git a/mod/src/main/java/dev/bunkerrelay/SalvageValue.java b/mod/src/main/java/dev/bunkerrelay/SalvageValue.java
+index a2e1a35..87053fd 100644
+--- a/mod/src/main/java/dev/bunkerrelay/SalvageValue.java
++++ b/mod/src/main/java/dev/bunkerrelay/SalvageValue.java
+@@ -58,6 +58,7 @@ final class SalvageValue {
+     }
+ 
+     private static String taczKey(String type,ResourceLocation id,String fallback){
++        if(id!=null&&id.getNamespace().equals("relayarsenal"))return type+"/"+id;
+         return id!=null&&id.getNamespace().equals("tacz")?type+"/"+id.getPath():fallback;
+     }
+ 
+diff --git a/mod/src/main/java/dev/bunkerrelay/TrophyWeapons.java b/mod/src/main/java/dev/bunkerrelay/TrophyWeapons.java
+new file mode 100644
+index 0000000..9cb365c
+--- /dev/null
++++ b/mod/src/main/java/dev/bunkerrelay/TrophyWeapons.java
+@@ -0,0 +1,62 @@
++package dev.bunkerrelay;
++
++import com.tacz.guns.api.item.IGun;
++import com.tacz.guns.api.item.builder.AttachmentItemBuilder;
++import com.tacz.guns.api.item.builder.GunItemBuilder;
++import net.minecraft.core.component.DataComponents;
++import net.minecraft.network.chat.Component;
++import net.minecraft.resources.ResourceLocation;
++import net.minecraft.server.level.ServerLevel;
++import net.minecraft.world.entity.LivingEntity;
++import net.minecraft.world.item.ItemStack;
++import net.minecraft.world.item.component.CustomData;
++
++final class TrophyWeapons {
++    static int bonus(ItemStack stack) {
++        var data = stack.get(DataComponents.CUSTOM_DATA);
++        return data == null ? 0 : Math.clamp(data.copyTag().getInt("relay_trophy_damage"), 0, 14);
++    }
++
++    static void drop(LivingEntity source, String theme, int loot, boolean boss, String name) {
++        var level = (ServerLevel) source.level();
++        int tier = Math.clamp(loot, 1, 5);
++        int chance = boss ? 16 + 4 * tier : 4 + tier;
++        if (level.random.nextInt(100) >= chance) return;
++        var weapon = create(level, theme, boss, name, boss ? 8 + level.random.nextInt(7) : 3 + level.random.nextInt(5));
++        if (!weapon.isEmpty()) source.spawnAtLocation(weapon);
++    }
++
++    static ItemStack create(ServerLevel level, String theme, boolean boss, String name, int percent) {
++        String model = boss ? switch (theme) {
++            case "forest" -> "svd";
++            case "winter" -> "m700";
++            case "infected" -> "spas_12";
++            case "ash" -> "rpk";
++            case "hell" -> "scar_h";
++            default -> "hk416d";
++        } : switch (theme) {
++            case "forest" -> "glock_17";
++            case "infected" -> "m870";
++            case "ash" -> "ump45";
++            default -> "hk_mp5a5";
++        };
++        var stack = GunItemBuilder.create().setId(id(model)).setAmmoCount(0).build(level.registryAccess());
++        if (!(stack.getItem() instanceof IGun gun)) return ItemStack.EMPTY;
++        String[] modules = {"scope_pso_1","sight_t2","scope_mk5hd","muzzle_choke_sg","light_extended_mag_1","extended_mag_2","laser_peq15"};
++        int installed = 0;
++        for (String attachment : modules) {
++            var module = AttachmentItemBuilder.create().setId(id(attachment)).build();
++            if (!gun.allowAttachment(stack, module)) continue;
++            var type = ((com.tacz.guns.api.item.IAttachment) module.getItem()).getType(module);
++            if (gun.getAttachmentTag(stack,type) != null) continue;
++            gun.installAttachment(level.registryAccess(),stack,module);
++            if (++installed == (boss ? 2 : 1)) break;
++        }
++        CustomData.update(DataComponents.CUSTOM_DATA,stack,tag -> tag.putInt("relay_trophy_damage",percent));
++        stack.set(DataComponents.CUSTOM_NAME,Component.literal(name + " · " + model.toUpperCase(java.util.Locale.ROOT) + " · +" + percent + "% урона"));
++        return stack;
++    }
++
++    private static ResourceLocation id(String path) { return ResourceLocation.fromNamespaceAndPath("tacz",path); }
++    private TrophyWeapons() {}
++}
+diff --git a/mod/src/main/resources/META-INF/neoforge.mods.toml b/mod/src/main/resources/META-INF/neoforge.mods.toml
+index 6697900..0ac6f13 100644
+--- a/mod/src/main/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/main/resources/META-INF/neoforge.mods.toml
+@@ -3,7 +3,7 @@ loaderVersion="[4,)"
+ license="MIT"
+ [[mods]]
+ modId="bunkerrelay"
+-version="0.57.0"
++version="0.58.0"
+ displayName="Bunker Relay"
+ description="Cooperative bunker, garage and procedural expeditions. Early prototype."
+ [[dependencies.bunkerrelay]]
+@@ -56,7 +56,7 @@ side="BOTH"
+ [[dependencies.bunkerrelay]]
+ modId="relaylights"
+ type="required"
+-versionRange="[0.57.0]"
++versionRange="[0.58.0]"
+ ordering="AFTER"
+ side="BOTH"
+ 
+@@ -66,6 +66,13 @@ config="bunkerrelay.mixins.json"
+ [[dependencies.bunkerrelay]]
+ modId="relayfactories"
+ type="required"
+-versionRange="[0.57.0]"
++versionRange="[0.58.0]"
++ordering="AFTER"
++side="BOTH"
++
++[[dependencies.bunkerrelay]]
++modId="relayarsenal"
++type="required"
++versionRange="[0.58.0]"
+ ordering="AFTER"
+ side="BOTH"
+diff --git a/mod/src/relayArsenal/java/dev/relayarsenal/RelayArsenal.java b/mod/src/relayArsenal/java/dev/relayarsenal/RelayArsenal.java
+new file mode 100644
+index 0000000..3671f73
+--- /dev/null
++++ b/mod/src/relayArsenal/java/dev/relayarsenal/RelayArsenal.java
+@@ -0,0 +1,6 @@
++package dev.relayarsenal;
++
++import net.neoforged.fml.common.Mod;
++
++@Mod("relayarsenal")
++public final class RelayArsenal {}
+diff --git a/mod/src/relayArsenal/resources/META-INF/neoforge.mods.toml b/mod/src/relayArsenal/resources/META-INF/neoforge.mods.toml
+new file mode 100644
+index 0000000..09463ef
+--- /dev/null
++++ b/mod/src/relayArsenal/resources/META-INF/neoforge.mods.toml
+@@ -0,0 +1,28 @@
++modLoader="javafml"
++loaderVersion="[4,)"
++license="MIT"
++
++[[mods]]
++modId="relayarsenal"
++version="0.58.0"
++displayName="Relay Arsenal"
++description="Historical TaCZ arsenal for Bunker Relay."
++
++[[dependencies.relayarsenal]]
++modId="neoforge"
++type="required"
++versionRange="[21.1,21.2)"
++side="BOTH"
++
++[[dependencies.relayarsenal]]
++modId="minecraft"
++type="required"
++versionRange="[1.21.1]"
++side="BOTH"
++
++
++[[dependencies.relayarsenal]]
++modId="tacz"
++type="required"
++versionRange="[1.2,)"
++side="BOTH"
+diff --git a/mod/src/relayArsenal/resources/assets/relayarsenal/lang/en_us.json b/mod/src/relayArsenal/resources/assets/relayarsenal/lang/en_us.json
+new file mode 100644
+index 0000000..8776638
+--- /dev/null
++++ b/mod/src/relayArsenal/resources/assets/relayarsenal/lang/en_us.json
+@@ -0,0 +1,5 @@
++{
++  "gun.relayarsenal.trench_m1897": "Winchester M1897 Trench",
++  "gun.relayarsenal.service_m1911": "M1911 Service",
++  "gun.relayarsenal.field_kar98": "Kar98k Field"
++}
+diff --git a/mod/src/relayArsenal/resources/assets/relayarsenal/lang/ru_ru.json b/mod/src/relayArsenal/resources/assets/relayarsenal/lang/ru_ru.json
+new file mode 100644
+index 0000000..05b44df
+--- /dev/null
++++ b/mod/src/relayArsenal/resources/assets/relayarsenal/lang/ru_ru.json
+@@ -0,0 +1,5 @@
++{
++  "gun.relayarsenal.trench_m1897": "Winchester M1897 · окопный",
++  "gun.relayarsenal.service_m1911": "M1911 · табельный",
++  "gun.relayarsenal.field_kar98": "Kar98k · полевой"
++}
+diff --git a/mod/src/relayArsenal/resources/data/relayarsenal/index/guns/field_kar98.json b/mod/src/relayArsenal/resources/data/relayarsenal/index/guns/field_kar98.json
+new file mode 100644
+index 0000000..c26e7d3
+--- /dev/null
++++ b/mod/src/relayArsenal/resources/data/relayarsenal/index/guns/field_kar98.json
+@@ -0,0 +1,7 @@
++{
++  "name": "gun.relayarsenal.field_kar98",
++  "display": "tacz:kar98_display",
++  "data": "tacz:kar98_data",
++  "type": "sniper",
++  "sort": 2
++}
+diff --git a/mod/src/relayArsenal/resources/data/relayarsenal/index/guns/service_m1911.json b/mod/src/relayArsenal/resources/data/relayarsenal/index/guns/service_m1911.json
+new file mode 100644
+index 0000000..cedd600
+--- /dev/null
++++ b/mod/src/relayArsenal/resources/data/relayarsenal/index/guns/service_m1911.json
+@@ -0,0 +1,7 @@
++{
++  "name": "gun.relayarsenal.service_m1911",
++  "display": "tacz:m1911_display",
++  "data": "tacz:m1911_data",
++  "type": "pistol",
++  "sort": 1
++}
+diff --git a/mod/src/relayArsenal/resources/data/relayarsenal/index/guns/trench_m1897.json b/mod/src/relayArsenal/resources/data/relayarsenal/index/guns/trench_m1897.json
+new file mode 100644
+index 0000000..0a5f7f8
+--- /dev/null
++++ b/mod/src/relayArsenal/resources/data/relayarsenal/index/guns/trench_m1897.json
+@@ -0,0 +1,7 @@
++{
++  "name": "gun.relayarsenal.trench_m1897",
++  "display": "tacz:m1897_display",
++  "data": "tacz:m1897_data",
++  "type": "shotgun",
++  "sort": 0
++}
+diff --git a/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml b/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml
+index 358f416..d647940 100644
+--- a/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml
+@@ -4,7 +4,7 @@ license="MIT"
+ 
+ [[mods]]
+ modId="relayfactories"
+-version="0.57.0"
++version="0.58.0"
+ displayName="Relay Factories"
+ description="Factory structures for industrial expeditions."
+ 
+diff --git a/mod/src/relayLights/resources/META-INF/neoforge.mods.toml b/mod/src/relayLights/resources/META-INF/neoforge.mods.toml
+index 6048d54..97d09cf 100644
+--- a/mod/src/relayLights/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/relayLights/resources/META-INF/neoforge.mods.toml
+@@ -4,7 +4,7 @@ license="MIT"
+ 
+ [[mods]]
+ modId="relaylights"
+-version="0.57.0"
++version="0.58.0"
+ displayName="Relay Lights"
+ description="Directional lights with personal and multiplayer modes."
+ 
+diff --git a/modrinth.index.json b/modrinth.index.json
+index c461c18..43953ad 100644
+--- a/modrinth.index.json
++++ b/modrinth.index.json
+@@ -1,7 +1,7 @@
+ {
+   "formatVersion": 1,
+   "game": "minecraft",
+-  "versionId": "0.57.0",
++  "versionId": "0.58.0",
+   "name": "Bunker Relay",
+   "summary": "Cooperative expeditions, ECHO encounters, threats, extraction and persistent bunker.",
+   "files": [
+diff --git a/tools/package_release.py b/tools/package_release.py
+index 16ffffa..2647fef 100644
+--- a/tools/package_release.py
++++ b/tools/package_release.py
+@@ -1,11 +1,13 @@
+ #!/usr/bin/env python3
+ import hashlib,pathlib,shutil,zipfile,sys
+ ROOT=pathlib.Path(__file__).resolve().parents[1];dist=ROOT/'dist';dist.mkdir(exist_ok=True)
+-VERSION='0.57.0';source='--source' in sys.argv;jar=ROOT/f'mod/build/libs/bunkerrelay-{VERSION}.jar'
++VERSION='0.58.0';source='--source' in sys.argv;jar=ROOT/f'mod/build/libs/bunkerrelay-{VERSION}.jar'
+ lights=ROOT/f'mod/build/libs/relaylights-{VERSION}.jar'
+ factories=ROOT/f'mod/build/libs/relayfactories-{VERSION}.jar'
+ if not source:
+  if not jar.is_file() or not lights.is_file():raise SystemExit('First build: cd mod && ./gradlew build')
++ arsenal=ROOT/f'mod/build/libs/relayarsenal-{VERSION}.jar'
++ shutil.copy2(arsenal,dist/arsenal.name)
+  shutil.copy2(factories,dist/factories.name)
+  shutil.copy2(jar,dist/jar.name)
+  shutil.copy2(lights,dist/lights.name)
+@@ -62,6 +64,8 @@ if not source:
+   z.write(ROOT/'WORK_0.55.md','overrides/WORK_0.55.md')
+   z.write(ROOT/'WORK_0.56.md','overrides/WORK_0.56.md')
+   z.write(ROOT/'WORK_0.57.md','overrides/WORK_0.57.md')
++  z.write(ROOT/'WORK_0.58.md','overrides/WORK_0.58.md')
++  z.write(arsenal,'overrides/mods/'+arsenal.name)
+   z.write(factories,'overrides/mods/'+factories.name)
+   z.write(lights,'overrides/mods/'+lights.name)
+   for path in (ROOT/'overrides').rglob('*'):
