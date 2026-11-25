@@ -1979,7 +1979,7 @@ index 5528403..cbf2d07 100644
 +                var origin=BlockPos.of(room.getLong("origin"));
 +                var approach=BlockPos.of(room.getLong("approach"));
 +                var facing=net.minecraft.core.Direction.getNearest(approach.getX()-origin.getX(),0,approach.getZ()-origin.getZ());
-+                var cabinet=origin.relative(facing,3).relative(facing.getClockWise(),5);
++                var cabinet=origin.relative(facing,2).relative(facing.getClockWise(),5);
 +                check(!PersonalLoot.templateItem(level,cabinet,0).isEmpty(),"regional supplies inside "+plan.title());
 +                if(plan.medical())check(PersonalLoot.templateItem(level,cabinet,4).is(Medicine.BANDAGE.get()),"medical cabinet "+plan.title());
                  var condition=LandmarkCondition.read(room.getString("condition"));
@@ -2032,7 +2032,7 @@ index 3f79a24..dea2765 100644
              for(int dx=-5;dx<=-3;dx++)for(int dz=1;dz<=3;dz++)
                  level.setBlock(origin.offset(dx,0,dz),Blocks.WATER.defaultBlockState(),2);
          }
-+        stockContainer(level,state,route(origin,entrance,5,-3),kind,medical);
++        stockContainer(level,state,route(origin,entrance,5,-2),kind,medical);
          return new Site(origin,id,approach);
      }
  
