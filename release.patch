@@ -4449,3 +4449,16 @@ index 2647fef..e3f28ff 100644
    z.write(arsenal,'overrides/mods/'+arsenal.name)
    z.write(factories,'overrides/mods/'+factories.name)
    z.write(lights,'overrides/mods/'+lights.name)
+diff --git a/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java b/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java
+index bcb5992..0304615 100644
+--- a/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java
++++ b/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java
+@@ -69,7 +69,7 @@ final class ZoneLandmarks {
+             int draw=Math.floorMod(RaidDirector.roll(seed,310+index,profile.ordinal()),3);
+             if(draw!=0)return switch(profile){
+                 case WINTER -> draw==1?new Plan("Снежный наблюдательный пост","minecraft:igloo/top",SupplySites.Kind.WAREHOUSE,false):new Plan("Северная кузница","minecraft:village/snowy/houses/snowy_tool_smith_1",SupplySites.Kind.WAREHOUSE,false);
+-                case FOREST -> draw==1?new Plan("Лесной картограф","minecraft:village/taiga/houses/taiga_cartographer_1",SupplySites.Kind.WAREHOUSE,false):new Plan("Мастерская лесорубов","minecraft:village/taiga/houses/taiga_tool_smith_1",SupplySites.Kind.WAREHOUSE,false);
++                case FOREST -> draw==1?new Plan("Лесной картограф","minecraft:village/taiga/houses/taiga_cartographer_house_1",SupplySites.Kind.WAREHOUSE,false):new Plan("Мастерская лесорубов","minecraft:village/taiga/houses/taiga_tool_smith_1",SupplySites.Kind.WAREHOUSE,false);
+                 case INDUSTRIAL -> draw==1?new Plan("Разбитый сухогруз","minecraft:shipwreck/rightsideup_full",SupplySites.Kind.WAREHOUSE,false):new Plan("Старая кузница","minecraft:village/plains/houses/plains_tool_smith_1",SupplySites.Kind.WAREHOUSE,false);
+                 case INFECTED -> draw==1?new Plan("Карантинная часовня","minecraft:village/plains/houses/plains_temple_3",SupplySites.Kind.CANTEEN,true):new Plan("Палата изоляции","minecraft:igloo/bottom",SupplySites.Kind.CANTEEN,true);
+                 case ASH -> draw==1?new Plan("Засыпанная оружейная","minecraft:village/desert/houses/desert_armorer_1",SupplySites.Kind.ARMORY,false):new Plan("Дозорная застава","minecraft:pillager_outpost/watchtower",SupplySites.Kind.ARMORY,false);
