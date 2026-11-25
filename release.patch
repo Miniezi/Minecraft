@@ -1535,3 +1535,92 @@ index 0000000..8d8d4f2
 +            print('Cyber implant components:',[p.split('/')[-1] for p in candidates[:4]],flush=True)
 +        if slug=='mekanism' and changed<4:raise ValueError('Expected four modified MekaSuit recipes: '+str(changed))
 +        print('Progression recipes:',slug,changed,flush=True)
+diff --git a/WORK_0.52.md b/WORK_0.52.md
+index e76f318..0c8beed 100644
+--- a/WORK_0.52.md
++++ b/WORK_0.52.md
+@@ -5,3 +5,5 @@
+ Через терминал доступен «Адский разлом», открытая базальтовая зона пятой сложности с адскими материалами. Для M700 и SCAR-H добавлены рецепты с точным механизмом Create и редкими материалами. Изменены множители урона MP5, M700 и SCAR-H.
+ 
+ Выбор площадок по сиду чередует продольную ось и внешние ряды. Бункер, размер сетки и координаты сброса сохраняются. Скейтборд и Cybernetic System устанавливаются отдельными зависимостями. Экзоброня MekaSuit использует установленный Mekanism. Обновлённые рецепты брони формируются по ресурсам закреплённых версий.
++
++Городские мосты стыкуются с берегом из плит. На перепадах высоты ступени позволяют пройти по мосту без прыжков.
+diff --git a/mod/src/main/java/dev/bunkerrelay/CrossingIntegrationTest.java b/mod/src/main/java/dev/bunkerrelay/CrossingIntegrationTest.java
+index 0c929df..b6d1227 100644
+--- a/mod/src/main/java/dev/bunkerrelay/CrossingIntegrationTest.java
++++ b/mod/src/main/java/dev/bunkerrelay/CrossingIntegrationTest.java
+@@ -14,15 +14,17 @@ final class CrossingIntegrationTest {
+         for(int i=-17;i<=17;i++)for(int k=-2;k<=2;k++){
+             var at=middle.offset(i,0,k);
+             world.getChunkAt(at);
+-            if(Math.abs(i)==17)world.setBlock(at.above(i>0?4:0),Blocks.WHITE_CONCRETE.defaultBlockState(),2);
++            if(i==17)world.setBlock(at.above(4),Blocks.SMOOTH_STONE_SLAB.defaultBlockState(),2);
++            else if(i==-17)world.setBlock(at,Blocks.WHITE_CONCRETE.defaultBlockState(),2);
+             else world.setBlock(at.below(6),Blocks.WATER.defaultBlockState(),2);
+         }
+         world.setBlock(middle.west(17).above(),Blocks.STONE_BRICK_WALL.defaultBlockState(),2);
+         SectorCrossings.visit(world,sample,middle);
+         for(int i=-17;i<=17;i++)for(int k=-2;k<=2;k++){
++            boolean step=i<17 && Math.round((i+18)*4f/34)>Math.round((i+17)*4f/34);
+             var deck=middle.offset(i,Math.round((i+17)*4f/34),k);
+             if(!world.getBlockState(deck).is(k==0?Blocks.LIGHT_GRAY_CONCRETE:Blocks.SMOOTH_STONE)
+-                ||!world.isEmptyBlock(deck.above()))throw new IllegalStateException("Broken crossing "+deck);
++                || (step ? !world.getBlockState(deck.above()).is(Blocks.STONE_STAIRS) : !world.isEmptyBlock(deck.above())))throw new IllegalStateException("Broken crossing "+deck);
+         }
+         System.out.println("RELAY_052_BRIDGE_PASS");
+     }
+diff --git a/mod/src/main/java/dev/bunkerrelay/SectorCrossings.java b/mod/src/main/java/dev/bunkerrelay/SectorCrossings.java
+index 6bf896a..cfe070a 100644
+--- a/mod/src/main/java/dev/bunkerrelay/SectorCrossings.java
++++ b/mod/src/main/java/dev/bunkerrelay/SectorCrossings.java
+@@ -4,6 +4,8 @@ import net.minecraft.core.BlockPos;
+ import net.minecraft.core.Direction;
+ import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.world.level.block.Blocks;
++import net.minecraft.world.level.block.StairBlock;
++import net.minecraft.world.level.block.SlabBlock;
+ import net.minecraft.world.level.levelgen.Heightmap;
+ 
+ /** Join opposite banks of the two reserved chunks at a city parcel boundary. */
+@@ -99,7 +101,7 @@ final class SectorCrossings {
+         if(Math.abs(to-from)>BANK || (!street(level,left.atY(from)) && !street(level,right.atY(to)))) return false;
+         // Validate the full span before placing anything. Never cut buildings or open containers.
+         for(int i=-BANK;i<=BANK;i++){
+-            int y=from+Math.round((to-from)*(i+BANK)/(2f*BANK));
++            int y=deckHeight(from,to,i);
+             var centre=middle.relative(axis,i).atY(y);
+             if(StructureLevels.overlapsHistorical(level,state,centre,WIDTH)) return false;
+             for(int k=-WIDTH;k<=WIDTH;k++){
+@@ -108,21 +110,30 @@ final class SectorCrossings {
+                 boolean curb=Math.abs(i)>=BANK-2 && obstruction.is(net.minecraft.tags.BlockTags.WALLS);
+                 if((!obstruction.isAir()&&!curb)||!level.isEmptyBlock(at.above(2))) return false;
+                 if(level.getBlockEntity(at)!=null) return false;
+-                if(Math.abs(i)==BANK && !level.getBlockState(at).isSolidRender(level,at))return false;
++                if(Math.abs(i)==BANK && !level.getBlockState(at).isSolidRender(level,at)
++                    && !(level.getBlockState(at).getBlock() instanceof SlabBlock))return false;
+             }
+         }
+         for(int i=-BANK;i<=BANK;i++){
+-            int y=from+Math.round((to-from)*(i+BANK)/(2f*BANK));
++            int y=deckHeight(from,to,i);
++            Direction climb = i<BANK && deckHeight(from,to,i+1)>y ? axis
++                : i>-BANK && deckHeight(from,to,i-1)>y ? axis.getOpposite() : null;
+             for(int k=-WIDTH;k<=WIDTH;k++){
+                 var deck=middle.relative(axis,i).relative(side,k).atY(y);
+                 if(level.getBlockState(deck.above()).is(net.minecraft.tags.BlockTags.WALLS))level.setBlock(deck.above(),Blocks.AIR.defaultBlockState(),2);
+                 level.setBlock(deck,
+                 (k==0?Blocks.LIGHT_GRAY_CONCRETE:Blocks.SMOOTH_STONE).defaultBlockState(),2);
++                if(climb!=null)level.setBlock(deck.above(),
++                    Blocks.STONE_STAIRS.defaultBlockState().setValue(StairBlock.FACING,climb),3);
+             }
+         }
+         return true;
+     }
+ 
++    private static int deckHeight(int from,int to,int offset){
++        return from+Math.round((to-from)*(offset+BANK)/(2f*BANK));
++    }
++
+     private static int height(ServerLevel level,BlockPos at){
+         int top=level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,at.getX(),at.getZ())-1;
+         return level.getBlockState(at.atY(top)).is(net.minecraft.tags.BlockTags.WALLS)?top-1:top;
