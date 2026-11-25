@@ -1,0 +1,35 @@
+name: Build Bunker Relay
+on:
+  push:
+    branches: [bunker-relay-0.51.3]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Extract verified project sources
+        run: |
+          echo '4b72564da02a3fdfae1752e814000287e3a6d830ce5764fda7b5ad1e91542d90  Bunker-Relay-0.51.3.zip' | sha256sum -c -
+          mkdir -p sources
+          unzip -q Bunker-Relay-0.51.3.zip -d sources
+      - name: Compile both mods
+        working-directory: sources/Bunker-Relay/mod
+        run: bash gradlew build
+      - name: Package release
+        working-directory: sources/Bunker-Relay
+        run: |
+          python3 tools/package_release.py
+          python3 tools/package_release.py --source
+          cp ../Bunker-Relay-0.51.3.zip dist/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Bunker-Relay-0.51.3
+          path: sources/Bunker-Relay/dist/*
+          if-no-files-found: error
