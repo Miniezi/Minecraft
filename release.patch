@@ -2611,7 +2611,7 @@ index 0000000..528d675
 +            if(piece.is(Items.LEATHER_BOOTS)||piece.is(Items.LEATHER_LEGGINGS)||
 +                piece.is(Items.LEATHER_CHESTPLATE)||piece.is(Items.LEATHER_HELMET))leather++;
 +        }
-+        boolean sheltered=!level.canSeeSky(feet.above());
++        boolean sheltered=level.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,feet.getX(),feet.getZ())>feet.getY()+1;
 +        int change=heater?10:player.isInWater()?-7:sheltered?3:
 +            -Math.max(1,3+(level.isNight()?2:0)+(level.isRaining()?1:0)-leather);
 +        int warmth=Math.clamp(before+change,0,100);
