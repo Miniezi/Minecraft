@@ -1862,3 +1862,332 @@ index 6ad6b6f..15686d1 100644
    z.write(factories,'overrides/mods/'+factories.name)
    z.write(lights,'overrides/mods/'+lights.name)
    for path in (ROOT/'overrides').rglob('*'):
+diff --git a/README_RU.md b/README_RU.md
+index 072606e..1adcef0 100644
+--- a/README_RU.md
++++ b/README_RU.md
+@@ -1,6 +1,6 @@
+-# Bunker Relay 0.53.0
++# Bunker Relay 0.54.0
+ 
+-Изменения релиза см. в WORK_0.53.md.
++Изменения релиза см. в WORK_0.54.md.
+ 
+ Убрано ограничение дальности всего светового пятна по одному лучу из центра. Ручной и оружейный фонари освещают видимые поверхности внутри конуса до 22 блоков. Для света напарника и вида от третьего лица затенение приближённо рассчитывается по глубине видимой сцены. Геометрия вне экрана в этой проверке не участвует.
+ 
+diff --git a/WORK_0.54.md b/WORK_0.54.md
+new file mode 100644
+index 0000000..30e61de
+--- /dev/null
++++ b/WORK_0.54.md
+@@ -0,0 +1,4 @@
++# Bunker Relay 0.54.0
++В каждом из пяти регионов один вспомогательный участок выбирается из трёх вариантов по сиду. В промзоне встречаются заводская больница или ремонтная мастерская. В лесу — картографическая станция или кожевенная мастерская, в пустоши — броневая мастерская или архив. Карантинная зона получила архив и ремонтный пункт, Адский разлом — шахту и хранилище пиглинов. Использованы шаблоны Spore и Towns and Towers из сборки.
++
++В сундуках и бочках шаблонов после генерации размещаются личные припасы. Основное содержимое определяет постройка, дополнительный материал — регион. В больнице это бинты и медицинские припасы даже в промзоне, в мастерской — комплектующие, на военном объекте — боеприпасы. У входного коридора есть дополнительный шкаф с тем же профилем. Изменения применяются при генерации вылазки.
+diff --git a/mod/build.gradle b/mod/build.gradle
+index d9a1f7e..ecfcab9 100644
+--- a/mod/build.gradle
++++ b/mod/build.gradle
+@@ -1,5 +1,5 @@
+ plugins { id 'java-library'; id 'net.neoforged.moddev' version '2.0.148' }
+-version = '0.53.0'
++version = '0.54.0'
+ group = 'dev.bunkerrelay'
+ base { archivesName = 'bunkerrelay' }
+ java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+diff --git a/mod/src/main/java/dev/bunkerrelay/RaidLoot.java b/mod/src/main/java/dev/bunkerrelay/RaidLoot.java
+index c5f8474..d7816bb 100644
+--- a/mod/src/main/java/dev/bunkerrelay/RaidLoot.java
++++ b/mod/src/main/java/dev/bunkerrelay/RaidLoot.java
+@@ -37,13 +37,7 @@ public final class RaidLoot {
+         int tier=tier(state);
+         var profile=ZoneProfile.of(state.activeTheme);
+         var result=new ArrayList<ItemStack>();
+-        supplies(result,switch(profile){
+-            case FOREST -> FOREST;
+-            case INDUSTRIAL -> INDUSTRIAL;
+-            case INFECTED -> INFECTED;
+-            case ASH -> ASH;
+-            case HELL -> HELL;
+-        },2+(tier-1)/2,1,1+tier,random);
++        supplies(result,regionalMaterials(profile),2+(tier-1)/2,1,1+tier,random);
+         if(random.nextInt(100)<25+8*tier)result.add(ammo(tier,4+2*tier,random));
+         if(tier>=2&&random.nextInt(100)<(profile==ZoneProfile.INDUSTRIAL?24:12))result.add(circuit(tier,1));
+         if(tier>=3&&random.nextInt(100)<tier*2)result.add(module(tier,random));
+@@ -97,6 +91,32 @@ public final class RaidLoot {
+         put(chest,4,result);
+     }
+ 
++    private static String[] regionalMaterials(ZoneProfile profile){
++        return switch(profile){
++            case FOREST -> FOREST;
++            case INDUSTRIAL -> INDUSTRIAL;
++            case INFECTED -> INFECTED;
++            case ASH -> ASH;
++            case HELL -> HELL;
++        };
++    }
++
++    static void structureChest(Container chest,ServerLevel level,RelayState state,BlockPos at,
++                               SupplySites.Kind kind,boolean clinic){
++        var random=random(state,at,0x482efe19L);
++        var support=new ArrayList<ItemStack>();
++        if(clinic){
++            medical(support,state,random);
++            support.add(new ItemStack(random.nextBoolean()?Items.HONEY_BOTTLE:Items.PAPER,1+random.nextInt(3)));
++            put(chest,4,support);
++            support.clear();
++        }else{
++            specialist(chest,level,state,at,kind);
++        }
++        supplies(support,regionalMaterials(ZoneProfile.of(state.activeTheme)),1,1,2,random);
++        put(chest,0,support);
++    }
++
+     static void medical(List<ItemStack> result,RelayState state,RandomSource random) {
+         int tier=tier(state);
+         result.add(new ItemStack(Medicine.BANDAGE.get(),1+tier+random.nextInt(2)));
+diff --git a/mod/src/main/java/dev/bunkerrelay/RegionalIntegrationTest.java b/mod/src/main/java/dev/bunkerrelay/RegionalIntegrationTest.java
+index 5528403..cbf2d07 100644
+--- a/mod/src/main/java/dev/bunkerrelay/RegionalIntegrationTest.java
++++ b/mod/src/main/java/dev/bunkerrelay/RegionalIntegrationTest.java
+@@ -22,18 +22,31 @@ final class RegionalIntegrationTest {
+             for(var plan:ZoneLandmarks.plans(profile.id))
+                 check(templates.add(plan.template())&&level.getStructureManager()
+                     .get(SporeStorySites.templateId(plan.template())).isPresent(),"distinct available template");
++            var variants=new HashSet<String>();
++            for(int sample=0;sample<64;sample++)for(int slot=0;slot<ZoneLandmarks.COUNT;slot++){
++                var candidate=ZoneLandmarks.select(profile.id,slot,sample);
++                if(variants.add(candidate.template()))check(level.getStructureManager()
++                    .get(SporeStorySites.templateId(candidate.template())).isPresent(),"missing "+candidate.template());
++            }
++            check(variants.size()==7,"seeded structure pool "+profile.id);
+             state.activeTheme=profile.id;
+             state.centerX=4000+profile.ordinal()*1500;
+             state.centerZ=4000;
+             state.activeLoot=profile.max;
+             for(int index:new int[]{0,1,2,3,4}){
+-                var plan=ZoneLandmarks.plans(profile.id).get(index);
++                var plan=ZoneLandmarks.select(profile.id,index,state.seed);
+                 ZoneLandmarks.build(level,state,index);
+                 var room=RaidDirector.get(server).rooms.getLast();
+                 var cache=new BlockPos(room.getInt("x"),room.getInt("y"),room.getInt("z"));
+                 check(room.getString("title").equals(plan.title()),"landmark "+plan.title());
+                 check(room.getString("template").equals(plan.template()),"correct source "+plan.title());
+                 check(level.getBlockState(cache.north(2)).is(Blocks.AIR)&&!PersonalLoot.templateItem(level,cache,4).isEmpty(),"open access and loot");
++                var origin=BlockPos.of(room.getLong("origin"));
++                var approach=BlockPos.of(room.getLong("approach"));
++                var facing=net.minecraft.core.Direction.getNearest(approach.getX()-origin.getX(),0,approach.getZ()-origin.getZ());
++                var cabinet=origin.relative(facing,3).relative(facing.getClockWise(),5);
++                check(!PersonalLoot.templateItem(level,cabinet,0).isEmpty(),"regional supplies inside "+plan.title());
++                if(plan.medical())check(PersonalLoot.templateItem(level,cabinet,4).is(Medicine.BANDAGE.get()),"medical cabinet "+plan.title());
+                 var condition=LandmarkCondition.read(room.getString("condition"));
+                 check(condition==LandmarkCondition.choose(state.seed,BlockPos.of(room.getLong("origin"))),"seeded condition");
+                 var block=level.getBlockEntity(cache);
+diff --git a/mod/src/main/java/dev/bunkerrelay/SporeStorySites.java b/mod/src/main/java/dev/bunkerrelay/SporeStorySites.java
+index 3f79a24..dea2765 100644
+--- a/mod/src/main/java/dev/bunkerrelay/SporeStorySites.java
++++ b/mod/src/main/java/dev/bunkerrelay/SporeStorySites.java
+@@ -22,14 +22,15 @@ final class SporeStorySites {
+             case "archive" -> "church";
+             default -> null;
+         };
+-        return buildTemplate(level,state,x,z,type,variant,id,"spore_story");
++        var kind=switch(type){case "signal" -> SupplySites.Kind.ARMORY; case "echo" -> SupplySites.Kind.FACTORY; default -> SupplySites.Kind.WAREHOUSE;};
++        return buildTemplate(level,state,x,z,type,variant,id,"spore_story",kind,type.equals("clinic"));
+     }
+ 
+     static ResourceLocation templateId(String id){
+         return id.contains(":")?ResourceLocation.parse(id):ResourceLocation.fromNamespaceAndPath("spore",id);
+     }
+ 
+-    static Site buildTemplate(ServerLevel level,RelayState state,int x,int z,String type,int variant,String id,String footprint){
++    static Site buildTemplate(ServerLevel level,RelayState state,int x,int z,String type,int variant,String id,String footprint,SupplySites.Kind kind,boolean medical){
+         if(id==null)return null;
+         var template=level.getStructureManager().get(templateId(id)).orElse(null);
+         if(template==null)return null;
+@@ -63,6 +64,20 @@ final class SporeStorySites {
+         if(!template.placeInWorld(level,corner,corner,settings,level.random,2))
+             return null;
+ 
++        // Use only authored container positions, before cutting the entrance and installing quest caches.
++        for(var block:java.util.List.of(Blocks.CHEST,Blocks.TRAPPED_CHEST,Blocks.BARREL)){
++            for(var info:template.filterBlocks(corner,settings,block)){
++                var at=info.pos();
++                var existing=level.getBlockEntity(at);
++                if(existing!=null && !(existing instanceof net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity))continue;
++                if(existing instanceof net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity container){
++                    container.setLootTable(null);
++                    container.clearContent();
++                }
++                stockContainer(level,state,at,kind,medical);
++            }
++        }
++
+         Block accent=switch(type){
+             case "echo" -> Blocks.CYAN_CONCRETE;
+             case "signal" -> Blocks.YELLOW_CONCRETE;
+@@ -96,9 +111,18 @@ final class SporeStorySites {
+             for(int dx=-5;dx<=-3;dx++)for(int dz=1;dz<=3;dz++)
+                 level.setBlock(origin.offset(dx,0,dz),Blocks.WATER.defaultBlockState(),2);
+         }
++        stockContainer(level,state,route(origin,entrance,5,-3),kind,medical);
+         return new Site(origin,id,approach);
+     }
+ 
++    private static void stockContainer(ServerLevel level,RelayState state,BlockPos at,SupplySites.Kind kind,boolean medical){
++        level.setBlock(at,Blocks.CHEST.defaultBlockState(),2);
++        if(level.getBlockEntity(at) instanceof net.minecraft.world.level.block.entity.ChestBlockEntity chest){
++            RaidLoot.structureChest(chest,level,state,at,kind,medical);
++            PersonalLoot.convert(level,at,chest);
++        }
++    }
++
+     private static BlockPos route(BlockPos origin,Direction entrance,int across,int north){
+         return origin.relative(entrance,-north).relative(entrance.getClockWise(),across);
+     }
+diff --git a/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java b/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java
+index daec898..e7adcbf 100644
+--- a/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java
++++ b/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java
+@@ -53,8 +53,39 @@ final class ZoneLandmarks {
+         };
+     }
+ 
++    // Keep the contract sites fixed; vary one support site per region and expedition.
++    static Plan select(String theme,int index,long seed){
++        var base=plans(theme).get(index);
++        var profile=ZoneProfile.of(theme);
++        int slot=switch(profile){case INDUSTRIAL, INFECTED, ASH -> 4; default -> 3;};
++        if(index!=slot)return base;
++        int choice=Math.floorMod(RaidDirector.roll(seed,index,profile.ordinal()),3);
++        if(choice==0)return base;
++        return switch(profile){
++            case INDUSTRIAL -> choice==1
++                ? new Plan("Заводская больница","hospital",SupplySites.Kind.CANTEEN,true)
++                : village("Ремонтная мастерская","badlands_pueblo/houses/badlands_toolsmith_and_weaponsmith_1",SupplySites.Kind.FACTORY);
++            case FOREST -> choice==1
++                ? village("Лесная картографическая станция","birch_forest_romanian/houses/birch_forest_cartographer_and_library_1",SupplySites.Kind.WAREHOUSE)
++                : village("Кожевенная мастерская","birch_forest_romanian/houses/birch_forest_butcher_and_leatherworker_1",SupplySites.Kind.CANTEEN);
++            case ASH -> choice==1
++                ? village("Броневая мастерская","badlands_pueblo/houses/badlands_armorer_1",SupplySites.Kind.ARMORY)
++                : village("Архив пустоши","badlands_pueblo/houses/badlands_library_1",SupplySites.Kind.WAREHOUSE);
++            case HELL -> choice==1
++                ? village("Шахта пиглинов","exclusives/piglin/houses/piglin_mine_1",SupplySites.Kind.FACTORY)
++                : village("Хранилище пиглинов","exclusives/piglin/houses/piglin_storage_1",SupplySites.Kind.WAREHOUSE);
++            case INFECTED -> choice==1
++                ? village("Карантинный архив","badlands_pueblo/houses/badlands_cartographer_1",SupplySites.Kind.WAREHOUSE)
++                : village("Мастерская санитарной колонны","birch_forest_romanian/houses/birch_forest_armorer_and_toolsmith_1",SupplySites.Kind.FACTORY);
++        };
++    }
++
++    private static Plan village(String title,String template,SupplySites.Kind kind){
++        return new Plan(title,"kaisyn:village/"+template,kind,false);
++    }
++
+     static void build(ServerLevel level,RelayState state,int index){
+-        var plan=plans(state.activeTheme).get(index);
++        var plan=select(state.activeTheme,index,state.seed);
+         SporeStorySites.Site site=null;
+         LandmarkCondition condition=LandmarkCondition.REGULAR;
+         int entrance=0;
+@@ -72,7 +103,7 @@ final class ZoneLandmarks {
+                 entrance=condition.entrance(Math.floorMod(RaidDirector.roll(state.seed,x,z),3));
+                 site=SporeStorySites.buildTemplate(level,state,x,z,
+                     plan.medical?"clinic":plan.loot==SupplySites.Kind.ARMORY?"signal":"archive",
+-                    entrance,plan.template,"landmark");
++                    entrance,plan.template,"landmark",plan.loot,plan.medical);
+             }catch(IllegalArgumentException noHeadroom){
+                 continue;
+             }
+diff --git a/mod/src/main/resources/META-INF/neoforge.mods.toml b/mod/src/main/resources/META-INF/neoforge.mods.toml
+index 3bf0ff4..8a0fb34 100644
+--- a/mod/src/main/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/main/resources/META-INF/neoforge.mods.toml
+@@ -3,7 +3,7 @@ loaderVersion="[4,)"
+ license="MIT"
+ [[mods]]
+ modId="bunkerrelay"
+-version="0.53.0"
++version="0.54.0"
+ displayName="Bunker Relay"
+ description="Cooperative bunker, garage and procedural expeditions. Early prototype."
+ [[dependencies.bunkerrelay]]
+@@ -56,7 +56,7 @@ side="BOTH"
+ [[dependencies.bunkerrelay]]
+ modId="relaylights"
+ type="required"
+-versionRange="[0.53.0]"
++versionRange="[0.54.0]"
+ ordering="AFTER"
+ side="BOTH"
+ 
+@@ -66,6 +66,6 @@ config="bunkerrelay.mixins.json"
+ [[dependencies.bunkerrelay]]
+ modId="relayfactories"
+ type="required"
+-versionRange="[0.53.0]"
++versionRange="[0.54.0]"
+ ordering="AFTER"
+ side="BOTH"
+diff --git a/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml b/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml
+index 8b18289..37e61a0 100644
+--- a/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml
+@@ -4,7 +4,7 @@ license="MIT"
+ 
+ [[mods]]
+ modId="relayfactories"
+-version="0.53.0"
++version="0.54.0"
+ displayName="Relay Factories"
+ description="Factory structures for industrial expeditions."
+ 
+diff --git a/mod/src/relayLights/resources/META-INF/neoforge.mods.toml b/mod/src/relayLights/resources/META-INF/neoforge.mods.toml
+index 3ff04f2..291a798 100644
+--- a/mod/src/relayLights/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/relayLights/resources/META-INF/neoforge.mods.toml
+@@ -4,7 +4,7 @@ license="MIT"
+ 
+ [[mods]]
+ modId="relaylights"
+-version="0.53.0"
++version="0.54.0"
+ displayName="Relay Lights"
+ description="Directional lights with personal and multiplayer modes."
+ 
+diff --git a/modrinth.index.json b/modrinth.index.json
+index 86cc4f0..b835725 100644
+--- a/modrinth.index.json
++++ b/modrinth.index.json
+@@ -1,7 +1,7 @@
+ {
+   "formatVersion": 1,
+   "game": "minecraft",
+-  "versionId": "0.53.0",
++  "versionId": "0.54.0",
+   "name": "Bunker Relay",
+   "summary": "Cooperative expeditions, ECHO encounters, threats, extraction and persistent bunker.",
+   "files": [
+diff --git a/tools/package_release.py b/tools/package_release.py
+index 15686d1..b776896 100644
+--- a/tools/package_release.py
++++ b/tools/package_release.py
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env python3
+ import hashlib,pathlib,shutil,zipfile,sys
+ ROOT=pathlib.Path(__file__).resolve().parents[1];dist=ROOT/'dist';dist.mkdir(exist_ok=True)
+-VERSION='0.53.0';source='--source' in sys.argv;jar=ROOT/f'mod/build/libs/bunkerrelay-{VERSION}.jar'
++VERSION='0.54.0';source='--source' in sys.argv;jar=ROOT/f'mod/build/libs/bunkerrelay-{VERSION}.jar'
+ lights=ROOT/f'mod/build/libs/relaylights-{VERSION}.jar'
+ factories=ROOT/f'mod/build/libs/relayfactories-{VERSION}.jar'
+ if not source:
+@@ -58,6 +58,7 @@ if not source:
+   z.write(ROOT/'WORK_0.51.3.md','overrides/WORK_0.51.3.md')
+   z.write(ROOT/'WORK_0.52.md','overrides/WORK_0.52.md')
+   z.write(ROOT/'WORK_0.53.md','overrides/WORK_0.53.md')
++  z.write(ROOT/'WORK_0.54.md','overrides/WORK_0.54.md')
+   z.write(factories,'overrides/mods/'+factories.name)
+   z.write(lights,'overrides/mods/'+lights.name)
+   for path in (ROOT/'overrides').rglob('*'):
