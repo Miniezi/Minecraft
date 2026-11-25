@@ -4147,3 +4147,16 @@ index 16ffffa..2647fef 100644
    z.write(factories,'overrides/mods/'+factories.name)
    z.write(lights,'overrides/mods/'+lights.name)
    for path in (ROOT/'overrides').rglob('*'):
+diff --git a/mod/src/main/java/dev/bunkerrelay/RegionalIntegrationTest.java b/mod/src/main/java/dev/bunkerrelay/RegionalIntegrationTest.java
+index 63c755c..75d7538 100644
+--- a/mod/src/main/java/dev/bunkerrelay/RegionalIntegrationTest.java
++++ b/mod/src/main/java/dev/bunkerrelay/RegionalIntegrationTest.java
+@@ -97,7 +97,7 @@ final class RegionalIntegrationTest {
+         doctor.setItemInHand(InteractionHand.MAIN_HAND,new ItemStack(Medicine.MEDKIT.get()));
+         Medicine.MEDKIT.get().use(level,doctor,InteractionHand.MAIN_HAND);
+         check(doctor.getHealth()==13&&doctor.getMainHandItem().getCount()==1,"shared cooldown");
+-        check(RelayEconomy.CATALOG.stream().filter(offer->RelayEconomy.merchant(offer)==RelayEconomy.Merchant.MEDIC).count()==2,"medic offers");
++        check(RelayEconomy.CATALOG.stream().filter(offer->RelayEconomy.merchant(offer)==RelayEconomy.Merchant.MEDIC).map(RelayEconomy.Offer::id).collect(java.util.stream.Collectors.toSet()).containsAll(java.util.List.of("medkit","bandage","honey_flask")),"medic offers");
+         var pda=new PocketDevice.Menu(9,doctor.getInventory(),doctor,PocketDevice.Page.RAID);
+         check(pda.getSlot(10).getItem().getHoverName().getString().equals("Ориентиры"),"PDA map removed");
+         System.out.println("RELAY_REGIONAL_PASS profiles=true templates="+templates.size()+" medicine=true food=true medic=true");
