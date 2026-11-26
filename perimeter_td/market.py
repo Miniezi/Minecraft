@@ -12,16 +12,25 @@ def install():
     lines=d.files[key('menu')].splitlines()
     d.files[key('menu')]='\n'.join(s for s in lines if 'radio set 42' not in s)+'\n'
     append('menu','tellraw @s '+json.dumps(['',d.label(41,'Магазин снабжения'),d.label(42,'Мастерская перековки')],ensure_ascii=False))
-    append('arrival',d.say('У оператора: /forgegear — перековка, /supplyshop — магазин. Каждая пятая волна — босс.'))
-    append('wave','scoreboard players operation #bossCycle rd = #wave rd','scoreboard players set #ten rd 10','scoreboard players operation #bossCycle rd %= #ten rd',
-           'execute if score #bossCycle rd matches 5 run function relay:boss_guard',
-           'execute if score #bossCycle rd matches 0 run function relay:boss_scout')
-    for guard in (True,False):
-        kind='guard' if guard else 'scout'
-        title='Панцирник' if guard else 'Дозорный'
-        hp=90 if guard else 75
-        nbt='{Tags:["rd.mob","rd.boss","rd.'+kind+'boss"],PersistenceRequired:1b,CustomNameVisible:1b,CustomName:'+repr(json.dumps({'text':title},ensure_ascii=False))+',Health:'+str(hp)+'f,Attributes:[{Name:"minecraft:generic.max_health",Base:'+str(hp)+'d},{Name:"minecraft:generic.armor",Base:'+('8' if guard else '4')+'d}]}'
-        d.fn('boss_'+kind,'execute positioned ~22 ~ ~4 positioned over motion_blocking_no_leaves run summon minecraft:husk ~ ~ ~ '+nbt,'tellraw @a '+json.dumps({'text':'Босс: '+title+('. Держи дистанцию!' if guard else '. Сокращай дистанцию или ищи укрытие!'),'color':'gold'},ensure_ascii=False))
-    for name in ('lose','timeout'):
-        prepend(name,'tag @e[tag=rd.boss] add rd.cleanup')
-    prepend('breach','tag @s add rd.cleanup')
+    append('arrival',d.say('У оператора: /forgegear — перековка, /supplyshop — магазин. Первая волна по радио. Первое бедствие на волне 10.'))
+    d.fn('wave','scoreboard players set #active rd 1','scoreboard players add #wave rd 1','scoreboard players set #time rd 0',
+         'execute as @e[tag=rd.core,limit=1] at @s store result score #rostered rd run perimeter_muster',
+         'tellraw @a [{"text":"Началась волна "},{"score":{"name":"#wave","objective":"rd"}}]')
+    d.fn('battle','perimeter_wave_tick','scoreboard players add #time rd 1',
+         'execute if score #hp rd matches 1.. if score #gun rd matches 1.. as @e[tag=rd.mob,distance=..18,sort=nearest,limit=1] run damage @s 4 minecraft:generic',
+         'execute if score #hp rd matches 1.. if score #gun rd matches 2 as @e[tag=rd.mob,distance=..24,sort=nearest,limit=1] run damage @s 5 minecraft:generic',
+         'execute if entity @e[tag=rd.mob,distance=..4] if score #hp rd matches 1.. run scoreboard players remove #hp rd 1',
+         'execute if score #rostered rd matches 1 unless entity @e[tag=rd.ticket,distance=..3] run function relay:win')
+    # A protocol upgrade during an old-style wave retries that wave under the new roster.
+    prepend('battle','execute unless score #rostered rd matches 1 run function relay:adopt_wave')
+    d.fn('adopt_wave','tag @e[tag=rd.mob] add rd.cleanup','kill @e[tag=rd.mob]','execute store result score #rostered rd run perimeter_muster')
+    append('win','scoreboard players set #rostered rd 0','scoreboard players set #rest rd 45',
+           'execute if score #wave rd matches 5.. run scoreboard players set #rest rd 60',
+           'scoreboard players operation #cycle rd = #wave rd','scoreboard players set #five rd 5','scoreboard players operation #cycle rd %= #five rd',
+           'execute if score #wave rd matches 10.. if score #cycle rd matches 0 run scoreboard players set #rest rd 100',
+           'tellraw @a [{"text":"Передышка: "},{"score":{"name":"#rest","objective":"rd"}},{"text":" сек. Отсчёт идёт, пока защитник в 48 блоках от базы."}]')
+    prepend('base_tick','execute unless score #active rd matches 1 if score #wave rd matches 1.. if entity @a[distance=..48,gamemode=!spectator] run function relay:rest')
+    d.fn('rest','execute if score #rest rd matches 1.. run scoreboard players remove #rest rd 1',
+         'execute if score #rest rd matches 10 run tellraw @a {"text":"Следующая волна через 10 секунд!"}',
+         'execute unless score #rest rd matches 1.. run function relay:wave')
+    d.files[key('input')]=d.files[key('input')].replace('radio matches 3 if','radio matches 3 unless score #rest rd matches 1.. if')
