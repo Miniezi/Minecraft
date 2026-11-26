@@ -25,7 +25,7 @@ import static net.minecraft.commands.Commands.*;
 public class BaseOps {
     static int get(ServerLevel l,String key){var b=l.getScoreboard();var o=b.getObjective("rd");return o==null?0:b.getOrCreatePlayerScore("#"+key,o).getScore();}
     static void set(ServerLevel l,String k,int v){var b=l.getScoreboard();b.getOrCreatePlayerScore("#"+k,b.getObjective("rd")).setScore(v);}
-    static Entity anchor(ServerLevel l){for(Entity e:l.getAllEntities())if(e.getTags().contains("rd.core"))return e;return null;}
+    static Entity anchor(ServerLevel l){for(Entity e:l.getAllEntities())if(!e.isRemoved()&&e.getTags().contains("rd.core"))return e;return null;}
     static void cmd(ServerLevel l,CommandSourceStack src,String command){l.getServer().getCommands().performPrefixedCommand(src.withPermission(2).withSuppressedOutput(),command);}
     static boolean operator(Entity e){return e instanceof Villager&&e.getTags().contains("rd.lure");}
     static void clearWave(ServerLevel l){
@@ -64,8 +64,8 @@ public class BaseOps {
     }
     static void relocate(ServerLevel l,Entity old){
         var pos=old.blockPosition();
-        BlockPos next=null;
-        for(int i=0;i<32;i++){
+        BlockPos next=old.getPersistentData().contains("evacPos")?BlockPos.of(old.getPersistentData().getLong("evacPos")):null;
+        for(int i=0;next==null&&i<32;i++){
             double angle=l.random.nextDouble()*Math.PI*2;int radius=400+l.random.nextInt(300);
             BlockPos p=pos.offset((int)(radius*Math.cos(angle)),0,(int)(radius*Math.sin(angle)));
             if(!l.getWorldBorder().isWithinBounds(p))continue;
@@ -74,6 +74,8 @@ public class BaseOps {
             next=ground;break;
         }
         if(next==null)return;
+        old.getPersistentData().putLong("evacPos",next.asLong());l.setChunkForced(next.getX()>>4,next.getZ()>>4,true);
+        if(!l.isPositionEntityTicking(next))return;
         var src=old.createCommandSourceStack();clearWave(l);
         var ledger=Siege.Ledger.get(l);ledger.hits.keySet().forEach(p->l.destroyBlockProgress(Siege.crackId(p),p,-1));ledger.hits.clear();ledger.repair.clear();ledger.setDirty();
         for(Entity e:l.getEntities(old,new AABB(pos).inflate(130),e->operator(e)||e.getTags().contains("rd.clock")||e.getTags().contains("rd.site")||e.getTags().contains("rd.guard")))e.discard();
