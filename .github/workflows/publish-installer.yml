@@ -1,0 +1,23 @@
+name: Publish verified installer
+on:
+  push:
+    branches: [publish-bunker-relay-0.66.0]
+    paths: [.github/workflows/publish-installer.yml]
+permissions:
+  actions: read
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: Bunker-Relay-release
+          run-id: 45836804472
+          github-token: ${{ github.token }}
+      - name: Verify and publish installer
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo 'bf38a241bc9fb4fdcfb2a57ef203c7bfea7f468f136349e01bbcf1e1eb36cd13  Bunker-Relay-0.66.0.mrpack' | sha256sum -c -
+          gh release create bunker-relay-v0.66.0 Bunker-Relay-0.66.0.mrpack --repo "$GITHUB_REPOSITORY" --target 2849f39701b1448ed1af3dcb07ac8a87543ff093 --title 'Bunker Relay 0.66.0' --notes 'Файл для импорта в лаунчер. Minecraft 1.21.1, NeoForge 21.1.265.'
