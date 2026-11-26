@@ -37,6 +37,7 @@ public class ForgeCounter extends ChestMenu {
         new Offer(Items.IRON_HORSE_ARMOR,"Glock 17",1,15,"glock_17"),
         new Offer(Items.GOLDEN_HORSE_ARMOR,"АКМ",1,26,"ak47"),
         new Offer(Items.FLINT,"9 мм",30,4,"9mm"),new Offer(Items.FLINT,"7,62 × 39",30,6,"762x39"),
+        new Offer(Items.FLINT,".50 AE",14,4,"50ae"),new Offer(Items.FLINT,"12-й калибр",12,5,"12g"),new Offer(Items.FLINT,".30-06",10,6,"30_06"),new Offer(Items.FLINT,"40 мм",3,12,"40mm"),new Offer(Items.FLINT,"5,56 × 45",30,6,"556x45"),
         new Offer(Items.NAUTILUS_SHELL,"Ящик арсенала",1,18,"crate"),
         new Offer(Items.DISPENSER,"Пост базы: автопушка I / II",1,24,"gun"),
         new Offer(Items.BRICKS,"Укрепление базы",1,18,"walls"),
@@ -118,7 +119,7 @@ public class ForgeCounter extends ChestMenu {
                 return;
             }
             case "med","crate" -> out=Arsenal.supply(a.equals("crate"));
-            case "glock_17","ak47","9mm","762x39" -> {
+            case "glock_17","ak47","9mm","762x39","50ae","12g","30_06","40mm","556x45" -> {
                 boolean gun=a.equals("glock_17")||a.equals("ak47");
                 Item item=ForgeRegistries.ITEMS.getValue(new ResourceLocation("tacz",gun?"modern_kinetic_gun":"ammo"));
                 if(item==null||item==Items.AIR)return;
