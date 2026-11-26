@@ -104,10 +104,18 @@ public class ArsenalCheck {
         if(BaseOps.get(level,"hp")!=120||cash.getScore()!=24)throw new AssertionError("Intermission repair");
         BaseOps.set(level,"hp",1);BaseOps.set(level,"active",1);v.hurt(level.damageSources().mobAttack(zombie),5);
         BaseOps.update(level,marker);
-        var replacement=BaseOps.anchor(level);
-        if(!marker.isRemoved()||replacement==null||replacement.distanceToSqr(marker)<350*350||BaseOps.get(level,"hp")!=120||BaseOps.get(level,"wave")!=0)throw new AssertionError("Base relocation");
+        oldCore=marker;
         if(!Arsenal.supply(false).is(Terminal.MED.get()))throw new AssertionError("Medical item");
-        System.out.println("PERIMETER_ARSENAL_PASS");
-        event.getServer().halt(false);
+        
+    }
+    static net.minecraft.world.entity.Entity oldCore;
+    static int elapsed;
+    @SubscribeEvent public static void verifyMove(net.minecraftforge.event.TickEvent.ServerTickEvent e){
+        if(oldCore==null||e.phase!=net.minecraftforge.event.TickEvent.Phase.END)return;
+        var l=e.getServer().overworld();var next=BaseOps.anchor(l);
+        if(oldCore.isRemoved()&&next!=null&&next.distanceToSqr(oldCore)>350*350&&BaseOps.get(l,"hp")==120&&BaseOps.get(l,"wave")==0){
+            oldCore=null;System.out.println("PERIMETER_ARSENAL_PASS");e.getServer().halt(false);return;
+        }
+        if(++elapsed>400)throw new AssertionError("Relocation: oldRemoved="+oldCore.isRemoved()+" replacement="+next+" hp="+BaseOps.get(l,"hp")+" wave="+BaseOps.get(l,"wave"));
     }
 }
