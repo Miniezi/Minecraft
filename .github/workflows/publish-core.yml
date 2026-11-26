@@ -1,0 +1,23 @@
+name: Publish verified core mod
+on:
+  push:
+    branches: [publish-bunker-relay-0.67.1]
+    paths: [.github/workflows/publish-core.yml]
+permissions:
+  actions: read
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: relay-core-0671
+          run-id: 45878174597
+          github-token: ${{ github.token }}
+      - name: Verify and publish core mod
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          echo '17861d39789bc17849eab8ba78ea762e709a965083da4bad71227e57d0cd46b1  bunkerrelay-0.67.1.jar' | sha256sum -c -
+          gh release create bunker-relay-v0.67.1 bunkerrelay-0.67.1.jar --repo "$GITHUB_REPOSITORY" --target 248ee0c30f7f366ba55bcb1382901ee4dcdad9ff --title 'Bunker Relay 0.67.1' --notes 'Обновление основного мода для сборки 0.67.0. Замените bunkerrelay-0.67.0.jar на клиенте и сервере.'
