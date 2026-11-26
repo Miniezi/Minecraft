@@ -731,7 +731,7 @@ diff -ruN orig/Bunker-Relay/mod/src/relayLights/resources/META-INF/neoforge.mods
  
 diff -ruN orig/Bunker-Relay/modrinth.index.json Bunker-Relay/modrinth.index.json
 --- a/modrinth.index.json	2026-11-26 22:55:46.604431122 +0500
-+++ b/modrinth.index.json	2026-11-26 22:56:38.872405996 +0500
++++ b/modrinth.index.json	2026-11-26 23:00:01.763739364 +0500
 @@ -1,7 +1,7 @@
  {
    "formatVersion": 1,
@@ -741,7 +741,7 @@ diff -ruN orig/Bunker-Relay/modrinth.index.json Bunker-Relay/modrinth.index.json
    "name": "Bunker Relay",
    "summary": "Cooperative expeditions, ECHO encounters, threats, extraction and persistent bunker.",
    "files": [
-@@ -829,6 +829,171 @@
+@@ -829,6 +829,186 @@
          "https://cdn.modrinth.com/data/VUE19tql/versions/NogMjmCH/cybernetic_system-2.0.8-neoforge-1.21.1.jar"
        ],
        "fileSize": 2254681
@@ -910,13 +910,28 @@ diff -ruN orig/Bunker-Relay/modrinth.index.json Bunker-Relay/modrinth.index.json
 +        "https://edge.forgecdn.net/files/9493/803/apotheosis_modern_ragnarok-neoforge-1.21.1-tacz1.2.0-8.0.0.jar"
 +      ],
 +      "fileSize": 2779793
++    },
++    {
++      "path": "mods/curios-neoforge-9.6.1+1.21.1.jar",
++      "hashes": {
++        "sha512": "da2b98fac6c9c01cddbc37e35392f9ba4ef430b580549297bfbff2f04632d31b63da66f5db281e28bc7828f7a0f31672c0a71008ac8f2f530fe43e78ae0c4bc0",
++        "sha1": "0655348ff267e114dff016332ea7ed4527b43284"
++      },
++      "env": {
++        "client": "required",
++        "server": "required"
++      },
++      "downloads": [
++        "https://cdn.modrinth.com/data/vvuO3ImH/versions/8lywiRts/curios-neoforge-9.6.1%2B1.21.1.jar"
++      ],
++      "fileSize": 411934
      }
    ],
    "dependencies": {
 diff -ruN orig/Bunker-Relay/pack.lock.json Bunker-Relay/pack.lock.json
 --- a/pack.lock.json	2026-11-26 22:55:46.602708795 +0500
-+++ b/pack.lock.json	2026-11-26 22:56:38.842768940 +0500
-@@ -2087,6 +2087,290 @@
++++ b/pack.lock.json	2026-11-26 23:00:01.737253144 +0500
+@@ -2087,6 +2087,318 @@
          ],
          "fileSize": 229344
        }
@@ -1203,6 +1218,34 @@ diff -ruN orig/Bunker-Relay/pack.lock.json Bunker-Relay/pack.lock.json
 +          "https://edge.forgecdn.net/files/9493/803/apotheosis_modern_ragnarok-neoforge-1.21.1-tacz1.2.0-8.0.0.jar"
 +        ],
 +        "fileSize": 2779793
++      }
++    },
++    {
++      "slug": "curios",
++      "title": "Curios API",
++      "version": "9.6.1+1.21.1",
++      "version_id": "8lywiRts",
++      "project_id": "vvuO3ImH",
++      "dependencies": [],
++      "env": {
++        "client": "required",
++        "server": "required"
++      },
++      "url": "https://modrinth.com/mod/curios",
++      "file": {
++        "path": "mods/curios-neoforge-9.6.1+1.21.1.jar",
++        "hashes": {
++          "sha512": "da2b98fac6c9c01cddbc37e35392f9ba4ef430b580549297bfbff2f04632d31b63da66f5db281e28bc7828f7a0f31672c0a71008ac8f2f530fe43e78ae0c4bc0",
++          "sha1": "0655348ff267e114dff016332ea7ed4527b43284"
++        },
++        "env": {
++          "client": "required",
++          "server": "required"
++        },
++        "downloads": [
++          "https://cdn.modrinth.com/data/vvuO3ImH/versions/8lywiRts/curios-neoforge-9.6.1%2B1.21.1.jar"
++        ],
++        "fileSize": 411934
 +      }
      }
    ]
