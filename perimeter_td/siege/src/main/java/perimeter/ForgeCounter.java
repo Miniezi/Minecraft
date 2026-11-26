@@ -42,7 +42,7 @@ public class ForgeCounter extends ChestMenu {
         new Offer(Items.DISPENSER,"Пост базы: автопушка I / II",1,24,"gun"),
         new Offer(Items.BRICKS,"Укрепление базы",1,18,"walls"),
         new Offer(Items.BLAST_FURNACE,"Шахта",1,15,"mine"),new Offer(Items.STONECUTTER,"Лесопилка",1,12,"sawmill"),
-        new Offer(Items.ANVIL,"Ремонт узла",1,6,"repair"));
+        new Offer(Items.ANVIL,"Лечение ядра (+18 HP)",1,6,"repair"),new Offer(Items.STONE_BRICKS,"Каменный кирпич",16,3,"fort"),new Offer(Items.DEEPSLATE_BRICKS,"Глубинный кирпич",16,6,"fort"),new Offer(Items.IRON_BLOCK,"Железная плита",4,12,"fort"),new Offer(Items.CRYING_OBSIDIAN,"Плачущий обсидиан",2,18,"fort"));
     ForgeCounter(int id,ServerPlayer p,boolean shop){this(id,p,shop,new SimpleContainer(54));}
     private ForgeCounter(int id,ServerPlayer p,boolean shop,SimpleContainer c){
         super(MenuType.GENERIC_9x6,id,p.getInventory(),c,6);owner=p;icons=c;this.shop=shop;refresh();
@@ -113,7 +113,7 @@ public class ForgeCounter extends ChestMenu {
         String a=g.action();ItemStack out;
         switch(a){
             case "gun","walls","mine","sawmill","repair" -> {
-                boolean ok=switch(a){case "gun"->value(owner,"gun")<2;case "walls"->value(owner,"max")<60;case "mine"->value(owner,"mine")<4;case "sawmill"->value(owner,"saw")<4;default->value(owner,"hp")<value(owner,"max");};
+                boolean ok=switch(a){case "gun"->value(owner,"gun")<2;case "walls"->value(owner,"max")<180;case "mine"->value(owner,"mine")<4;case "sawmill"->value(owner,"saw")<4;default->value(owner,"active")==0&&value(owner,"wave")>0&&value(owner,"hp")<value(owner,"max");};
                 Entity base=core(owner);
                 if(ok&&base!=null)owner.server.getCommands().performPrefixedCommand(owner.createCommandSourceStack().withPermission(2).withPosition(base.position()).withSuppressedOutput(),"function relay:"+a);
                 return;

@@ -1,0 +1,61 @@
+name: Perimeter Core
+on:
+  push:
+    branches: [perimeter-core-0.7]
+    paths: ['perimeter_td/**', '.github/workflows/perimeter-core.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.8'
+      - name: Compile Forge siege module
+        run: |
+          cp 'компилятор модов/settings.gradle' perimeter_td/siege/
+          cat >> perimeter_td/siege/build.gradle <<'GRADLE'
+          minecraft.runs {
+              server {
+                  workingDirectory project.file('runTest')
+                  property 'perimeter.testArsenal', 'true'
+                  args 'nogui'
+                  mods { perimeter_siege { source sourceSets.main } }
+              }
+          }
+          GRADLE
+          mkdir -p perimeter_td/siege/runTest
+          echo 'eula=true' > perimeter_td/siege/runTest/eula.txt
+          (cd perimeter_td && python - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import defense, upgrade, arsenal_campaign, market
+          upgrade.install()
+          arsenal_campaign.install()
+          market.install()
+          target=Path("siege/runTest/world/datapacks/relay.zip")
+          target.parent.mkdir(parents=True,exist_ok=True)
+          with ZipFile(target,"w") as pack:
+              for path,data in defense.files.items():
+                  if path.startswith("data/") or path=="pack.mcmeta": pack.writestr(path,data)
+          PY
+          )
+          gradle -p perimeter_td/siege build runServer --no-daemon | tee arsenal-test.log
+          grep -q PERIMETER_ARSENAL_PASS arsenal-test.log
+      - name: Package Prism import
+        working-directory: perimeter_td
+        run: |
+          curl --fail --retry 3 -L https://mediafilez.forgecdn.net/files/7829/406/inf.zip -o inf.zip
+          python package_core.py siege/build/libs/Perimeter-Siege-0.3.0.jar
+          unzip -t Perimeter-Arsenal-0.7.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Perimeter-Arsenal-0.7
+          path: perimeter_td/Perimeter-Arsenal-0.7.zip

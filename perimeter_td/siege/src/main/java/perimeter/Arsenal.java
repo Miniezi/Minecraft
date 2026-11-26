@@ -30,18 +30,20 @@ public class Arsenal {
     static final String KEY="PerimeterAffix", SUPPLY="PerimeterSupply", QUEUE="PerimeterRoll";
     static final String[] TIERS={"Обычная","Необычная","Редкая","Эпическая","Легендарная","Мифическая"};
     static final ChatFormatting[] COLORS={ChatFormatting.GRAY,ChatFormatting.GREEN,ChatFormatting.AQUA,ChatFormatting.LIGHT_PURPLE,ChatFormatting.GOLD,ChatFormatting.RED};
-    static final String[] WEAPON={"Натиск","Вампиризм","Подвижность"}, ARMOR={"Бастион","Регенерация","Марш"};
+    static final String[] WEAPON={"Натиск","Вампиризм","Подвижность","Добивание","Дуэлянт","Снайпер"}, ARMOR={"Бастион","Регенерация","Марш","Огнеупор","Бронепластина","Последний рубеж"};
     static boolean gun(ItemStack s){return s.hasTag() && s.getTag().contains("GunId");}
     static boolean armor(ItemStack s){return s.getItem() instanceof ArmorItem;}
     static boolean eligible(ItemStack s){return armor(s)||gun(s)||s.getItem() instanceof SwordItem||s.getItem() instanceof AxeItem||s.getItem() instanceof ProjectileWeaponItem||s.getItem() instanceof TridentItem;}
     static int tier(RandomSource rng){int n=rng.nextInt(1000);return n<500?0:n<770?1:n<910?2:n<970?3:n<995?4:5;}
     static CompoundTag affix(ItemStack s){return s.getTagElement(KEY);}
     static int rank(CompoundTag t){return Math.min(5,Math.max(0,t.getInt("tier")));}
-    static int prefix(CompoundTag t){return Math.min(2,Math.max(0,t.getInt("prefix")));}
+    static int prefix(CompoundTag t){return Math.min(5,Math.max(0,t.getInt("prefix")));}
+    static final int[] TINT={0xfff4f8ff,0xff74ff71,0xff49e3ff,0xffef78ff,0xffffbf38,0xffff456e};
+    static int tint(ItemStack s){return affix(s)==null?0xffa4d7cc:TINT[rank(affix(s))];}
     static void roll(ItemStack s,RandomSource rng){
         CompoundTag old=affix(s);
         int newTier=old==null?tier(rng):rank(old);
-        int next=old==null?rng.nextInt(3):(prefix(old)+1+rng.nextInt(2))%3;
+        int next=old==null?rng.nextInt(6):(prefix(old)+1+rng.nextInt(5))%6;
         CompoundTag t=s.getOrCreateTagElement(KEY);
         t.putInt("tier",newTier);t.putInt("prefix",next);
     }
@@ -54,15 +56,15 @@ public class Arsenal {
         if(a==null)return;
         int level=rank(a)+1, kind=prefix(a);
         String meaning=armor(s)?switch(kind){
-            case 0->"Получаемый урон −"+(2*level)+"%";case 1->"Регенерация при экипировке";default->"Скорость при экипировке";
+            case 0->"Получаемый урон −"+(2*level)+"%";case 1->"Регенерация при экипировке";case 2->"Скорость при экипировке";case 3->"Огонь: −"+(3*level)+"% урона";case 4->"Снаряды: −"+(3*level)+"% урона";default->"При здоровье ниже половины: −"+(3*level)+"% урона";
         }:switch(kind){
-            case 0->"Урон +"+(5*level)+"%";case 1->"Лечение при попадании: "+(level*5)+"% урона";default->"Скорость в основной руке";
+            case 0->"Урон +"+(5*level)+"%";case 1->"Лечение при попадании: "+(level*5)+"% урона";case 2->"Скорость в основной руке";case 3->"Против раненых целей: +"+(7*level)+"% урона";case 4->"Ближе 6 блоков: +"+(6*level)+"% урона";default->"Дальше 18 блоков: +"+(6*level)+"% урона";
         };
-        e.getToolTip().add(Component.literal(info(s)).withStyle(COLORS[rank(a)]));
+        e.getToolTip().add(Component.literal(info(s)).withStyle(st->st.withColor(tint(s)&0xffffff).withBold(true)));
         e.getToolTip().add(Component.literal(meaning).withStyle(ChatFormatting.DARK_GRAY));
     }
     static ItemStack supply(boolean box){
-        ItemStack s=new ItemStack(box?Items.NAUTILUS_SHELL:Items.RABBIT_FOOT);
+        ItemStack s=new ItemStack(box?Items.NAUTILUS_SHELL:Terminal.MED.get());
         s.getOrCreateTag().putString(SUPPLY,box?"box":"med");
         s.setHoverName(Component.literal(box?"Запечатанный ящик арсенала":"Полевой автоинъектор").withStyle(box?ChatFormatting.GOLD:ChatFormatting.GREEN));
         return s;
@@ -128,6 +130,7 @@ public class Arsenal {
         if(p.tickCount%20!=0)return;
         for(int i=0;i<p.getInventory().getContainerSize();i++){
             ItemStack s=p.getInventory().getItem(i);
+            if(s.is(Items.RABBIT_FOOT)&&s.hasTag()&&"med".equals(s.getTag().getString(SUPPLY))){ItemStack med=new ItemStack(Terminal.MED.get(),s.getCount());med.setTag(s.getTag().copy());p.getInventory().setItem(i,med);}
             if(eligible(s)&&affix(s)==null)roll(s,p.getRandom());
         }
         for(ItemStack s:p.getArmorSlots())buff(p,s,true);
@@ -143,14 +146,17 @@ public class Arsenal {
             ItemStack weapon=p.getMainHandItem();CompoundTag t=affix(weapon);
             if(t!=null && !armor(weapon) && (e.getSource().getDirectEntity()==p || e.getSource().getDirectEntity() instanceof net.minecraft.world.entity.projectile.Projectile || e.getSource().is(net.minecraft.tags.DamageTypeTags.IS_PROJECTILE) || gun(weapon) && e.getSource().typeHolder().unwrapKey().map(k->k.location().getNamespace().equals("tacz")).orElse(false))){
                 float bonus=.05f*(rank(t)+1);
+                int kind=prefix(t),level=rank(t)+1;float distance=p.distanceTo(e.getEntity());
+                if(kind==3&&e.getEntity().getHealth()<=e.getEntity().getMaxHealth()/2)e.setAmount(e.getAmount()*(1+.07f*level));
+                if((kind==4&&distance<=6)||(kind==5&&distance>=18))e.setAmount(e.getAmount()*(1+.06f*level));
                 if(prefix(t)==0)e.setAmount(e.getAmount()*(1+bonus));
                 if(prefix(t)==1)p.heal(Math.min(4,e.getAmount()*bonus));
             }
         }
         if(e.getEntity() instanceof ServerPlayer victim){
             int sum=0;
-            for(ItemStack s:victim.getArmorSlots()){CompoundTag t=affix(s);if(t!=null&&prefix(t)==0)sum+=rank(t)+1;}
-            e.setAmount(e.getAmount()*(1-.02f*sum));
+            for(ItemStack s:victim.getArmorSlots()){CompoundTag t=affix(s);if(t==null)continue;int k=prefix(t),n=rank(t)+1;if(k==0)sum+=2*n;else if((k==3&&e.getSource().is(net.minecraft.tags.DamageTypeTags.IS_FIRE))||(k==4&&(e.getSource().is(net.minecraft.tags.DamageTypeTags.IS_PROJECTILE)||e.getSource().getDirectEntity() instanceof net.minecraft.world.entity.projectile.Projectile))||(k==5&&victim.getHealth()<=victim.getMaxHealth()/2))sum+=3*n;}
+            e.setAmount(e.getAmount()*(1-.01f*Math.min(75,sum)));
         }
     }
     @SubscribeEvent public static void commands(RegisterCommandsEvent e){

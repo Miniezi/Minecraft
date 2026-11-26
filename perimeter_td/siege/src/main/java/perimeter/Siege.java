@@ -21,7 +21,7 @@ import net.minecraft.commands.Commands;
 
 @Mod("perimeter_siege")
 public class Siege {
-    public Siege(){MinecraftForge.EVENT_BUS.register(this);}
+    public Siege(){MinecraftForge.EVENT_BUS.register(this);var bus=net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext.get().getModEventBus();Terminal.MENUS.register(bus);Terminal.ITEMS.register(bus);}
     static boolean wave(Entity e){return e!=null && e.getTags().contains("rd.mob");}
     static boolean attacker(Entity e){return wave(e) || e instanceof Mob && "spore".equals(ForgeRegistries.ENTITY_TYPES.getKey(e.getType()).getNamespace());}
     static class Ledger extends SavedData {
@@ -89,7 +89,10 @@ public class Siege {
             if(!core.getTags().contains("rd.core"))continue;
             for(Mob mob:l.getEntitiesOfClass(Mob.class,new AABB(core.blockPosition()).inflate(38),Siege::attacker)){
                 Entity goal=mob.getTarget();
-                if(goal==null && wave(mob))goal=core;
+                if(goal==null && wave(mob)){
+                    var operators=l.getEntitiesOfClass(net.minecraft.world.entity.npc.Villager.class,new AABB(core.blockPosition()).inflate(3),BaseOps::operator);
+                    if(!operators.isEmpty()){mob.setTarget(operators.get(0));goal=operators.get(0);}else goal=core;
+                }
                 if(goal==null)continue;
                 if(wave(mob) && !mob.getTags().contains("rd.boss") && mob.getNavigation().isDone())mob.getNavigation().moveTo(goal.getX(),goal.getY(),goal.getZ(),1);
                 double dx=goal.getX()-mob.getX(), dz=goal.getZ()-mob.getZ();

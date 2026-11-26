@@ -86,7 +86,27 @@ public class ArsenalCheck {
             if(!boss.getClass().getName().contains(".Calamities."))throw new AssertionError("Wrong boss: "+id);
             if(!Director.finish(boss,level.damageSources().playerAttack(player)))throw new AssertionError("No trophy for "+id);
         }
-        marker.discard();
+        var term=new Terminal(3,player.getInventory());
+        player.getInventory().setItem(0,new ItemStack(Items.COPPER_INGOT,12));cash.setScore(0);
+        term.clickMenuButton(player,3);term.clickMenuButton(player,19);term.clickMenuButton(player,19);
+        if(cash.getScore()!=2||!player.getInventory().getItem(0).isEmpty())throw new AssertionError("Sale not atomic");
+        var v=net.minecraft.world.entity.EntityType.VILLAGER.create(level);v.moveTo(marker.position());v.addTag("rd.lure");level.addFreshEntity(v);
+        BaseOps.set(level,"max",120);BaseOps.set(level,"hp",120);BaseOps.set(level,"active",1);
+        BaseOps.update(level,marker);
+        var zombie=net.minecraft.world.entity.EntityType.ZOMBIE.create(level);
+        v.hurt(level.damageSources().mobAttack(zombie),40);
+        if(BaseOps.get(level,"hp")!=119||v.getHealth()!=119)throw new AssertionError("Core damage");
+        cash.setScore(30);
+        BaseOps.cmd(level,marker.createCommandSourceStack(),"function relay:repair");
+        if(cash.getScore()!=30||BaseOps.get(level,"hp")!=119)throw new AssertionError("Combat repair");
+        BaseOps.set(level,"active",0);
+        BaseOps.cmd(level,marker.createCommandSourceStack(),"function relay:repair");
+        if(BaseOps.get(level,"hp")!=120||cash.getScore()!=24)throw new AssertionError("Intermission repair");
+        BaseOps.set(level,"hp",1);BaseOps.set(level,"active",1);v.hurt(level.damageSources().mobAttack(zombie),5);
+        BaseOps.update(level,marker);
+        var replacement=BaseOps.anchor(level);
+        if(!marker.isRemoved()||replacement==null||replacement.distanceToSqr(marker)<350*350||BaseOps.get(level,"hp")!=120||BaseOps.get(level,"wave")!=0)throw new AssertionError("Base relocation");
+        if(!Arsenal.supply(false).is(Terminal.MED.get()))throw new AssertionError("Medical item");
         System.out.println("PERIMETER_ARSENAL_PASS");
         event.getServer().halt(false);
     }

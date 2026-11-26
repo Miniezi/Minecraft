@@ -34,3 +34,12 @@ def install():
          'execute if score #rest rd matches 10 run tellraw @a {"text":"Следующая волна через 10 секунд!"}',
          'execute unless score #rest rd matches 1.. run function relay:wave')
     d.files[key('input')]=d.files[key('input')].replace('radio matches 3 if','radio matches 3 unless score #rest rd matches 1.. if')
+
+    d.files[key('battle')]='\n'.join(s for s in d.files[key('battle')].splitlines() if 'scoreboard players remove #hp rd 1' not in s)+'\n'
+    d.files[key('deploy')]=d.files[key('deploy')].replace('Invulnerable:1b','Invulnerable:0b,Health:120f,Attributes:[{Name:"minecraft:generic.max_health",Base:120d}]').replace('#hp rd 30','#hp rd 120').replace('#max rd 30','#max rd 120')
+    d.fn('repair','execute if score #active rd matches 0 if score #wave rd matches 1.. if score #hp rd < #max rd if score #cash rd matches 6.. run function relay:treat')
+    d.fn('treat','scoreboard players remove #cash rd 6','scoreboard players add #hp rd 18','execute if score #hp rd > #max rd run scoreboard players operation #hp rd = #max rd')
+    d.files[key('walls')]=d.files[key('walls')].replace('matches 30','matches 120').replace('matches 40','matches 140').replace('matches 50','matches 160').replace('add #max rd 10','add #max rd 20').replace('scoreboard players add #hp rd 10','execute if score #active rd matches 0 run scoreboard players add #hp rd 20')
+    d.files[key('input')]=d.files[key('input')].replace('matches ..59','matches ..179')
+    d.files[key('arrival')]='\n'.join(s for s in d.files[key('arrival')].splitlines() if not s.startswith('tellraw'))+'\n'
+    append('arrival',d.say('ПКМ по жителю с надписью «Ядро» открывает штаб. Первая волна запускается в штабе.'))
