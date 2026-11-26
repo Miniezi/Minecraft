@@ -6958,3 +6958,404 @@ index 91e9c20..2a472cb 100644
    ],
    "spawners": [
      {
+diff --git a/README_RU.md b/README_RU.md
+index 6cb5a45..31af991 100644
+--- a/README_RU.md
++++ b/README_RU.md
+@@ -1,4 +1,4 @@
+-# Bunker Relay 0.64.0
++# Bunker Relay 0.65.0
+ 
+ Изменения релиза см. в WORK_0.56.md.
+ 
+diff --git a/WORK_0.65.md b/WORK_0.65.md
+new file mode 100644
+index 0000000..723725d
+--- /dev/null
++++ b/WORK_0.65.md
+@@ -0,0 +1,3 @@
++# 0.65.0
++
++В каждой вылазке есть шахта из 81 связанной камеры и поверхностная расселина. Координаты входа доступны в КПК, медные плиты ведут под землю и обратно. Жилы зависят от зоны, в лесу максимум железо, в Адском разломе встречаются алмазы и древние обломки.
+diff --git a/mod/build.gradle b/mod/build.gradle
+index dab9a2b..b406d54 100644
+--- a/mod/build.gradle
++++ b/mod/build.gradle
+@@ -1,5 +1,5 @@
+ plugins { id 'java-library'; id 'net.neoforged.moddev' version '2.0.148' }
+-version = '0.64.0'
++version = '0.65.0'
+ group = 'dev.bunkerrelay'
+ base { archivesName = 'bunkerrelay' }
+ java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+diff --git a/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java b/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java
+index ad398a4..a358fa8 100644
+--- a/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java
++++ b/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java
+@@ -314,7 +314,7 @@ public final class BunkerRelay {
+     if(!SectorPlan.contains(s.centerX,s.centerZ,s.activeSize,p.getX(),p.getZ())){teleport(p,p.serverLevel(),arrival(s));RaidRules.tell(p,"Граница зоны: возвращение к эвакуации.");}
+     if(ticks%4==0)ExpeditionTerrain.visit(p,s);
+     if(ticks%100==0)PolarCold.tick(p,s);
+-    if(ticks%4==0)InteriorSites.walk(p,s);
++    if(ticks%4==0){InteriorSites.walk(p,s);ExpeditionMine.walk(p,s);}
+     if(ticks%40==0){ZoneLandmarks.visit(p,s);ExpeditionRoads.visit(p,s);ReconChart.visit(p,s);if(s.sectorBuildings)SectorBuildings.discover(p,s);else ExpeditionContent.nearby(p,s);}
+    }
+    if(ticks%20==0&&safe(p.level())){p.setRemainingFireTicks(0);p.setAirSupply(p.getMaxAirSupply());p.getFoodData().setFoodLevel(20);if(p.getY()<p.level().getMinBuildHeight()+2)sendHome(p,s);}
+diff --git a/mod/src/main/java/dev/bunkerrelay/ExpeditionBuilder.java b/mod/src/main/java/dev/bunkerrelay/ExpeditionBuilder.java
+index ae183e1..ccd866e 100644
+--- a/mod/src/main/java/dev/bunkerrelay/ExpeditionBuilder.java
++++ b/mod/src/main/java/dev/bunkerrelay/ExpeditionBuilder.java
+@@ -4,6 +4,7 @@ import net.minecraft.server.level.ServerLevel;
+ /** Prepare only the 5x5 arrival chunks, then let vanilla generate on exploration. */
+ public final class ExpeditionBuilder {
+  private final ServerLevel level;private final RelayState state;private int chunk;
++ private ExpeditionMine mine;
+  private ExpeditionGrid.Planner planner;
+  public ExpeditionBuilder(ServerLevel l,RelayState s){level=l;state=s;}
+  public int percent(){return Math.min(99,chunk*100/(state.generating?33+ZoneLandmarks.COUNT:33));}
+@@ -27,6 +28,11 @@ public final class ExpeditionBuilder {
+    chunk++;
+    return false;
+   }
++  if(state.generating&&chunk==33+ZoneLandmarks.COUNT){
++   if(mine==null)mine=new ExpeditionMine(level,state);
++   if(!mine.step(level,state))return false;
++   chunk++;return false;
++  }
+   int y=StructureLevels.floor(level,state,"entry",state.centerX,state.centerZ,5,5,8);state.spawnY=y;
+   FieldArchitecture.extraction(level,new BlockPos(state.centerX,y,state.centerZ),false);
+   var arrival=new BlockPos(state.centerX,y,state.centerZ+10);
+diff --git a/mod/src/main/java/dev/bunkerrelay/ExpeditionGrid.java b/mod/src/main/java/dev/bunkerrelay/ExpeditionGrid.java
+index c0ac482..96f835d 100644
+--- a/mod/src/main/java/dev/bunkerrelay/ExpeditionGrid.java
++++ b/mod/src/main/java/dev/bunkerrelay/ExpeditionGrid.java
+@@ -10,7 +10,7 @@ import net.minecraft.server.level.ServerLevel;
+ final class ExpeditionGrid {
+     static final int SIDE=192;
+     static final int HALF=SIDE/2;
+-    static final int PLOTS=9+ZoneLandmarks.COUNT;
++    static final int PLOTS=10+ZoneLandmarks.COUNT;
+ 
+     static final class Planner {
+         private final ArrayList<BlockPos> cells=new ArrayList<>();
+diff --git a/mod/src/main/java/dev/bunkerrelay/ExpeditionMine.java b/mod/src/main/java/dev/bunkerrelay/ExpeditionMine.java
+new file mode 100644
+index 0000000..fbc3011
+--- /dev/null
++++ b/mod/src/main/java/dev/bunkerrelay/ExpeditionMine.java
+@@ -0,0 +1,124 @@
++package dev.bunkerrelay;
++
++import java.util.ArrayList;
++import java.util.Collections;
++import java.util.Random;
++import net.minecraft.core.BlockPos;
++import net.minecraft.server.level.ServerLevel;
++import net.minecraft.server.level.ServerPlayer;
++import net.minecraft.world.level.block.Block;
++import net.minecraft.world.level.block.Blocks;
++
++/** A connected network of chambers generated in bounded steps on its own expedition plot. */
++final class ExpeditionMine {
++    static final int SIDE=9, ROOMS=SIDE*SIDE;
++    private final int[] links=new int[ROOMS];
++    private static final int[] DX={0,1,0,-1}, DZ={-1,0,1,0};
++    private final BlockPos center;
++    private final String theme;
++    private final long seed;
++    private final Block rock;
++    private int room;
++
++    ExpeditionMine(ServerLevel level,RelayState state){
++        theme=state.activeTheme;
++        seed=state.seed;
++        var plot=ExpeditionGrid.point(state,ExpeditionGrid.PLOTS-1);
++        center=plot.atY(level.getMinBuildHeight()+20);
++        rock=switch(theme){case "hell"->Blocks.BLACKSTONE;case "winter"->Blocks.TUFF;
++            case "forest"->Blocks.STONE;case "infected"->Blocks.CALCITE;case "ash"->Blocks.BASALT;default->Blocks.DEEPSLATE;};
++        var rng=new Random(seed ^ plot.asLong());
++        var visited=new boolean[ROOMS];
++        connect(ROOMS/2,visited,rng);
++        for(int i=0;i<ROOMS;i++)if(i%SIDE<SIDE-1&&rng.nextInt(7)==0)link(i,1,i+1);
++    }
++
++    private void link(int a,int dir,int b){links[a]|=1<<dir;links[b]|=1<<((dir+2)%4);}
++    private void connect(int cell,boolean[] seen,Random rng){
++        seen[cell]=true;
++        var directions=new ArrayList<>(java.util.List.of(0,1,2,3));
++        Collections.shuffle(directions,rng);
++        for(int dir:directions){
++            int x=cell%SIDE+DX[dir],z=cell/SIDE+DZ[dir];
++            if(x<0||x>=SIDE||z<0||z>=SIDE)continue;
++            int next=x+SIDE*z;
++            if(!seen[next]){link(cell,dir,next);connect(next,seen,rng);}
++        }
++    }
++
++    static String title(String theme){return switch(theme){
++        case "forest"->"Лесной железный рудник";case "winter"->"Ледяные копи";case "ash"->"Обгоревшие штольни";
++        case "infected"->"Карантинные выработки";case "hell"->"Глубинные копи разлома";default->"Промышленный рудник";};}
++
++    boolean step(ServerLevel level,RelayState state){
++        if(room<ROOMS){carve(level,room++);return false;}
++        int y=StructureLevels.floor(level,state,"mine",center.getX(),center.getZ(),3,4,6);
++        var gate=center.atY(y);
++        for(int x:new int[]{-2,2})for(int h=0;h<4;h++)set(level,gate.offset(x,h,0),Blocks.STRIPPED_SPRUCE_LOG);
++        for(int x=-2;x<=2;x++)set(level,gate.offset(x,3,0),Blocks.DARK_OAK_PLANKS);
++        set(level,gate.above(2),Blocks.LANTERN);
++        set(level,gate.below(),Blocks.CUT_COPPER);
++        set(level,center.below(),Blocks.CUT_COPPER);
++        set(level,center.north(2).below(),Blocks.SHROOMLIGHT);
++        // A winding surface fissure beside the entrance, with a shallow way out at either end.
++        for(int i=-16;i<=16;i++){
++            int z=center.getZ()+13+(int)Math.round(3*Math.sin(i*.22+(seed&7)));
++            int depth=Math.min(7,1+(16-Math.abs(i))/2);
++            for(int w=-1;w<=1;w++){
++                int x=center.getX()+i,top=SurfacePlacement.ground(level,x,z+w);
++                for(int h=1;h<=depth-Math.abs(w);h++)set(level,new BlockPos(x,top-h,z+w),Blocks.AIR);
++            }
++        }
++        state.fieldRoutes.putLong("mineGate",gate.asLong());state.fieldRoutes.putLong("mineReturn",center.asLong());state.setDirty();
++        return true;
++    }
++
++    private Block ore(Random random){
++        int roll=random.nextInt(100);
++        return switch(theme){
++            case "hell"->roll<3?Blocks.ANCIENT_DEBRIS:roll<12?Blocks.DIAMOND_ORE:roll<45?Blocks.NETHER_GOLD_ORE:Blocks.NETHER_QUARTZ_ORE;
++            case "winter"->roll<25?Blocks.LAPIS_ORE:roll<65?Blocks.IRON_ORE:Blocks.COPPER_ORE;
++            case "industrial"->roll<35?Blocks.REDSTONE_ORE:roll<70?Blocks.IRON_ORE:Blocks.COPPER_ORE;
++            case "infected"->roll<22?Blocks.GOLD_ORE:roll<58?Blocks.REDSTONE_ORE:Blocks.IRON_ORE;
++            case "ash"->roll<8?Blocks.EMERALD_ORE:roll<48?Blocks.GOLD_ORE:Blocks.IRON_ORE;
++            default->roll<25?Blocks.IRON_ORE:roll<60?Blocks.COPPER_ORE:Blocks.COAL_ORE;
++        };
++    }
++
++    private void carve(ServerLevel level,int index){
++        var at=center.offset((index%SIDE-SIDE/2)*9,0,(index/SIDE-SIDE/2)*9);
++        var rng=new Random(RaidDirector.roll(seed,index,651));
++        int radius=2+rng.nextInt(2),height=3+rng.nextInt(3);
++        Block vein=ore(rng);
++        if(theme.equals("hell")&&index==Math.floorMod(seed,ROOMS))vein=Blocks.ANCIENT_DEBRIS;
++        if(theme.equals("hell")&&index==Math.floorMod(seed+1,ROOMS))vein=Blocks.DIAMOND_ORE;
++        for(int x=-4;x<=4;x++)for(int z=-4;z<=4;z++){
++            boolean hall=(Math.abs(x)<=1&&((z<0&&(links[index]&1)!=0)||(z>0&&(links[index]&4)!=0)))
++                ||(Math.abs(z)<=1&&((x>0&&(links[index]&2)!=0)||(x<0&&(links[index]&8)!=0)));
++            boolean cave=x*x+z*z<=radius*radius+1;
++            int clearance=cave?height-(Math.abs(x)+Math.abs(z))/3:hall?3:0;
++            for(int y=-1;y<=height;y++){
++                Block b=y>=0&&y<clearance?Blocks.CAVE_AIR:rock;
++                if(b==rock&&y==0&&z==-radius&&Math.abs(x)<=1)b=vein;
++                if(b==rock&&y==1&&z==-radius-1&&Math.abs(x)<=1)b=vein;
++                if(y==-1&&theme.equals("winter")&&index%4==1)b=Blocks.PACKED_ICE;
++                if(y==-1&&theme.equals("hell")&&index%6==2)b=Blocks.SOUL_SOIL;
++                set(level,at.offset(x,y,z),b);
++            }
++        }
++        if(index%6==0)set(level,at.above(height-1),Blocks.SHROOMLIGHT);
++    }
++    private static void set(ServerLevel level,BlockPos p,Block block){level.setBlock(p,block.defaultBlockState(),2);}
++
++    static void walk(ServerPlayer p,RelayState s){
++        if(!s.ready||s.generating||!RaidRules.active(p)||!s.fieldRoutes.contains("mineGate"))return;
++        var gate=BlockPos.of(s.fieldRoutes.getLong("mineGate"));var back=BlockPos.of(s.fieldRoutes.getLong("mineReturn"));
++        var feet=p.blockPosition();
++        boolean enter=feet.equals(gate);
++        if(!enter&&!feet.equals(back))return;
++        var to=(enter?back:gate).south(2);
++        p.moveTo(to.getX()+.5,to.getY(),to.getZ()+.5,p.getYRot(),p.getXRot());
++        p.connection.teleport(to.getX()+.5,to.getY(),to.getZ()+.5,p.getYRot(),p.getXRot());
++        p.fallDistance=0;RaidRules.tell(p,enter?title(s.activeTheme)+" · выход у освещённой медной плиты":"Вы у входа в шахту");
++    }
++}
+diff --git a/mod/src/main/java/dev/bunkerrelay/LiveRefreshTest.java b/mod/src/main/java/dev/bunkerrelay/LiveRefreshTest.java
+index 1d3adce..57a42dc 100644
+--- a/mod/src/main/java/dev/bunkerrelay/LiveRefreshTest.java
++++ b/mod/src/main/java/dev/bunkerrelay/LiveRefreshTest.java
+@@ -95,6 +95,34 @@ final class LiveRefreshTest {
+                 }
+                 check(raised&&lowered&&zone.getBlockState(sample).is(Blocks.GRASS_BLOCK),"terrain rises and recedes");
+             }finally{state.seed=savedSeed;zone.removeBlock(sample,false);}
++            var gate=BlockPos.of(state.fieldRoutes.getLong("mineGate"));
++            var mine=BlockPos.of(state.fieldRoutes.getLong("mineReturn"));
++            check(zone.getBlockState(gate.below()).is(Blocks.CUT_COPPER),"mine entrance");
++            var visitor=new FakePlayer(zone,new GameProfile(UUID.randomUUID(),"MineVisitor"));
++            var journal=RaidJournal.get(server);
++            journal.raids.put(visitor.getUUID(),new net.minecraft.nbt.CompoundTag());
++            try{
++                visitor.moveTo(gate.getX()+.5,gate.getY(),gate.getZ()+.5);
++                ExpeditionMine.walk(visitor,state);
++                check(visitor.blockPosition().equals(mine.south(2)),"mine teleport");
++                var reached=new java.util.HashSet<BlockPos>();
++                var queue=new java.util.ArrayDeque<BlockPos>();
++                queue.add(mine);reached.add(mine);
++                while(!queue.isEmpty()){
++                    var at=queue.remove();
++                    for(var dir:net.minecraft.core.Direction.Plane.HORIZONTAL){
++                        var dest=at.relative(dir,9);
++                        if(Math.abs(dest.getX()-mine.getX())>36||Math.abs(dest.getZ()-mine.getZ())>36||reached.contains(dest))continue;
++                        boolean open=true;
++                        for(int step=1;step<=9;step++)if(!zone.isEmptyBlock(at.relative(dir,step))||!zone.isEmptyBlock(at.relative(dir,step).above()))open=false;
++                        if(open){reached.add(dest);queue.add(dest);}
++                    }
++                }
++                check(reached.size()==ExpeditionMine.ROOMS,"81 accessible mine chambers");
++                visitor.moveTo(mine.getX()+.5,mine.getY(),mine.getZ()+.5);
++                ExpeditionMine.walk(visitor,state);
++                check(visitor.blockPosition().equals(gate.south(2)),"mine exit");
++            }finally{journal.raids.remove(visitor.getUUID());}
+             System.out.println("RELAY_GRID_PASS");
+             var allRooms=RaidDirector.get(server).rooms;
+             var rooms=allRooms.stream().filter(room->!room.getString("type").equals("landmark")).toList();
+diff --git a/mod/src/main/java/dev/bunkerrelay/ReconChart.java b/mod/src/main/java/dev/bunkerrelay/ReconChart.java
+index 2aa6611..deef007 100644
+--- a/mod/src/main/java/dev/bunkerrelay/ReconChart.java
++++ b/mod/src/main/java/dev/bunkerrelay/ReconChart.java
+@@ -75,6 +75,7 @@ public final class ReconChart extends ChestMenu {
+         entries.add(new Point("Площадка эвакуации",new BlockPos(state.centerX,state.spawnY,state.centerZ)));
+         entries.add(new Point("Полевое радио",RaidMission.radio(state)));
+         if(state.bossGeneration==state.generation)entries.add(new Point(RaidBosses.name(state),RaidBosses.arena(state)));
++        if(state.fieldRoutes.contains("mineGate"))entries.add(new Point(ExpeditionMine.title(state.activeTheme),BlockPos.of(state.fieldRoutes.getLong("mineGate"))));
+         var director=RaidDirector.get(owner.server);
+         if(director.sectorX==state.centerX&&director.sectorZ==state.centerZ)
+             director.rooms.stream().limit(4).forEach(room->entries.add(new Point(RaidDirector.roomName(room.getString("type")),
+diff --git a/mod/src/main/java/dev/bunkerrelay/mixin/ExpeditionDecoration.java b/mod/src/main/java/dev/bunkerrelay/mixin/ExpeditionDecoration.java
+index 0bc149a..dfbcf3c 100644
+--- a/mod/src/main/java/dev/bunkerrelay/mixin/ExpeditionDecoration.java
++++ b/mod/src/main/java/dev/bunkerrelay/mixin/ExpeditionDecoration.java
+@@ -19,6 +19,24 @@ abstract class ExpeditionDecoration {
+         BlockPos origin,CallbackInfoReturnable<Boolean> result){
+         if(!BunkerRelay.expedition(world.getLevel()))return;
+         var feature=((PlacedFeature)(Object)this).feature().value().feature();
++        var config=((PlacedFeature)(Object)this).feature().value().config();
++        if(config instanceof net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration ore){
++            String dim=world.getLevel().dimension().location().getPath();
++            for(var target:ore.targetStates){
++                String id=net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(target.state.getBlock()).getPath();
++                if(!id.endsWith("_ore")&&!id.equals("ancient_debris"))continue;
++                boolean basic=id.contains("coal")||id.contains("copper")||id.contains("iron");
++                boolean allowed=switch(dim){
++                    case "forest_expedition"->basic;
++                    case "polar_station"->basic||id.contains("lapis");
++                    case "city"->basic||id.contains("redstone");
++                    case "infected_city"->basic||id.contains("redstone")||id.contains("gold");
++                    case "ashlands"->basic||id.contains("gold")||id.contains("emerald");
++                    default->true;
++                };
++                if(!allowed){result.setReturnValue(false);return;}
++            }
++        }
+         if(feature==Feature.MONSTER_ROOM||feature==Feature.FOSSIL||feature==Feature.DESERT_WELL)
+             result.setReturnValue(false);
+     }
+diff --git a/mod/src/main/resources/META-INF/neoforge.mods.toml b/mod/src/main/resources/META-INF/neoforge.mods.toml
+index 0894450..beb8c4e 100644
+--- a/mod/src/main/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/main/resources/META-INF/neoforge.mods.toml
+@@ -3,7 +3,7 @@ loaderVersion="[4,)"
+ license="MIT"
+ [[mods]]
+ modId="bunkerrelay"
+-version="0.64.0"
++version="0.65.0"
+ displayName="Bunker Relay"
+ description="Cooperative bunker, garage and procedural expeditions. Early prototype."
+ [[dependencies.bunkerrelay]]
+@@ -56,7 +56,7 @@ side="BOTH"
+ [[dependencies.bunkerrelay]]
+ modId="relaylights"
+ type="required"
+-versionRange="[0.64.0]"
++versionRange="[0.65.0]"
+ ordering="AFTER"
+ side="BOTH"
+ 
+@@ -66,13 +66,13 @@ config="bunkerrelay.mixins.json"
+ [[dependencies.bunkerrelay]]
+ modId="relayfactories"
+ type="required"
+-versionRange="[0.64.0]"
++versionRange="[0.65.0]"
+ ordering="AFTER"
+ side="BOTH"
+ 
+ [[dependencies.bunkerrelay]]
+ modId="relayarsenal"
+ type="required"
+-versionRange="[0.64.0]"
++versionRange="[0.65.0]"
+ ordering="AFTER"
+ side="BOTH"
+diff --git a/mod/src/relayArsenal/resources/META-INF/neoforge.mods.toml b/mod/src/relayArsenal/resources/META-INF/neoforge.mods.toml
+index cdb2653..cc8cff2 100644
+--- a/mod/src/relayArsenal/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/relayArsenal/resources/META-INF/neoforge.mods.toml
+@@ -4,7 +4,7 @@ license="MIT"
+ 
+ [[mods]]
+ modId="relayarsenal"
+-version="0.64.0"
++version="0.65.0"
+ displayName="Relay Arsenal"
+ description="Historical TaCZ arsenal for Bunker Relay."
+ 
+diff --git a/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml b/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml
+index 1ae298f..73a46f1 100644
+--- a/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml
+@@ -4,7 +4,7 @@ license="MIT"
+ 
+ [[mods]]
+ modId="relayfactories"
+-version="0.64.0"
++version="0.65.0"
+ displayName="Relay Factories"
+ description="Factory structures for industrial expeditions."
+ 
+diff --git a/mod/src/relayLights/resources/META-INF/neoforge.mods.toml b/mod/src/relayLights/resources/META-INF/neoforge.mods.toml
+index 5c9e34a..5a8a60e 100644
+--- a/mod/src/relayLights/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/relayLights/resources/META-INF/neoforge.mods.toml
+@@ -4,7 +4,7 @@ license="MIT"
+ 
+ [[mods]]
+ modId="relaylights"
+-version="0.64.0"
++version="0.65.0"
+ displayName="Relay Lights"
+ description="Directional lights with personal and multiplayer modes."
+ 
+diff --git a/modrinth.index.json b/modrinth.index.json
+index b075ed2..a8b7e52 100644
+--- a/modrinth.index.json
++++ b/modrinth.index.json
+@@ -1,7 +1,7 @@
+ {
+   "formatVersion": 1,
+   "game": "minecraft",
+-  "versionId": "0.64.0",
++  "versionId": "0.65.0",
+   "name": "Bunker Relay",
+   "summary": "Cooperative expeditions, ECHO encounters, threats, extraction and persistent bunker.",
+   "files": [
+diff --git a/tools/package_release.py b/tools/package_release.py
+index 80ada45..b3902a2 100644
+--- a/tools/package_release.py
++++ b/tools/package_release.py
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env python3
+ import hashlib,pathlib,shutil,zipfile,sys
+ ROOT=pathlib.Path(__file__).resolve().parents[1];dist=ROOT/'dist';dist.mkdir(exist_ok=True)
+-VERSION='0.64.0';source='--source' in sys.argv;jar=ROOT/f'mod/build/libs/bunkerrelay-{VERSION}.jar'
++VERSION='0.65.0';source='--source' in sys.argv;jar=ROOT/f'mod/build/libs/bunkerrelay-{VERSION}.jar'
+ lights=ROOT/f'mod/build/libs/relaylights-{VERSION}.jar'
+ factories=ROOT/f'mod/build/libs/relayfactories-{VERSION}.jar'
+ if not source:
+@@ -72,6 +72,7 @@ if not source:
+   z.write(ROOT/'WORK_0.62.md','overrides/WORK_0.62.md')
+   z.write(ROOT/'WORK_0.63.md','overrides/WORK_0.63.md')
+   z.write(ROOT/'WORK_0.64.md','overrides/WORK_0.64.md')
++  z.write(ROOT/'WORK_0.65.md','overrides/WORK_0.65.md')
+   z.write(arsenal,'overrides/mods/'+arsenal.name)
+   z.write(factories,'overrides/mods/'+factories.name)
+   z.write(lights,'overrides/mods/'+lights.name)
