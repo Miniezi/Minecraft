@@ -6932,3 +6932,29 @@ index 814f6e8..80ada45 100644
    z.write(arsenal,'overrides/mods/'+arsenal.name)
    z.write(factories,'overrides/mods/'+factories.name)
    z.write(lights,'overrides/mods/'+lights.name)
+diff --git a/mod/src/main/resources/data/bunkerrelay/neoforge/biome_modifier/expedition_spore.json b/mod/src/main/resources/data/bunkerrelay/neoforge/biome_modifier/expedition_spore.json
+index 91e9c20..2a472cb 100644
+--- a/mod/src/main/resources/data/bunkerrelay/neoforge/biome_modifier/expedition_spore.json
++++ b/mod/src/main/resources/data/bunkerrelay/neoforge/biome_modifier/expedition_spore.json
+@@ -7,7 +7,20 @@
+     "minecraft:forest",
+     "minecraft:dark_forest",
+     "minecraft:plains",
+-    "minecraft:badlands"
++    "minecraft:badlands",
++    "minecraft:birch_forest",
++    "minecraft:flower_forest",
++    "minecraft:old_growth_pine_taiga",
++    "minecraft:ice_spikes",
++    "minecraft:snowy_plains",
++    "minecraft:snowy_taiga",
++    "minecraft:grove",
++    "minecraft:snowy_slopes",
++    "minecraft:soul_sand_valley",
++    "minecraft:warped_forest",
++    "minecraft:nether_wastes",
++    "minecraft:crimson_forest",
++    "minecraft:basalt_deltas"
+   ],
+   "spawners": [
+     {
