@@ -1,0 +1,50 @@
+name: Build Bunker Relay
+on:
+  push:
+    branches: [relay-jeweler-0671]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Extract verified project sources
+        run: |
+          echo '4b72564da02a3fdfae1752e814000287e3a6d830ce5764fda7b5ad1e91542d90  Bunker-Relay-0.51.3.zip' | sha256sum -c -
+          mkdir -p sources
+          unzip -q Bunker-Relay-0.51.3.zip -d sources
+      - name: Apply patch and lock optional modules
+        working-directory: sources/Bunker-Relay
+        run: |
+          patch -p1 < ../../release.patch
+          patch -p1 < ../../apotheosis.patch
+          patch -p1 < ../../jeweler.patch
+          python3 tools/factory_templates.py
+          python3 tools/resolve_pack.py
+          python3 tools/progression_recipes.py
+      - name: Compile both mods
+        working-directory: sources/Bunker-Relay/mod
+        run: bash gradlew build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: relay-core-0671
+          path: sources/Bunker-Relay/mod/build/libs/bunkerrelay-0.67.1.jar
+          if-no-files-found: error
+      - name: Dedicated server expedition test
+        working-directory: sources/Bunker-Relay
+        timeout-minutes: 25
+        run: |
+          mkdir -p mod/run
+          echo 'eula=true' > mod/run/eula.txt
+          python3 tools/download_mods.py mod/run/mods --side server
+          cd mod
+          JDK_JAVA_OPTIONS=-Dbunkerrelay.zone27Test=true timeout 18m bash gradlew runServer | tee server-test.log
+          grep -q RELAY_052_BRIDGE_PASS server-test.log
+          grep -q RELAY_016_LIVE_PASS server-test.log
+          grep -q RELAY_POLAR_PASS server-test.log
