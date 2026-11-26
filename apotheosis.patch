@@ -1,0 +1,1230 @@
+diff -ruN orig/Bunker-Relay/README_RU.md Bunker-Relay/README_RU.md
+--- a/README_RU.md	2026-11-26 22:55:46.603728863 +0500
++++ b/README_RU.md	2026-11-26 22:56:53.028809517 +0500
+@@ -1,4 +1,4 @@
+-# Bunker Relay 0.66.1
++# Bunker Relay 0.67.0
+ 
+ Изменения релиза см. в WORK_0.56.md.
+ 
+diff -ruN orig/Bunker-Relay/WORK_0.67.0.md Bunker-Relay/WORK_0.67.0.md
+--- a/WORK_0.67.0.md	1970-01-01 05:00:00.000000000 +0500
++++ b/WORK_0.67.0.md	2026-11-26 22:56:53.026560099 +0500
+@@ -0,0 +1,5 @@
++# Перековка Apotheosis
++
++В купленной кузнице установлен стол Apotheosis. Игрок выбирает результат в штатном меню. Стоимость по редкости — 1, 2, 3, 5 и 8 уровней опыта. Предыдущие бонусы Relay к урону и защите отключены. Старые кристаллы в инвентаре обмениваются на материал обычной редкости.
++
++Самоцветы и материалы встречаются в ящиках шахтёра, оружейника и лаборатории и выпадают с заражённых вылазки. Совершенный самоцвет стража стоит 65 000 кредитов или выпадает с босса арены с вероятностью 1/8. Верхний уровень чистоты исключён из таблицы случайного выбора и огранки. У усиленных заражённых больше здоровья и урона на высоких сложностях. Прочность боссов и мини-боссов повышена.
+diff -ruN orig/Bunker-Relay/mod/build.gradle Bunker-Relay/mod/build.gradle
+--- a/mod/build.gradle	2026-11-26 22:55:46.603809264 +0500
++++ b/mod/build.gradle	2026-11-26 22:56:38.842069075 +0500
+@@ -1,5 +1,5 @@
+ plugins { id 'java-library'; id 'net.neoforged.moddev' version '2.0.148' }
+-version = '0.66.1'
++version = '0.67.0'
+ group = 'dev.bunkerrelay'
+ base { archivesName = 'bunkerrelay' }
+ java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+diff -ruN orig/Bunker-Relay/mod/src/main/java/dev/bunkerrelay/BossIntegrationTest.java Bunker-Relay/mod/src/main/java/dev/bunkerrelay/BossIntegrationTest.java
+--- a/mod/src/main/java/dev/bunkerrelay/BossIntegrationTest.java	2026-11-26 22:55:46.587092082 +0500
++++ b/mod/src/main/java/dev/bunkerrelay/BossIntegrationTest.java	2026-11-26 22:56:38.809431199 +0500
+@@ -58,7 +58,7 @@
+             check(level.getEntity(state.bossId) instanceof Mob,theme+" spawn");
+             var boss=(Mob)level.getEntity(state.bossId);
+             check(net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(boss.getType()).getPath().equals(SporeSites.calamity(theme)),theme+" calamity species");
+-            check(boss.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH).getBaseValue()==255,theme+" solo scaling");
++            check(boss.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH).getBaseValue()==285,theme+" solo scaling");
+             check(RaidBosses.bar.getPlayers().contains(player),theme+" bar");
+             boss.setCustomName(Component.literal(RaidBosses.name(state)));
+             state.bossAbility=8;
+diff -ruN orig/Bunker-Relay/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java Bunker-Relay/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java
+--- a/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java	2026-11-26 22:55:46.603446557 +0500
++++ b/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java	2026-11-26 22:56:38.807343871 +0500
+@@ -43,12 +43,12 @@
+      case "tacz:scar_h" -> 1.06f;
+      default -> 1f;
+     };
+-    multiplier*=1f+.04f*ForgeRoom.rank(stack);
++
+     multiplier*=1f+TrophyWeapons.bonus(stack)/100f;
+     if(multiplier!=1f)bullet.setShotDamageMultiplier(multiplier);
+    }
+   });
+-  NeoForge.EVENT_BUS.addListener(FieldTransport::recharge);CargoBike.register();ForgeRoom.register();NeoForge.EVENT_BUS.addListener(net.neoforged.bus.api.EventPriority.HIGHEST,CargoBike::open);NeoForge.EVENT_BUS.addListener(CargoBike::unload);
++  NeoForge.EVENT_BUS.addListener(FieldTransport::recharge);CargoBike.register();ForgeRoom.register();NeoForge.EVENT_BUS.addListener(ForgeRoom::drops);NeoForge.EVENT_BUS.addListener(net.neoforged.bus.api.EventPriority.HIGHEST,CargoBike::open);NeoForge.EVENT_BUS.addListener(CargoBike::unload);
+   TrophyResearch.register();Medicine.register();BossTrophies.ITEMS.register(modBus);RelayMenus.TYPES.register(modBus);StructureLoot.TYPES.register(modBus);modBus.addListener(ExitSignal::register);
+   RaidRules.register();DownedPlayers.register();NeoForge.EVENT_BUS.addListener(net.neoforged.bus.api.EventPriority.LOWEST,RaidBosses::died);NeoForge.EVENT_BUS.addListener(net.neoforged.bus.api.EventPriority.LOWEST,MiniBosses::died);NeoForge.EVENT_BUS.addListener(net.neoforged.bus.api.EventPriority.LOWEST,(ServerAboutToStartEvent e)->CityIntegration.profiles());
+   NeoForge.EVENT_BUS.addListener(this::clonePlayer);
+@@ -278,7 +278,7 @@
+  private void interact(PlayerInteractEvent.RightClickBlock e){
+   if(e.getHand()!=InteractionHand.MAIN_HAND||!(e.getEntity() instanceof ServerPlayer player))return;
+   var state=RelayState.get(player.server);
+-  if(ForgeRoom.use(player,e.getPos())){e.setCanceled(true);return;}
++  ForgeRoom.migrateBench(player,e.getPos());
+   if(!RaidRules.active(player)&&state.annexBuilt&&player.level().dimension().equals(HUB)&&e.getPos().equals(BunkerAnnex.exit(state))){
+    teleport(player,player.serverLevel(),homePos(state));e.setCanceled(true);return;
+   }
+@@ -307,7 +307,7 @@
+   if(ticks%20==0){BasePower.second(server,s);RaidDirector.second(server,s);RaidMission.second(server,s);Navigation.signal(server,s);RaidBosses.second(server,s);MiniBosses.second(server,s);}
+   if(ticks%4==0)Airdrop.animate(server,s,ticks%20);
+   for(var p:server.getPlayerList().getPlayers()){
+-   if(ticks%20==0){TrashRecovery.drain(p);RaidHud.pulse(p);CargoContract.signal(p,s);if(p.containerMenu instanceof TerminalMenu menu)menu.refreshPower();}
++   if(ticks%20==0){ForgeRoom.migrateItems(p);TrashRecovery.drain(p);RaidHud.pulse(p);CargoContract.signal(p,s);if(p.containerMenu instanceof TerminalMenu menu)menu.refreshPower();}
+    DownedPlayers.tick(p,s);
+    if(p.tickCount%20==0)PdaProtection.restore(p);
+    RaidRules.tick(p,s);
+@@ -382,10 +382,7 @@
+   return !SectorPlan.contains(s.centerX,s.centerZ,s.activeSize,pos.getX()+0.5,pos.getZ()+0.5);
+  }
+  private void damage(LivingIncomingDamageEvent e){if(safe(e.getEntity().level())&&e.getEntity() instanceof ServerPlayer){e.setCanceled(true);return;}
+-  float amount=e.getAmount();
+-  if(e.getSource().getDirectEntity() instanceof ServerPlayer user&&user.getMainHandItem().getItem() instanceof net.minecraft.world.item.SwordItem)amount*=1f+.04f*ForgeRoom.rank(user.getMainHandItem());
+-  int protection=0;for(var armor:e.getEntity().getArmorSlots())protection+=ForgeRoom.rank(armor);
+-  e.setAmount(amount*(1f-.01f*protection));}
++ }
+  private void spawn(MobSpawnEvent.PositionCheck e){
+   var mob=e.getEntity();
+   boolean spore=SporeEncounters.isSpore(mob);
+diff -ruN orig/Bunker-Relay/mod/src/main/java/dev/bunkerrelay/ExpeditionContent.java Bunker-Relay/mod/src/main/java/dev/bunkerrelay/ExpeditionContent.java
+--- a/mod/src/main/java/dev/bunkerrelay/ExpeditionContent.java	2026-11-25 01:05:22.000000000 +0500
++++ b/mod/src/main/java/dev/bunkerrelay/ExpeditionContent.java	2026-11-26 22:56:38.809988530 +0500
+@@ -24,8 +24,8 @@
+    e.setCanceled(true);return;
+   }
+   if(!(entity instanceof Mob mob)||!SporeEncounters.isSpore(mob)||mob.getTags().contains("relay_scaled"))return;if((!s.ready&&!s.generating)||!level.dimension().equals(BunkerRelay.key(s.activeDimension))||!SectorPlan.contains(s.centerX,s.centerZ,s.activeSize,mob.getX(),mob.getZ()))return;
+-  int tier=s.activeDifficulty;var health=mob.getAttribute(Attributes.MAX_HEALTH);if(health!=null){health.setBaseValue(health.getBaseValue()*(1+(tier-1)*0.35));mob.setHealth(mob.getMaxHealth());}
+-  var attack=mob.getAttribute(Attributes.ATTACK_DAMAGE);if(attack!=null)attack.setBaseValue(attack.getBaseValue()*(1+(tier-1)*0.2));mob.addTag("relay_scaled");
++  int tier=s.activeDifficulty;var health=mob.getAttribute(Attributes.MAX_HEALTH);if(health!=null){health.setBaseValue(health.getBaseValue()*(1+(tier-1)*0.48));mob.setHealth(mob.getMaxHealth());}
++  var attack=mob.getAttribute(Attributes.ATTACK_DAMAGE);if(attack!=null)attack.setBaseValue(attack.getBaseValue()*(1+(tier-1)*0.26));mob.addTag("relay_scaled");
+  }
+  public static void nearby(ServerPlayer player,RelayState s){
+   var level=player.serverLevel();int cellX=Math.floorDiv(player.getBlockX()-s.centerX,192),cellZ=Math.floorDiv(player.getBlockZ()-s.centerZ,192);
+diff -ruN orig/Bunker-Relay/mod/src/main/java/dev/bunkerrelay/FieldGearTest.java Bunker-Relay/mod/src/main/java/dev/bunkerrelay/FieldGearTest.java
+--- a/mod/src/main/java/dev/bunkerrelay/FieldGearTest.java	2026-11-26 22:55:46.603873401 +0500
++++ b/mod/src/main/java/dev/bunkerrelay/FieldGearTest.java	2026-11-26 22:56:38.810096102 +0500
+@@ -25,21 +25,8 @@
+         var bench=BlockPos.of(state.structureLayouts.getLong("forgeBench"));
+         player.moveTo(bench.getX()+1,bench.getY(),bench.getZ()+.5);
+         player.getInventory().clearContent();
+-        for(int slot:new int[]{18,39,40}){
+-            ItemStack item=new ItemStack(slot==39?Items.IRON_HELMET:Items.IRON_SWORD);
+-            player.getInventory().setItem(slot,item);
+-            var menu=new ForgeMenu(1,player,bench);
+-            menu.clicked(slot,0,net.minecraft.world.inventory.ClickType.PICKUP,player);
+-            menu.clicked(53,0,net.minecraft.world.inventory.ClickType.PICKUP,player);
+-            check(ForgeRoom.rank(item)==0,"no material");
+-            player.getInventory().setItem(12,new ItemStack(ForgeRoom.GEM.get(),2));
+-            menu.broadcastChanges();
+-            menu.clicked(53,0,net.minecraft.world.inventory.ClickType.PICKUP,player);
+-            check(ForgeRoom.rank(item)>0&&player.getInventory().getItem(12).getCount()==1,"selected inventory item");
+-            menu.clicked(53,0,net.minecraft.world.inventory.ClickType.PICKUP,player);
+-            check(player.getInventory().getItem(12).getCount()==1,"one confirmed roll");
+-            player.getInventory().clearContent();
+-        }
++        check(hub.getBlockState(bench).is(ForgeRoom.table()),"native reforging bench");
++        check(!ForgeRoom.gem(hub.registryAccess(),"guardian","perfect").isEmpty(),"perfect gem");
+         var bike=BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse("simplebikes:basic_bike")).create(hub);
+         CargoBike.bag(bike).setItem(5,new ItemStack(Items.DIAMOND,3));
+         CargoBike.bags.remove(bike);
+diff -ruN orig/Bunker-Relay/mod/src/main/java/dev/bunkerrelay/ForgeMenu.java Bunker-Relay/mod/src/main/java/dev/bunkerrelay/ForgeMenu.java
+--- a/mod/src/main/java/dev/bunkerrelay/ForgeMenu.java	2026-11-26 22:55:46.603928274 +0500
++++ b/mod/src/main/java/dev/bunkerrelay/ForgeMenu.java	1970-01-01 05:00:00.000000000 +0500
+@@ -1,78 +0,0 @@
+-package dev.bunkerrelay;
+-
+-import net.minecraft.core.BlockPos;
+-import net.minecraft.core.component.DataComponents;
+-import net.minecraft.network.chat.Component;
+-import net.minecraft.server.level.ServerPlayer;
+-import net.minecraft.world.SimpleContainer;
+-import net.minecraft.world.entity.player.Player;
+-import net.minecraft.world.inventory.*;
+-import net.minecraft.world.item.*;
+-import net.minecraft.world.level.block.Blocks;
+-
+-final class ForgeMenu extends ChestMenu {
+-    private final ServerPlayer owner;
+-    private final BlockPos bench;
+-    private final ItemStack[] previous;
+-    private int selected=-1;
+-    private ItemStack choice=ItemStack.EMPTY;
+-
+-    ForgeMenu(int id,ServerPlayer player,BlockPos bench){
+-        super(MenuType.GENERIC_9x6,id,player.getInventory(),new SimpleContainer(54),6);
+-        this.owner=player;
+-        this.bench=bench;
+-        previous=new ItemStack[player.getInventory().getContainerSize()];
+-        refresh();
+-    }
+-
+-    private void refresh(){
+-        var panel=getContainer();
+-        panel.clearContent();
+-        var inventory=owner.getInventory();
+-        if(selected>=0&&!ItemStack.matches(choice,inventory.getItem(selected)))selected=-1;
+-        int crystals=0;
+-        for(int i=0;i<previous.length;i++){
+-            var item=inventory.getItem(i);
+-            previous[i]=item.copy();
+-            if(item.is(ForgeRoom.GEM.get()))crystals+=item.getCount();
+-            if(!ForgeRoom.eligible(item))continue;
+-            var icon=item.copy();
+-            if(i==selected)icon.set(DataComponents.CUSTOM_NAME,Component.literal("✓ ").append(item.getHoverName()));
+-            panel.setItem(i,icon);
+-        }
+-        var cost=new ItemStack(ForgeRoom.GEM.get());
+-        cost.set(DataComponents.CUSTOM_NAME,Component.literal("Нужно: 1 кристалл · в наличии: "+crystals));
+-        panel.setItem(49,cost);
+-        var action=new ItemStack(selected>=0&&crystals>0?Items.SMITHING_TABLE:Items.GRAY_DYE);
+-        action.set(DataComponents.CUSTOM_NAME,Component.literal(selected<0?"Выберите предмет":crystals==0?"Нужен кузнечный кристалл":"Перековать за 1 кристалл").append(selected<0?"":" · "+choice.getHoverName().getString()));
+-        panel.setItem(53,action);
+-    }
+-
+-    @Override public void broadcastChanges(){
+-        if(previous!=null)for(int i=0;i<previous.length;i++)if(!ItemStack.matches(previous[i],owner.getInventory().getItem(i))){refresh();break;}
+-        super.broadcastChanges();
+-    }
+-
+-    @Override public void clicked(int slot,int button,ClickType type,Player player){
+-        if(!stillValid(player)||button!=0||type!=ClickType.PICKUP)return;
+-        var inventory=owner.getInventory();
+-        if(slot>=0&&slot<previous.length){
+-            var live=inventory.getItem(slot);
+-            if(ForgeRoom.eligible(live)&&ItemStack.matches(previous[slot],live)){selected=slot;choice=live.copy();}
+-        }else if(slot==53&&selected>=0){
+-            var live=inventory.getItem(selected);
+-            if(ItemStack.matches(choice,live)&&ForgeRoom.eligible(live))
+-                for(int i=0;i<previous.length;i++)if(inventory.getItem(i).is(ForgeRoom.GEM.get())){
+-                    ForgeRoom.apply(owner,live,inventory.getItem(i));selected=-1;choice=ItemStack.EMPTY;break;
+-                }
+-        }
+-        refresh();broadcastChanges();
+-    }
+-    @Override public ItemStack quickMoveStack(Player player,int slot){return ItemStack.EMPTY;}
+-    @Override public boolean stillValid(Player p){
+-        return p==owner&&RelayEconomy.safe(owner)&&owner.level().dimension().equals(BunkerRelay.HUB)
+-            &&owner.distanceToSqr(bench.getX()+.5,bench.getY()+.5,bench.getZ()+.5)<=64
+-            &&owner.level().getBlockState(bench).is(Blocks.SMITHING_TABLE)
+-            &&BaseUpgrades.has(owner,BaseUpgrades.Upgrade.FORGE);
+-    }
+-}
+diff -ruN orig/Bunker-Relay/mod/src/main/java/dev/bunkerrelay/ForgeRoom.java Bunker-Relay/mod/src/main/java/dev/bunkerrelay/ForgeRoom.java
+--- a/mod/src/main/java/dev/bunkerrelay/ForgeRoom.java	2026-11-26 22:55:46.603969857 +0500
++++ b/mod/src/main/java/dev/bunkerrelay/ForgeRoom.java	2026-11-26 22:57:17.805091247 +0500
+@@ -25,36 +25,64 @@
+                     (Math.abs(a)==4||Math.abs(b)==4)&&!(b==4&&Math.abs(a)<=1&&h<3)?Blocks.STONE_BRICKS:Blocks.AIR;
+                 level.setBlock(o.offset(a,h,b),block.defaultBlockState(),2);
+             }
+-            level.setBlock(o,Blocks.SMITHING_TABLE.defaultBlockState(),2);
++            level.setBlock(o,table().defaultBlockState(),2);
+             level.setBlock(o.west(2),Blocks.ANVIL.defaultBlockState(),2);
+             level.setBlock(o.east(2),Blocks.BLAST_FURNACE.defaultBlockState(),2);
+             state.structureLayouts.putLong("forgeBench",o.asLong());state.setDirty();return true;
+         }
+         return false;
+     }
+-    static int rank(ItemStack s){return Math.clamp(s.getOrDefault(DataComponents.CUSTOM_DATA,CustomData.EMPTY).copyTag().getInt("relayForgeRank"),0,3);}
+-    static boolean use(ServerPlayer p,BlockPos at){
+-        var state=RelayState.get(p.server);
+-        if(!p.level().dimension().equals(BunkerRelay.HUB)||!state.structureLayouts.contains("forgeBench")||at.asLong()!=state.structureLayouts.getLong("forgeBench"))return false;
+-        p.openMenu(new net.minecraft.world.SimpleMenuProvider((id,inv,who)->new ForgeMenu(id,p,at),Component.literal("Перековка · выберите предмет")));
+-        return true;
+-    }
+-    static boolean eligible(ItemStack item){
+-        return !item.isEmpty()&&!StarterKit.marked(item)&&(item.getItem() instanceof com.tacz.guns.api.item.IGun
+-            ||item.getItem() instanceof ArmorItem||item.getItem() instanceof SwordItem);
+-    }
+-    static void apply(ServerPlayer p,ItemStack item,ItemStack crystal){
+-        if(!eligible(item)||!crystal.is(GEM.get()))return;
+-        int roll=p.getRandom().nextInt(100);
+-        int tier=roll<55?1:roll<90?2:3;
+-        String prefix=new String[]{"","Добротный","Отборный","Мастерский"}[tier];
+-        var data=item.getOrDefault(DataComponents.CUSTOM_DATA,CustomData.EMPTY).copyTag();
+-        if(!data.contains("relayForgeBase"))data.putString("relayForgeBase",item.getHoverName().getString());
+-        data.putInt("relayForgeRank",tier);item.set(DataComponents.CUSTOM_DATA,CustomData.of(data));
+-        item.set(DataComponents.RARITY,new Rarity[]{Rarity.COMMON,Rarity.UNCOMMON,Rarity.RARE,Rarity.EPIC}[tier]);
+-        item.set(DataComponents.CUSTOM_NAME,Component.literal(prefix+" · "+data.getString("relayForgeBase")));
+-        crystal.shrink(1);RelayEconomy.save(p);
+-        RaidRules.tell(p,"Перековка · "+prefix+" · "+(item.getItem() instanceof ArmorItem?"защита +"+tier+"%":"урон +"+(tier*4)+"%"));
++    static net.minecraft.world.level.block.Block table(){
++        return net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(net.minecraft.resources.ResourceLocation.parse("apotheosis:reforging_table"));
++    }
++    static void migrateBench(ServerPlayer player,BlockPos pos){
++        var state=RelayState.get(player.server);
++        if(player.level().dimension().equals(BunkerRelay.HUB) && state.structureLayouts.contains("forgeBench")
++                && pos.asLong()==state.structureLayouts.getLong("forgeBench") && player.level().getBlockState(pos).is(Blocks.SMITHING_TABLE)){
++            player.level().setBlockAndUpdate(pos,table().defaultBlockState());
++        }
++    }
++    static void migrateItems(ServerPlayer player){
++        var inv=player.getInventory();
++        for(int i=0;i<inv.getContainerSize();i++){
++            var item=inv.getItem(i);
++            if(item.is(GEM.get())){
++                inv.setItem(i,new ItemStack(material(0),item.getCount()));
++                continue;
++            }
++            var custom=item.get(DataComponents.CUSTOM_DATA);
++            if(custom==null || !custom.copyTag().contains("relayForgeRank"))continue;
++            var tag=custom.copyTag();
++            String base=tag.getString("relayForgeBase");
++            var name=item.get(DataComponents.CUSTOM_NAME);
++            if(name!=null && java.util.List.of("Добротный","Отборный","Мастерский").stream().anyMatch(prefix->name.getString().equals(prefix+" · "+base)))
++                item.set(DataComponents.CUSTOM_NAME,Component.literal(base));
++            item.remove(DataComponents.RARITY);
++            tag.remove("relayForgeBase");tag.remove("relayForgeRank");
++            if(tag.isEmpty())item.remove(DataComponents.CUSTOM_DATA);else item.set(DataComponents.CUSTOM_DATA,CustomData.of(tag));
++            inv.setChanged();
++        }
++    }
++    static Item material(int tier){
++        String[] ids={"mysterious_scrap_metal","timeworn_fabric","luminous_crystal_shard","arcane_sands","godforged_pearl"};
++        return net.minecraft.core.registries.BuiltInRegistries.ITEM.get(net.minecraft.resources.ResourceLocation.parse("apotheosis:"+ids[tier]));
++    }
++    static ItemStack gem(net.minecraft.core.HolderLookup.Provider registries,String type,String purity){
++        var tag=new net.minecraft.nbt.CompoundTag();
++        tag.putString("id","apotheosis:gem");tag.putInt("count",1);
++        var components=new net.minecraft.nbt.CompoundTag();
++        components.putString("apotheosis:gem","apotheosis:core/"+type);
++        components.putString("apotheosis:purity",purity);
++        tag.put("components",components);
++        return ItemStack.parse(registries,tag).orElseThrow();
++    }
++    static void drops(net.neoforged.neoforge.event.entity.living.LivingDropsEvent event){
++        var mob=event.getEntity();
++        if(!(event.getSource().getEntity() instanceof ServerPlayer player) || !BunkerRelay.expedition(player.level()) || !SporeEncounters.isSpore(mob))return;
++        var random=mob.getRandom();
++        if(random.nextInt(24)!=0)return;
++        var loot=random.nextInt(3)==0?gem(player.registryAccess(),"guardian","chipped"):new ItemStack(material(random.nextInt(Math.clamp(RelayState.get(player.server).activeLoot,1,5))));
++        event.getDrops().add(new net.minecraft.world.entity.item.ItemEntity(mob.level(),mob.getX(),mob.getY(),mob.getZ(),loot));
+     }
+     private ForgeRoom(){}
+ }
+diff -ruN orig/Bunker-Relay/mod/src/main/java/dev/bunkerrelay/MiniBosses.java Bunker-Relay/mod/src/main/java/dev/bunkerrelay/MiniBosses.java
+--- a/mod/src/main/java/dev/bunkerrelay/MiniBosses.java	2026-11-26 22:55:46.587847441 +0500
++++ b/mod/src/main/java/dev/bunkerrelay/MiniBosses.java	2026-11-26 22:56:38.809494574 +0500
+@@ -126,7 +126,7 @@
+         mob.setCustomNameVisible(true);
+         mob.setPersistenceRequired();
+         kind.combat.configure(mob);
+-        mob.getAttribute(Attributes.MAX_HEALTH).setBaseValue((kind==Kind.CANTEEN?32:48)+8*state.activeDifficulty);
++        mob.getAttribute(Attributes.MAX_HEALTH).setBaseValue((kind==Kind.CANTEEN?32:48)+11*state.activeDifficulty);
+         var damage=mob.getAttribute(Attributes.ATTACK_DAMAGE);
+         if(damage!=null)damage.setBaseValue(4+state.activeDifficulty);
+         mob.setHealth(mob.getMaxHealth());
+diff -ruN orig/Bunker-Relay/mod/src/main/java/dev/bunkerrelay/RaidBosses.java Bunker-Relay/mod/src/main/java/dev/bunkerrelay/RaidBosses.java
+--- a/mod/src/main/java/dev/bunkerrelay/RaidBosses.java	2026-11-26 22:55:46.587937327 +0500
++++ b/mod/src/main/java/dev/bunkerrelay/RaidBosses.java	2026-11-26 22:56:38.809341634 +0500
+@@ -25,7 +25,7 @@
+  }
+  public static void second(MinecraftServer server,RelayState s){if(!s.ready||s.bossGeneration!=s.generation||s.bossDefeated){reset();return;}var level=server.getLevel(BunkerRelay.key(s.activeDimension));if(level==null)return;var pos=arena(s);var players=server.getPlayerList().getPlayers().stream().filter(p->p.isAlive()&&!p.isSpectator()&&RaidRules.active(p)&&p.serverLevel()==level&&p.blockPosition().distSqr(pos)<140*140).toList();encounter(server,s,level,players);}
+  static void encounter(MinecraftServer server,RelayState s,ServerLevel level,java.util.List<ServerPlayer> players){var pos=arena(s);if(players.isEmpty()){reset();if(s.bossAbility!=0){s.bossAbility=0;s.setDirty();}return;}Mob boss;
+-  if(s.bossId==null){boss=SporeSites.boss(level,s.activeTheme);if(boss==null)return;boss.moveTo(pos.getX()+.5,pos.getY(),pos.getZ()+.5,0,0);boss.setCustomName(appearance(s,boss));boss.setCustomNameVisible(true);boss.setPersistenceRequired();boss.getAttribute(Attributes.MAX_HEALTH).setBaseValue(120+45*s.activeDifficulty+30*Math.clamp(players.size()-1,0,3));var attack=boss.getAttribute(Attributes.ATTACK_DAMAGE);if(attack!=null)attack.setBaseValue(5+2*s.activeDifficulty);boss.setHealth(boss.getMaxHealth());boss.getPersistentData().putBoolean("relay_boss",true);boss.addTag("relay_scaled");if(appearance(s,boss).getStyle().getInsertion()!=null&&(s.activeTheme.equals("forest")||s.activeTheme.equals("ash"))){boss.setItemSlot(EquipmentSlot.MAINHAND,new ItemStack(s.activeTheme.equals("forest")?Items.IRON_AXE:Items.IRON_SWORD));boss.setDropChance(EquipmentSlot.MAINHAND,0);}if(!level.addFreshEntity(boss))return;s.bossId=boss.getUUID();s.setDirty();}
++  if(s.bossId==null){boss=SporeSites.boss(level,s.activeTheme);if(boss==null)return;boss.moveTo(pos.getX()+.5,pos.getY(),pos.getZ()+.5,0,0);boss.setCustomName(appearance(s,boss));boss.setCustomNameVisible(true);boss.setPersistenceRequired();boss.getAttribute(Attributes.MAX_HEALTH).setBaseValue(120+55*s.activeDifficulty+30*Math.clamp(players.size()-1,0,3));var attack=boss.getAttribute(Attributes.ATTACK_DAMAGE);if(attack!=null)attack.setBaseValue(5+2*s.activeDifficulty);boss.setHealth(boss.getMaxHealth());boss.getPersistentData().putBoolean("relay_boss",true);boss.addTag("relay_scaled");if(appearance(s,boss).getStyle().getInsertion()!=null&&(s.activeTheme.equals("forest")||s.activeTheme.equals("ash"))){boss.setItemSlot(EquipmentSlot.MAINHAND,new ItemStack(s.activeTheme.equals("forest")?Items.IRON_AXE:Items.IRON_SWORD));boss.setDropChance(EquipmentSlot.MAINHAND,0);}if(!level.addFreshEntity(boss))return;s.bossId=boss.getUUID();s.setDirty();}
+   else{var entity=level.getEntity(s.bossId);if(!(entity instanceof Mob found)||!found.isAlive()){reset();return;}boss=found;if(!appearance(s,boss).equals(boss.getCustomName()))boss.setCustomName(appearance(s,boss));}
+   if(bar==null)bar=new ServerBossEvent(Component.literal(name(s)),BossEvent.BossBarColor.RED,BossEvent.BossBarOverlay.NOTCHED_10);
+   bar.setProgress(Math.clamp(boss.getHealth()/boss.getMaxHealth(),0,1));
+@@ -86,6 +86,7 @@
+   entity.spawnAtLocation(new ItemStack(BossTrophies.trophy(s.activeTheme),s.activeDifficulty>=5?2:1));
+   entity.spawnAtLocation(new ItemStack(Items.DIAMOND,1+s.activeLoot));
+   entity.spawnAtLocation(new ItemStack(Items.EXPERIENCE_BOTTLE,3+s.activeLoot));
++  if(entity.getRandom().nextInt(8)==0)entity.spawnAtLocation(ForgeRoom.gem(level.registryAccess(),"guardian","perfect"));
+   TrophyWeapons.drop(entity,s.activeTheme,s.activeLoot,true,name(s));
+   for(var p:level.getServer().getPlayerList().getPlayers())if(p.serverLevel()==level&&RaidRules.active(p))
+    RaidRules.chat(p,name(s)+" повержен. Добыча · "+entity.blockPosition().toShortString());
+diff -ruN orig/Bunker-Relay/mod/src/main/java/dev/bunkerrelay/RelayEconomy.java Bunker-Relay/mod/src/main/java/dev/bunkerrelay/RelayEconomy.java
+--- a/mod/src/main/java/dev/bunkerrelay/RelayEconomy.java	2026-11-26 22:55:46.601848167 +0500
++++ b/mod/src/main/java/dev/bunkerrelay/RelayEconomy.java	2026-11-26 22:56:38.808962542 +0500
+@@ -20,6 +20,7 @@
+  public static final long MAX_BALANCE=1_000_000_000L;
+  public record Offer(String id,String name,String item,int quantity,int buy,int sell,int stock,boolean staple) {
+   public ItemStack stack(ServerPlayer p){
++   if(id.equals("perfect_guardian"))return ForgeRoom.gem(p.registryAccess(),"guardian","perfect");
+    if(item.startsWith("ammo/"))return AmmoItemBuilder.create().setId(ResourceLocation.parse("tacz:"+item.substring(5))).setCount(quantity).build();
+    if(item.startsWith("attachment/"))return AttachmentItemBuilder.create().setId(ResourceLocation.parse("tacz:"+item.substring(11))).build();
+    if(item.startsWith("gun/"))return GunItemBuilder.create().setId(ResourceLocation.parse(item.substring(4).contains(":")?item.substring(4):"tacz:"+item.substring(4))).setAmmoCount(0).build(p.registryAccess());
+@@ -232,7 +233,8 @@
+   list.add(new Offer("honey_flask","Мёд в бутылке","minecraft:honey_bottle",1,34,6,8,true));categories.put("honey_flask",Merchant.MEDIC);
+   list.add(new Offer("bike","Велосипед","simplebikes:basic_bike_item",1,650,120,3,true));categories.put("bike",Merchant.MECHANISMS);
+   list.add(new Offer("cargo_bike","Грузовой велосипед · 9 ячеек","bunkerrelay:cargo_bike",1,1100,220,2,true));categories.put("cargo_bike",Merchant.MECHANISMS);
+-  list.add(new Offer("forge_crystal","Кузнечный кристалл","bunkerrelay:forge_crystal",1,230,45,8,true));categories.put("forge_crystal",Merchant.JEWELER);
++  list.add(new Offer("forge_crystal","Материал перековки","apotheosis:mysterious_scrap_metal",1,230,45,8,true));categories.put("forge_crystal",Merchant.JEWELER);
++  list.add(new Offer("perfect_guardian","Совершенный самоцвет стража","apotheosis:gem",1,65000,0,1,true));categories.put("perfect_guardian",Merchant.JEWELER);
+   return list.stream().map(o->{
+    int factor=o.id().equals("glock")?85:o.item().startsWith("gun/")?180:o.item().startsWith("attachment/")?140:
+        o.item().startsWith("ammo/")?115:merchant(o)==Merchant.MEDIC?90:merchant(o)==Merchant.MECHANISMS?130:110;
+diff -ruN orig/Bunker-Relay/mod/src/main/java/dev/bunkerrelay/SiteCrate.java Bunker-Relay/mod/src/main/java/dev/bunkerrelay/SiteCrate.java
+--- a/mod/src/main/java/dev/bunkerrelay/SiteCrate.java	2026-11-26 22:55:46.601932864 +0500
++++ b/mod/src/main/java/dev/bunkerrelay/SiteCrate.java	2026-11-26 22:56:38.807454818 +0500
+@@ -67,7 +67,7 @@
+             if(pattern==0)chest.setItem(21,new ItemStack(Medicine.TRAUMA.get()));
+             if(pattern==1)chest.setItem(21,new ItemStack(Items.HONEY_BOTTLE));
+         }else if(pattern==0)chest.setItem(21,new ItemStack(second));
+-        if((this==MINE||this==ARMORER||this==LAB)&&random.nextInt(12)==0)chest.setItem(23,new ItemStack(ForgeRoom.GEM.get()));
++        if((this==MINE||this==ARMORER||this==LAB)&&random.nextInt(12)==0)chest.setItem(23,random.nextBoolean()?ForgeRoom.gem(level.registryAccess(),"brawlers","flawed"):new ItemStack(ForgeRoom.material(random.nextInt(Math.clamp(state.activeLoot,1,5)))));
+         PersonalLoot.convert(level,at,chest);
+         if(level.getBlockEntity(at) instanceof BaseContainerBlockEntity personal){
+             var tag=personal.saveWithoutMetadata(level.registryAccess()); tag.putString("CustomName",Component.Serializer.toJson(Component.literal(title),level.registryAccess())); personal.loadWithComponents(tag,level.registryAccess());
+diff -ruN orig/Bunker-Relay/mod/src/main/resources/META-INF/neoforge.mods.toml Bunker-Relay/mod/src/main/resources/META-INF/neoforge.mods.toml
+--- a/mod/src/main/resources/META-INF/neoforge.mods.toml	2026-11-26 22:55:46.604069086 +0500
++++ b/mod/src/main/resources/META-INF/neoforge.mods.toml	2026-11-26 22:56:38.843228143 +0500
+@@ -3,7 +3,7 @@
+ license="MIT"
+ [[mods]]
+ modId="bunkerrelay"
+-version="0.66.1"
++version="0.67.0"
+ displayName="Bunker Relay"
+ description="Cooperative bunker, garage and procedural expeditions. Early prototype."
+ [[dependencies.bunkerrelay]]
+@@ -56,7 +56,7 @@
+ [[dependencies.bunkerrelay]]
+ modId="relaylights"
+ type="required"
+-versionRange="[0.66.1]"
++versionRange="[0.67.0]"
+ ordering="AFTER"
+ side="BOTH"
+ 
+@@ -66,13 +66,27 @@
+ [[dependencies.bunkerrelay]]
+ modId="relayfactories"
+ type="required"
+-versionRange="[0.66.1]"
++versionRange="[0.67.0]"
+ ordering="AFTER"
+ side="BOTH"
+ 
+ [[dependencies.bunkerrelay]]
+ modId="relayarsenal"
+ type="required"
+-versionRange="[0.66.1]"
++versionRange="[0.67.0]"
++ordering="AFTER"
++side="BOTH"
++
++[[dependencies.bunkerrelay]]
++modId="apotheosis"
++type="required"
++versionRange="[8.9.0,9)"
++ordering="AFTER"
++side="BOTH"
++
++[[dependencies.bunkerrelay]]
++modId="apotheosis_modern_ragnarok"
++type="required"
++versionRange="[8,9)"
+ ordering="AFTER"
+ side="BOTH"
+diff -ruN orig/Bunker-Relay/mod/src/main/resources/data/apotheosis/purity_weights/weights.json Bunker-Relay/mod/src/main/resources/data/apotheosis/purity_weights/weights.json
+--- a/mod/src/main/resources/data/apotheosis/purity_weights/weights.json	1970-01-01 05:00:00.000000000 +0500
++++ b/mod/src/main/resources/data/apotheosis/purity_weights/weights.json	2026-11-26 22:56:38.822117213 +0500
+@@ -0,0 +1,115 @@
++{
++  "type": "apotheosis:purity_weights",
++  "weights": {
++    "haven": {
++      "cracked": {
++        "weight": 550
++      },
++      "chipped": {
++        "quality": 2.5,
++        "weight": 410
++      },
++      "flawed": {
++        "quality": 5.0,
++        "weight": 40
++      },
++      "normal": {
++        "weight": 0
++      },
++      "flawless": {
++        "weight": 0
++      },
++      "perfect": {
++        "weight": 0
++      }
++    },
++    "frontier": {
++      "cracked": {
++        "weight": 230
++      },
++      "chipped": {
++        "weight": 540
++      },
++      "flawed": {
++        "quality": 2.5,
++        "weight": 180
++      },
++      "normal": {
++        "quality": 1.0,
++        "weight": 50
++      },
++      "flawless": {
++        "weight": 0
++      },
++      "perfect": {
++        "weight": 0
++      }
++    },
++    "ascent": {
++      "cracked": {
++        "weight": 20
++      },
++      "chipped": {
++        "weight": 250
++      },
++      "flawed": {
++        "quality": 2.5,
++        "weight": 560
++      },
++      "normal": {
++        "quality": 5.0,
++        "weight": 160
++      },
++      "flawless": {
++        "quality": 1.0,
++        "weight": 10
++      },
++      "perfect": {
++        "weight": 0
++      }
++    },
++    "summit": {
++      "cracked": {
++        "weight": 0
++      },
++      "chipped": {
++        "weight": 80
++      },
++      "flawed": {
++        "quality": 2.5,
++        "weight": 310
++      },
++      "normal": {
++        "quality": 5.0,
++        "weight": 580
++      },
++      "flawless": {
++        "quality": 5.0,
++        "weight": 20
++      },
++      "perfect": {
++        "weight": 0
++      }
++    },
++    "pinnacle": {
++      "cracked": {
++        "weight": 0
++      },
++      "chipped": {
++        "weight": 0
++      },
++      "flawed": {
++        "weight": 100
++      },
++      "normal": {
++        "weight": 330
++      },
++      "flawless": {
++        "weight": 470
++      },
++      "perfect": {
++        "weight": 0
++      }
++    }
++  }
++}
+diff -ruN orig/Bunker-Relay/mod/src/main/resources/data/apotheosis/recipe/gem_cutting/flawless.json Bunker-Relay/mod/src/main/resources/data/apotheosis/recipe/gem_cutting/flawless.json
+--- a/mod/src/main/resources/data/apotheosis/recipe/gem_cutting/flawless.json	1970-01-01 05:00:00.000000000 +0500
++++ b/mod/src/main/resources/data/apotheosis/recipe/gem_cutting/flawless.json	2026-11-26 22:56:38.822248350 +0500
+@@ -0,0 +1,29 @@
++{
++  "type": "apotheosis:purity_upgrade",
++  "left": [
++    {
++      "count": 9,
++      "item": "apotheosis:gem_dust"
++    }
++  ],
++  "purity": "flawless",
++  "right": [
++    {
++      "count": 27,
++      "item": "apotheosis:luminous_crystal_shard"
++    },
++    {
++      "count": 9,
++      "item": "apotheosis:arcane_sands"
++    },
++    {
++      "count": 3,
++      "item": "apotheosis:godforged_pearl"
++    }
++  ],
++  "neoforge:conditions": [
++    {
++      "type": "neoforge:false"
++    }
++  ]
++}
+diff -ruN orig/Bunker-Relay/mod/src/main/resources/data/apotheosis/recipe/reforging/common.json Bunker-Relay/mod/src/main/resources/data/apotheosis/recipe/reforging/common.json
+--- a/mod/src/main/resources/data/apotheosis/recipe/reforging/common.json	1970-01-01 05:00:00.000000000 +0500
++++ b/mod/src/main/resources/data/apotheosis/recipe/reforging/common.json	2026-11-26 22:56:38.821452620 +0500
+@@ -0,0 +1,11 @@
++{
++  "type": "apotheosis:reforging",
++  "level_cost": 1,
++  "material_cost": 1,
++  "rarity": "apotheosis:common",
++  "sigil_cost": 0,
++  "tables": [
++    "apotheosis:simple_reforging_table",
++    "apotheosis:reforging_table"
++  ]
++}
+diff -ruN orig/Bunker-Relay/mod/src/main/resources/data/apotheosis/recipe/reforging/epic.json Bunker-Relay/mod/src/main/resources/data/apotheosis/recipe/reforging/epic.json
+--- a/mod/src/main/resources/data/apotheosis/recipe/reforging/epic.json	1970-01-01 05:00:00.000000000 +0500
++++ b/mod/src/main/resources/data/apotheosis/recipe/reforging/epic.json	2026-11-26 22:56:38.821769218 +0500
+@@ -0,0 +1,8 @@
++{
++  "type": "apotheosis:reforging",
++  "level_cost": 5,
++  "material_cost": 2,
++  "rarity": "apotheosis:epic",
++  "sigil_cost": 4,
++  "tables": "apotheosis:reforging_table"
++}
+diff -ruN orig/Bunker-Relay/mod/src/main/resources/data/apotheosis/recipe/reforging/mythic.json Bunker-Relay/mod/src/main/resources/data/apotheosis/recipe/reforging/mythic.json
+--- a/mod/src/main/resources/data/apotheosis/recipe/reforging/mythic.json	1970-01-01 05:00:00.000000000 +0500
++++ b/mod/src/main/resources/data/apotheosis/recipe/reforging/mythic.json	2026-11-26 22:56:38.821876480 +0500
+@@ -0,0 +1,8 @@
++{
++  "type": "apotheosis:reforging",
++  "level_cost": 8,
++  "material_cost": 3,
++  "rarity": "apotheosis:mythic",
++  "sigil_cost": 5,
++  "tables": "apotheosis:reforging_table"
++}
+diff -ruN orig/Bunker-Relay/mod/src/main/resources/data/apotheosis/recipe/reforging/rare.json Bunker-Relay/mod/src/main/resources/data/apotheosis/recipe/reforging/rare.json
+--- a/mod/src/main/resources/data/apotheosis/recipe/reforging/rare.json	1970-01-01 05:00:00.000000000 +0500
++++ b/mod/src/main/resources/data/apotheosis/recipe/reforging/rare.json	2026-11-26 22:56:38.821695417 +0500
+@@ -0,0 +1,11 @@
++{
++  "type": "apotheosis:reforging",
++  "level_cost": 3,
++  "material_cost": 2,
++  "rarity": "apotheosis:rare",
++  "sigil_cost": 2,
++  "tables": [
++    "apotheosis:simple_reforging_table",
++    "apotheosis:reforging_table"
++  ]
++}
+diff -ruN orig/Bunker-Relay/mod/src/main/resources/data/apotheosis/recipe/reforging/uncommon.json Bunker-Relay/mod/src/main/resources/data/apotheosis/recipe/reforging/uncommon.json
+--- a/mod/src/main/resources/data/apotheosis/recipe/reforging/uncommon.json	1970-01-01 05:00:00.000000000 +0500
++++ b/mod/src/main/resources/data/apotheosis/recipe/reforging/uncommon.json	2026-11-26 22:56:38.821603278 +0500
+@@ -0,0 +1,11 @@
++{
++  "type": "apotheosis:reforging",
++  "level_cost": 2,
++  "material_cost": 2,
++  "rarity": "apotheosis:uncommon",
++  "sigil_cost": 1,
++  "tables": [
++    "apotheosis:simple_reforging_table",
++    "apotheosis:reforging_table"
++  ]
++}
+diff -ruN orig/Bunker-Relay/mod/src/main/resources/data/apotheosis_modern_ragnarok/affixes/all_gun/attribute/tungstenic.json Bunker-Relay/mod/src/main/resources/data/apotheosis_modern_ragnarok/affixes/all_gun/attribute/tungstenic.json
+--- a/mod/src/main/resources/data/apotheosis_modern_ragnarok/affixes/all_gun/attribute/tungstenic.json	1970-01-01 05:00:00.000000000 +0500
++++ b/mod/src/main/resources/data/apotheosis_modern_ragnarok/affixes/all_gun/attribute/tungstenic.json	2026-11-26 22:57:17.796766461 +0500
+@@ -0,0 +1,51 @@
++{
++  "type": "apotheosis:attribute",
++  "definition": {
++    "affix_type": "stat",
++    "exclusive_set": [],
++    "weights": {
++      "quality": 0.1,
++      "weight": 25
++    }
++  },
++  "categories": [
++    "apotheosis_modern_ragnarok:shotgun",
++    "apotheosis_modern_ragnarok:full_auto",
++    "apotheosis_modern_ragnarok:semi_auto",
++    "apotheosis_modern_ragnarok:bolt_action"
++  ],
++  "attribute": "apothic_attributes:armor_pierce",
++  "operation": "add_value",
++  "values": {
++    "apotheosis:common": {
++      "min": 1.2,
++      "steps": 4,
++      "step": 0.15
++    },
++    "apotheosis:uncommon": {
++      "min": 1.2,
++      "steps": 4,
++      "step": 0.15
++    },
++    "apotheosis:rare": {
++      "min": 1.7999999999999998,
++      "steps": 8,
++      "step": 0.15
++    },
++    "apotheosis:epic": {
++      "min": 2.4,
++      "steps": 12,
++      "step": 0.15
++    },
++    "apotheosis:mythic": {
++      "min": 3.0,
++      "steps": 12,
++      "step": 0.15
++    },
++    "apotheosis_modern_ragnarok:ancient": {
++      "min": 4.8,
++      "steps": 12,
++      "step": 0.15
++    }
++  }
++}
+diff -ruN orig/Bunker-Relay/mod/src/relayArsenal/resources/META-INF/neoforge.mods.toml Bunker-Relay/mod/src/relayArsenal/resources/META-INF/neoforge.mods.toml
+--- a/mod/src/relayArsenal/resources/META-INF/neoforge.mods.toml	2026-11-26 22:55:46.604123418 +0500
++++ b/mod/src/relayArsenal/resources/META-INF/neoforge.mods.toml	2026-11-26 22:56:38.843401745 +0500
+@@ -4,7 +4,7 @@
+ 
+ [[mods]]
+ modId="relayarsenal"
+-version="0.66.1"
++version="0.67.0"
+ displayName="Relay Arsenal"
+ description="Historical TaCZ arsenal for Bunker Relay."
+ 
+diff -ruN orig/Bunker-Relay/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml Bunker-Relay/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml
+--- a/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml	2026-11-26 22:55:46.604260315 +0500
++++ b/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml	2026-11-26 22:56:38.843196485 +0500
+@@ -4,7 +4,7 @@
+ 
+ [[mods]]
+ modId="relayfactories"
+-version="0.66.1"
++version="0.67.0"
+ displayName="Relay Factories"
+ description="Factory structures for industrial expeditions."
+ 
+diff -ruN orig/Bunker-Relay/mod/src/relayLights/resources/META-INF/neoforge.mods.toml Bunker-Relay/mod/src/relayLights/resources/META-INF/neoforge.mods.toml
+--- a/mod/src/relayLights/resources/META-INF/neoforge.mods.toml	2026-11-26 22:55:46.604352143 +0500
++++ b/mod/src/relayLights/resources/META-INF/neoforge.mods.toml	2026-11-26 22:56:38.843366441 +0500
+@@ -4,7 +4,7 @@
+ 
+ [[mods]]
+ modId="relaylights"
+-version="0.66.1"
++version="0.67.0"
+ displayName="Relay Lights"
+ description="Directional lights with personal and multiplayer modes."
+ 
+diff -ruN orig/Bunker-Relay/modrinth.index.json Bunker-Relay/modrinth.index.json
+--- a/modrinth.index.json	2026-11-26 22:55:46.604431122 +0500
++++ b/modrinth.index.json	2026-11-26 22:56:38.872405996 +0500
+@@ -1,7 +1,7 @@
+ {
+   "formatVersion": 1,
+   "game": "minecraft",
+-  "versionId": "0.66.1",
++  "versionId": "0.67.0",
+   "name": "Bunker Relay",
+   "summary": "Cooperative expeditions, ECHO encounters, threats, extraction and persistent bunker.",
+   "files": [
+@@ -829,6 +829,171 @@
+         "https://cdn.modrinth.com/data/VUE19tql/versions/NogMjmCH/cybernetic_system-2.0.8-neoforge-1.21.1.jar"
+       ],
+       "fileSize": 2254681
++    },
++    {
++      "path": "mods/immersive_armors-1.7.6+1.21.1-neoforge.jar",
++      "hashes": {
++        "sha512": "875852a2d6710c1b4da43026b345154b41751e4c1f987c7a19614c5f195a4d68ebbd93811da9868db83bf245aca2d15a35432b66730c17531f5e7006882a5d95",
++        "sha1": "4c5762af46c0beac0830d1f1e9c88332b120ceaa"
++      },
++      "env": {
++        "client": "required",
++        "server": "required"
++      },
++      "downloads": [
++        "https://cdn.modrinth.com/data/eE2Db4YU/versions/B2YtQYCh/immersive_armors-1.7.6%2B1.21.1-neoforge.jar"
++      ],
++      "fileSize": 1274167
++    },
++    {
++      "path": "mods/superbwarfare-0.8.9.2-hotfix-mc1.21.1-e0c2b27f.jar",
++      "hashes": {
++        "sha1": "e62188c36582bf17c968593061bec7de2e3a9649",
++        "sha512": "1a61ed2d6ed6c7e91334469650fe8649d9f115183818eed011cb1e93b0e3e0d8cf0a21ba71063219a9c939815b9b74506b4ab45e0aa96d52ecf97b9bb0c9f637"
++      },
++      "env": {
++        "client": "required",
++        "server": "required"
++      },
++      "downloads": [
++        "https://cdn.modrinth.com/data/Cd3DYqzn/versions/izD7dnxq/superbwarfare-0.8.9.2-hotfix-mc1.21.1-e0c2b27f.jar"
++      ],
++      "fileSize": 41638430
++    },
++    {
++      "path": "mods/kotlinforforge-5.13.0-all.jar",
++      "hashes": {
++        "sha512": "64a26f73e3299ad09b350d3421e3f97a5ccd158d1936fb50fc57f3c88bf6fd33814568bf43a0886f79ada4be65d65d232d9e20a901833150ec5b89a01c46d459",
++        "sha1": "b1d5563f4e3db9ec4a4a2b371560aa171d6de237"
++      },
++      "env": {
++        "client": "optional",
++        "server": "optional"
++      },
++      "downloads": [
++        "https://cdn.modrinth.com/data/ordsPcFz/versions/9ZlVvei8/kotlinforforge-5.13.0-all.jar"
++      ],
++      "fileSize": 7364729
++    },
++    {
++      "path": "mods/simplebikes-1.0-neoforge-1.21.1.jar",
++      "hashes": {
++        "sha512": "7fa881fba6fb17d8525b4630a005b49ca0d742292e17ee07d692e8116374af2efb6b92d5b397e50cc81d962f6b2b17020204040cd0972b55fff0883b2f7d512e",
++        "sha1": "73f38b74031c244a3759a26e9fc2b84f5a4d2cc1"
++      },
++      "env": {
++        "client": "required",
++        "server": "required"
++      },
++      "downloads": [
++        "https://cdn.modrinth.com/data/KVUeWeA8/versions/zCV6RL5z/simplebikes-1.0-neoforge-1.21.1.jar"
++      ],
++      "fileSize": 229344
++    },
++    {
++      "path": "mods/Apotheosis-1.21.1-8.9.0.jar",
++      "hashes": {
++        "sha1": "2d8b59070a221bcc2e3ea08b3b48cbf034b77c71",
++        "sha512": "b3022bc31f4e9f99d298c36486e09cad308d4aa87e2aa65a341809aeca41f0067e744086768884959036a46685d4c0babc4274600884ad8962fe9d080d8ef3ee"
++      },
++      "env": {
++        "client": "required",
++        "server": "required"
++      },
++      "downloads": [
++        "https://cdn.modrinth.com/data/rqFWfVlz/versions/veL1ccTb/Apotheosis-1.21.1-8.9.0.jar"
++      ],
++      "fileSize": 7184314
++    },
++    {
++      "path": "mods/Placebo-1.21.1-9.9.4.jar",
++      "hashes": {
++        "sha1": "007d52a42020a331d5272495f6d676e0ad1a2c13",
++        "sha512": "4f3a9c5974132f3638c262c56b0c2886df2bc58027c961aa11d06d0ae2e608b63f24f949b2f8c240989e2a1bfe303fd237c5f2d49269453ad6c2ff1f85f2c648"
++      },
++      "env": {
++        "client": "required",
++        "server": "required"
++      },
++      "downloads": [
++        "https://cdn.modrinth.com/data/tCkE8p2N/versions/B5zbSVlT/Placebo-1.21.1-9.9.4.jar"
++      ],
++      "fileSize": 326063
++    },
++    {
++      "path": "mods/Patchouli-1.21.1-93-NEOFORGE.jar",
++      "hashes": {
++        "sha512": "0b5c172db9a6eeecb5ca44b359a83548c3a60be7ff313959acdfc1e5b8039736c18e57e947d435b52d06da31159d2d02ea36e5742668dbc826308a4c99e4039f",
++        "sha1": "5413bb9b8fc35ebe46b06b48bf9afafbd8471140"
++      },
++      "env": {
++        "client": "required",
++        "server": "required"
++      },
++      "downloads": [
++        "https://cdn.modrinth.com/data/nU0bVIaL/versions/BIogJv2D/Patchouli-1.21.1-93-NEOFORGE.jar"
++      ],
++      "fileSize": 646777
++    },
++    {
++      "path": "mods/ApothicAttributes-1.21.1-2.11.0.jar",
++      "hashes": {
++        "sha512": "568580e68016161151fc0254fb0da949b42cf285fa2bf7c3aec1cd320405c430483e9eb990aaddef537bfac4aa4beb21db82fbff9249131e05b15063b6839611",
++        "sha1": "7ff0e452e10cb582c188626a413037e63db9ca04"
++      },
++      "env": {
++        "client": "required",
++        "server": "required"
++      },
++      "downloads": [
++        "https://cdn.modrinth.com/data/DGaH8Rh0/versions/64fZbLnj/ApothicAttributes-1.21.1-2.11.0.jar"
++      ],
++      "fileSize": 319609
++    },
++    {
++      "path": "mods/ApothicSpawners-1.21.1-1.4.0.jar",
++      "hashes": {
++        "sha512": "2fdd49cdb3e6610846c3a746ab0730d6d49412eaf8c21e3d0b9d588d80c8cd1a1d0b7e19ade7fc86fd699ac02e270e5fa01fb5cf106d24a7740692ecc1ad8820",
++        "sha1": "b3be29751daea738e691db8949cce079e5aae3be"
++      },
++      "env": {
++        "client": "required",
++        "server": "required"
++      },
++      "downloads": [
++        "https://cdn.modrinth.com/data/DfxVkOAO/versions/pWfxcfO2/ApothicSpawners-1.21.1-1.4.0.jar"
++      ],
++      "fileSize": 129784
++    },
++    {
++      "path": "mods/ApothicEnchanting-1.21.1-1.6.4.jar",
++      "hashes": {
++        "sha1": "d88e75b60e97dae8054ee10f3a92aa2bb812b8b9",
++        "sha512": "b560ed61810030472c42fa39e6199b1db07c19baba8f78d98b44ab3e1d00a1bebff5f69942bd076fea9754f63940df920cfb19906073b77bcc459bb8d88575de"
++      },
++      "env": {
++        "client": "required",
++        "server": "required"
++      },
++      "downloads": [
++        "https://cdn.modrinth.com/data/pL8MtgqY/versions/JAQJkLJ1/ApothicEnchanting-1.21.1-1.6.4.jar"
++      ],
++      "fileSize": 5422885
++    },
++    {
++      "path": "mods/apotheosis_modern_ragnarok-neoforge-1.21.1-tacz1.2.0-8.0.0.jar",
++      "hashes": {
++        "sha1": "f1ac34a9c235c9dcaf87aaa448ac60623f01ff42",
++        "sha512": "d68dc578b93ec595d3f5708c9bed619d2865d517855daa1933d162a296b184288652da420711449d3714fc986eb865f25758907ca432c937b862579f5debd06f"
++      },
++      "env": {
++        "client": "required",
++        "server": "required"
++      },
++      "downloads": [
++        "https://edge.forgecdn.net/files/9493/803/apotheosis_modern_ragnarok-neoforge-1.21.1-tacz1.2.0-8.0.0.jar"
++      ],
++      "fileSize": 2779793
+     }
+   ],
+   "dependencies": {
+diff -ruN orig/Bunker-Relay/pack.lock.json Bunker-Relay/pack.lock.json
+--- a/pack.lock.json	2026-11-26 22:55:46.602708795 +0500
++++ b/pack.lock.json	2026-11-26 22:56:38.842768940 +0500
+@@ -2087,6 +2087,290 @@
+         ],
+         "fileSize": 229344
+       }
++    },
++    {
++      "slug": "apotheosis",
++      "title": "Apotheosis",
++      "version": "1.21.1-8.9.0",
++      "version_id": "veL1ccTb",
++      "project_id": "rqFWfVlz",
++      "dependencies": [
++        {
++          "version_id": null,
++          "project_id": "tCkE8p2N",
++          "file_name": null,
++          "dependency_type": "required"
++        },
++        {
++          "version_id": null,
++          "project_id": "nU0bVIaL",
++          "file_name": null,
++          "dependency_type": "required"
++        },
++        {
++          "version_id": null,
++          "project_id": "mH8wdmqr",
++          "file_name": null,
++          "dependency_type": "optional"
++        },
++        {
++          "version_id": null,
++          "project_id": "DGaH8Rh0",
++          "file_name": null,
++          "dependency_type": "required"
++        },
++        {
++          "version_id": null,
++          "project_id": "DfxVkOAO",
++          "file_name": null,
++          "dependency_type": "required"
++        },
++        {
++          "version_id": null,
++          "project_id": "pL8MtgqY",
++          "file_name": null,
++          "dependency_type": "required"
++        },
++        {
++          "version_id": null,
++          "project_id": "UVtY3ZAC",
++          "file_name": null,
++          "dependency_type": "optional"
++        },
++        {
++          "version_id": null,
++          "project_id": "u6dRKJwZ",
++          "file_name": null,
++          "dependency_type": "optional"
++        },
++        {
++          "version_id": null,
++          "project_id": "nvQzSEkH",
++          "file_name": null,
++          "dependency_type": "optional"
++        }
++      ],
++      "env": {
++        "client": "required",
++        "server": "required"
++      },
++      "url": "https://modrinth.com/mod/apotheosis",
++      "file": {
++        "path": "mods/Apotheosis-1.21.1-8.9.0.jar",
++        "hashes": {
++          "sha1": "2d8b59070a221bcc2e3ea08b3b48cbf034b77c71",
++          "sha512": "b3022bc31f4e9f99d298c36486e09cad308d4aa87e2aa65a341809aeca41f0067e744086768884959036a46685d4c0babc4274600884ad8962fe9d080d8ef3ee"
++        },
++        "env": {
++          "client": "required",
++          "server": "required"
++        },
++        "downloads": [
++          "https://cdn.modrinth.com/data/rqFWfVlz/versions/veL1ccTb/Apotheosis-1.21.1-8.9.0.jar"
++        ],
++        "fileSize": 7184314
++      }
++    },
++    {
++      "slug": "placebo",
++      "title": "Placebo",
++      "version": "1.21.1-9.9.4",
++      "version_id": "B5zbSVlT",
++      "project_id": "tCkE8p2N",
++      "dependencies": [],
++      "env": {
++        "client": "required",
++        "server": "required"
++      },
++      "url": "https://modrinth.com/mod/placebo",
++      "file": {
++        "path": "mods/Placebo-1.21.1-9.9.4.jar",
++        "hashes": {
++          "sha1": "007d52a42020a331d5272495f6d676e0ad1a2c13",
++          "sha512": "4f3a9c5974132f3638c262c56b0c2886df2bc58027c961aa11d06d0ae2e608b63f24f949b2f8c240989e2a1bfe303fd237c5f2d49269453ad6c2ff1f85f2c648"
++        },
++        "env": {
++          "client": "required",
++          "server": "required"
++        },
++        "downloads": [
++          "https://cdn.modrinth.com/data/tCkE8p2N/versions/B5zbSVlT/Placebo-1.21.1-9.9.4.jar"
++        ],
++        "fileSize": 326063
++      }
++    },
++    {
++      "slug": "patchouli",
++      "title": "Patchouli",
++      "version": "1.21.1-93-neoforge",
++      "version_id": "BIogJv2D",
++      "project_id": "nU0bVIaL",
++      "dependencies": [],
++      "env": {
++        "client": "required",
++        "server": "required"
++      },
++      "url": "https://modrinth.com/mod/patchouli",
++      "file": {
++        "path": "mods/Patchouli-1.21.1-93-NEOFORGE.jar",
++        "hashes": {
++          "sha512": "0b5c172db9a6eeecb5ca44b359a83548c3a60be7ff313959acdfc1e5b8039736c18e57e947d435b52d06da31159d2d02ea36e5742668dbc826308a4c99e4039f",
++          "sha1": "5413bb9b8fc35ebe46b06b48bf9afafbd8471140"
++        },
++        "env": {
++          "client": "required",
++          "server": "required"
++        },
++        "downloads": [
++          "https://cdn.modrinth.com/data/nU0bVIaL/versions/BIogJv2D/Patchouli-1.21.1-93-NEOFORGE.jar"
++        ],
++        "fileSize": 646777
++      }
++    },
++    {
++      "slug": "apothic-attributes",
++      "title": "Apothic Attributes",
++      "version": "1.21.1-2.11.0",
++      "version_id": "64fZbLnj",
++      "project_id": "DGaH8Rh0",
++      "dependencies": [
++        {
++          "version_id": null,
++          "project_id": "tCkE8p2N",
++          "file_name": null,
++          "dependency_type": "required"
++        },
++        {
++          "version_id": null,
++          "project_id": "vvuO3ImH",
++          "file_name": null,
++          "dependency_type": "optional"
++        }
++      ],
++      "env": {
++        "client": "required",
++        "server": "required"
++      },
++      "url": "https://modrinth.com/mod/apothic-attributes",
++      "file": {
++        "path": "mods/ApothicAttributes-1.21.1-2.11.0.jar",
++        "hashes": {
++          "sha512": "568580e68016161151fc0254fb0da949b42cf285fa2bf7c3aec1cd320405c430483e9eb990aaddef537bfac4aa4beb21db82fbff9249131e05b15063b6839611",
++          "sha1": "7ff0e452e10cb582c188626a413037e63db9ca04"
++        },
++        "env": {
++          "client": "required",
++          "server": "required"
++        },
++        "downloads": [
++          "https://cdn.modrinth.com/data/DGaH8Rh0/versions/64fZbLnj/ApothicAttributes-1.21.1-2.11.0.jar"
++        ],
++        "fileSize": 319609
++      }
++    },
++    {
++      "slug": "apothic-spawners",
++      "title": "Apothic-Spawners",
++      "version": "1.21.1-1.4.0",
++      "version_id": "pWfxcfO2",
++      "project_id": "DfxVkOAO",
++      "dependencies": [
++        {
++          "version_id": null,
++          "project_id": "tCkE8p2N",
++          "file_name": null,
++          "dependency_type": "required"
++        }
++      ],
++      "env": {
++        "client": "required",
++        "server": "required"
++      },
++      "url": "https://modrinth.com/mod/apothic-spawners",
++      "file": {
++        "path": "mods/ApothicSpawners-1.21.1-1.4.0.jar",
++        "hashes": {
++          "sha512": "2fdd49cdb3e6610846c3a746ab0730d6d49412eaf8c21e3d0b9d588d80c8cd1a1d0b7e19ade7fc86fd699ac02e270e5fa01fb5cf106d24a7740692ecc1ad8820",
++          "sha1": "b3be29751daea738e691db8949cce079e5aae3be"
++        },
++        "env": {
++          "client": "required",
++          "server": "required"
++        },
++        "downloads": [
++          "https://cdn.modrinth.com/data/DfxVkOAO/versions/pWfxcfO2/ApothicSpawners-1.21.1-1.4.0.jar"
++        ],
++        "fileSize": 129784
++      }
++    },
++    {
++      "slug": "apothic-enchanting",
++      "title": "Apothic-Enchanting",
++      "version": "1.21.1-1.6.4",
++      "version_id": "JAQJkLJ1",
++      "project_id": "pL8MtgqY",
++      "dependencies": [
++        {
++          "version_id": null,
++          "project_id": "DGaH8Rh0",
++          "file_name": null,
++          "dependency_type": "required"
++        },
++        {
++          "version_id": null,
++          "project_id": "tCkE8p2N",
++          "file_name": null,
++          "dependency_type": "required"
++        }
++      ],
++      "env": {
++        "client": "required",
++        "server": "required"
++      },
++      "url": "https://modrinth.com/mod/apothic-enchanting",
++      "file": {
++        "path": "mods/ApothicEnchanting-1.21.1-1.6.4.jar",
++        "hashes": {
++          "sha1": "d88e75b60e97dae8054ee10f3a92aa2bb812b8b9",
++          "sha512": "b560ed61810030472c42fa39e6199b1db07c19baba8f78d98b44ab3e1d00a1bebff5f69942bd076fea9754f63940df920cfb19906073b77bcc459bb8d88575de"
++        },
++        "env": {
++          "client": "required",
++          "server": "required"
++        },
++        "downloads": [
++          "https://cdn.modrinth.com/data/pL8MtgqY/versions/JAQJkLJ1/ApothicEnchanting-1.21.1-1.6.4.jar"
++        ],
++        "fileSize": 5422885
++      }
++    },
++    {
++      "slug": "apotheosis-modern-ragnarok",
++      "title": "Apotheosis Modern Ragnarok: Zero",
++      "version": "8.0.0",
++      "version_id": "9493803",
++      "project_id": "curseforge-apotheosis-modern-ragnarok",
++      "dependencies": [],
++      "env": {
++        "client": "required",
++        "server": "required"
++      },
++      "url": "https://www.curseforge.com/minecraft/mc-mods/apotheosis-modern-ragnarok",
++      "file": {
++        "path": "mods/apotheosis_modern_ragnarok-neoforge-1.21.1-tacz1.2.0-8.0.0.jar",
++        "hashes": {
++          "sha1": "f1ac34a9c235c9dcaf87aaa448ac60623f01ff42",
++          "sha512": "d68dc578b93ec595d3f5708c9bed619d2865d517855daa1933d162a296b184288652da420711449d3714fc986eb865f25758907ca432c937b862579f5debd06f"
++        },
++        "env": {
++          "client": "required",
++          "server": "required"
++        },
++        "downloads": [
++          "https://edge.forgecdn.net/files/9493/803/apotheosis_modern_ragnarok-neoforge-1.21.1-tacz1.2.0-8.0.0.jar"
++        ],
++        "fileSize": 2779793
++      }
+     }
+   ]
+ }
+diff -ruN orig/Bunker-Relay/tools/package_release.py Bunker-Relay/tools/package_release.py
+--- a/tools/package_release.py	2026-11-26 22:55:46.604510492 +0500
++++ b/tools/package_release.py	2026-11-26 22:56:38.842151599 +0500
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env python3
+ import hashlib,pathlib,shutil,zipfile,sys
+ ROOT=pathlib.Path(__file__).resolve().parents[1];dist=ROOT/'dist';dist.mkdir(exist_ok=True)
+-VERSION='0.66.1';source='--source' in sys.argv;jar=ROOT/f'mod/build/libs/bunkerrelay-{VERSION}.jar'
++VERSION='0.67.0';source='--source' in sys.argv;jar=ROOT/f'mod/build/libs/bunkerrelay-{VERSION}.jar'
+ lights=ROOT/f'mod/build/libs/relaylights-{VERSION}.jar'
+ factories=ROOT/f'mod/build/libs/relayfactories-{VERSION}.jar'
+ if not source:
+@@ -74,7 +74,7 @@
+   z.write(ROOT/'WORK_0.64.md','overrides/WORK_0.64.md')
+   z.write(ROOT/'WORK_0.65.md','overrides/WORK_0.65.md')
+   z.write(ROOT/'WORK_0.66.md','overrides/WORK_0.66.md')
+-  z.write(ROOT/'WORK_0.66.1.md','overrides/WORK_0.66.1.md')
++  z.write(ROOT/'WORK_0.67.0.md','overrides/WORK_0.67.0.md')
+   z.write(arsenal,'overrides/mods/'+arsenal.name)
+   z.write(factories,'overrides/mods/'+factories.name)
+   z.write(lights,'overrides/mods/'+lights.name)
