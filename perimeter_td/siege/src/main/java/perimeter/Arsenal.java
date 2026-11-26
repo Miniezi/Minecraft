@@ -139,7 +139,7 @@ public class Arsenal {
     @SubscribeEvent public static void hurt(LivingHurtEvent e){
         if(e.getSource().getEntity() instanceof ServerPlayer p){
             ItemStack weapon=p.getMainHandItem();CompoundTag t=affix(weapon);
-            if(t!=null && !armor(weapon) && (e.getSource().getDirectEntity()==p || e.getSource().is(net.minecraft.tags.DamageTypeTags.IS_PROJECTILE))){
+            if(t!=null && !armor(weapon) && (e.getSource().getDirectEntity()==p || e.getSource().getDirectEntity() instanceof net.minecraft.world.entity.projectile.Projectile || e.getSource().is(net.minecraft.tags.DamageTypeTags.IS_PROJECTILE) || gun(weapon) && e.getSource().typeHolder().unwrapKey().map(k->k.location().getNamespace().equals("tacz")).orElse(false))){
                 float bonus=.05f*(rank(t)+1);
                 if(prefix(t)==0)e.setAmount(e.getAmount()*(1+bonus));
                 if(prefix(t)==1)p.heal(Math.min(4,e.getAmount()*bonus));
