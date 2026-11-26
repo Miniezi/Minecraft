@@ -80,6 +80,27 @@ diff -ruN baseline-mod/src/main/java/dev/bunkerrelay/ForgeRoom.java Bunker-Relay
          event.getDrops().add(new net.minecraft.world.entity.item.ItemEntity(mob.level(),mob.getX(),mob.getY(),mob.getZ(),loot));
      }
      private ForgeRoom(){}
+diff -ruN baseline-mod/src/main/java/dev/bunkerrelay/PocketDevice.java Bunker-Relay/mod/src/main/java/dev/bunkerrelay/PocketDevice.java
+--- a/mod/src/main/java/dev/bunkerrelay/PocketDevice.java	2026-11-26 23:35:05.584611108 +0500
++++ b/mod/src/main/java/dev/bunkerrelay/PocketDevice.java	2026-11-26 23:38:00.427426573 +0500
+@@ -109,7 +109,7 @@
+                     }
+                     for(var merchant:RelayEconomy.Merchant.values())
+                         button(9+merchant.ordinal(),merchant.icon,merchant.title,"Открыть ассортимент");
+-                    button(16,Items.HOPPER,"Скупщик","Оценить и продать предметы");
++                    button(18,Items.HOPPER,"Скупщик","Оценить и продать предметы");
+                     button(17,Items.WRITABLE_BOOK,"Заказы снабжения","Текущие поставки");
+                 }
+                 case BASE -> {
+@@ -166,7 +166,7 @@
+                 case SHOP -> {
+                     if(RelayEconomy.safe(owner)){
+                         if(slot>=9&&slot<9+RelayEconomy.Merchant.values().length)RelayEconomy.openPocket(owner,false,RelayEconomy.Merchant.values()[slot-9]);
+-                        if(slot==16)RelayEconomy.openPocket(owner,true,RelayEconomy.Merchant.RESOURCES);
++                        if(slot==18)RelayEconomy.openPocket(owner,true,RelayEconomy.Merchant.RESOURCES);
+                         if(slot==17)SupplyOrders.openPocket(owner);
+                     }
+                 }
 diff -ruN baseline-mod/src/main/java/dev/bunkerrelay/RaidBosses.java Bunker-Relay/mod/src/main/java/dev/bunkerrelay/RaidBosses.java
 --- a/mod/src/main/java/dev/bunkerrelay/RaidBosses.java	2026-11-26 23:35:05.575643570 +0500
 +++ b/mod/src/main/java/dev/bunkerrelay/RaidBosses.java	2026-11-26 23:35:05.688868424 +0500
@@ -160,6 +181,35 @@ diff -ruN baseline-mod/src/main/java/dev/bunkerrelay/SiteCrate.java Bunker-Relay
          PersonalLoot.convert(level,at,chest);
          if(level.getBlockEntity(at) instanceof BaseContainerBlockEntity personal){
              var tag=personal.saveWithoutMetadata(level.registryAccess()); tag.putString("CustomName",Component.Serializer.toJson(Component.literal(title),level.registryAccess())); personal.loadWithComponents(tag,level.registryAccess());
+diff -ruN baseline-mod/src/main/java/dev/bunkerrelay/TerminalMenu.java Bunker-Relay/mod/src/main/java/dev/bunkerrelay/TerminalMenu.java
+--- a/mod/src/main/java/dev/bunkerrelay/TerminalMenu.java	2026-11-26 23:35:05.576406551 +0500
++++ b/mod/src/main/java/dev/bunkerrelay/TerminalMenu.java	2026-11-26 23:38:00.425851006 +0500
+@@ -22,7 +22,7 @@
+  public TerminalMenu(int id,Inventory inv,ServerPlayer p){this(id,inv,p,new SimpleContainer(54));}
+  private TerminalMenu(int id,Inventory inv,ServerPlayer p,SimpleContainer c){super(RelayMenus.TERMINAL.get(),id,inv,c,6);owner=p;buttons=c;refresh();}
+  private void icon(int slot,Item item,String name,String hint){var stack=new ItemStack(item);stack.set(DataComponents.CUSTOM_NAME,Component.literal(name));stack.set(DataComponents.LORE,new ItemLore(List.of(Component.literal(hint))));buttons.setItem(slot,stack);}
+- private void refresh(){buttons.clearContent();for(var m:RelayEconomy.Merchant.values())icon(m==RelayEconomy.Merchant.JEWELER?49:36+m.ordinal(),m.icon,m.title,"ЛКМ — 1 шт. · ПКМ — максимум");icon(42,Items.HOPPER,"Скупщик","Продать вещи по оценке");icon(44,Items.WRITABLE_BOOK,"Заказы снабжения",SupplyOrders.title(owner));icon(46,Items.CHEST,"Забрать награды","Почта наград");icon(48,Items.COMPASS,"Компас в углу экрана","Включить или выключить навигацию");icon(50,Items.GOLD_NUGGET,"Счёт: "+RelayEconomy.balance(owner)+" кр.","Бюджет скупщика: "+RelayEconomy.account(owner).getInt("budget"));var s=RelayState.get(owner.server);
++ private void refresh(){buttons.clearContent();for(var m:RelayEconomy.Merchant.values())icon(m==RelayEconomy.Merchant.SUPERB_AMMO?20:m==RelayEconomy.Merchant.JEWELER?49:36+m.ordinal(),m.icon,m.title,"ЛКМ — 1 шт. · ПКМ — максимум");icon(42,Items.HOPPER,"Скупщик","Продать вещи по оценке");icon(44,Items.WRITABLE_BOOK,"Заказы снабжения",SupplyOrders.title(owner));icon(46,Items.CHEST,"Забрать награды","Почта наград");icon(48,Items.COMPASS,"Компас в углу экрана","Включить или выключить навигацию");icon(50,Items.GOLD_NUGGET,"Счёт: "+RelayEconomy.balance(owner)+" кр.","Бюджет скупщика: "+RelayEconomy.account(owner).getInt("budget"));var s=RelayState.get(owner.server);
+   icon(0,Items.IRON_DOOR,"Бункер","Вернуться домой");icon(2,Items.CHEST_MINECART,"Гараж","Перейти в гараж");
+   icon(4,Items.COMPASS,s.ready?"Зона открыта":"Зона закрыта",s.generating?"Подготовка входа…":s.ready?"Эвакуация: "+s.centerX+", "+s.spawnY+", "+s.centerZ:"Выберите настройки и запустите цикл");
+   icon(6,Items.PAPER,"Сюжетные объекты","Выбрать цель для компаса");icon(8,Items.NOTE_BLOCK,"Скримеры: "+(owner.getPersistentData().getBoolean("relay_quiet")?"выкл.":"вкл."),"Переключить резкие звуки, надписи и темноту");
+@@ -49,7 +49,7 @@
+ 
+   icon(24,Items.ENDER_PEARL,"Начать вылазку","Снаряжение сохраняется перед выходом");
+   int[] visible=switch(page){
+-   case 1->new int[]{28,36,37,38,39,40,41,42,44,49,50};
++   case 1->new int[]{20,28,36,37,38,39,40,41,42,44,49,50};
+    case 2->new int[]{0,2,8,15,16,17,25,28,29,30,31,32,33,34,35,43,45,48,51,52,53};
+    case 3,4->new int[]{};
+    default->new int[]{4,6,22,24,27,18,46,47,52};
+@@ -135,6 +135,7 @@
+    case 33 -> BasePower.report(owner);
+    case 34 -> BasePower.fuel(owner);
+    case 35 -> TrophyResearch.dismantle(owner);
++   case 20 -> RelayEconomy.open(owner,false,RelayEconomy.Merchant.SUPERB_AMMO);
+    case 49 -> RelayEconomy.open(owner,false,RelayEconomy.Merchant.JEWELER);
+    case 45 -> {if(!BaseUpgrades.has(owner,BaseUpgrades.Upgrade.FORGE))BaseUpgrades.buy(owner,BaseUpgrades.Upgrade.FORGE);else RaidRules.tell(owner,"Стол перековки · "+net.minecraft.core.BlockPos.of(RelayState.get(owner.server).structureLayouts.getLong("forgeBench")).toShortString());}
+    case 42 -> RelayEconomy.open(owner,true);
 diff -ruN baseline-mod/src/main/java/dev/bunkerrelay/TrophyWeapons.java Bunker-Relay/mod/src/main/java/dev/bunkerrelay/TrophyWeapons.java
 --- a/mod/src/main/java/dev/bunkerrelay/TrophyWeapons.java	2026-11-26 23:35:05.599901503 +0500
 +++ b/mod/src/main/java/dev/bunkerrelay/TrophyWeapons.java	2026-11-26 23:36:37.365270197 +0500
