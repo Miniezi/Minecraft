@@ -102,8 +102,8 @@ diff -ruN orig/Bunker-Relay/mod/src/main/java/dev/bunkerrelay/ExpeditionContent.
    var level=player.serverLevel();int cellX=Math.floorDiv(player.getBlockX()-s.centerX,192),cellZ=Math.floorDiv(player.getBlockZ()-s.centerZ,192);
 diff -ruN orig/Bunker-Relay/mod/src/main/java/dev/bunkerrelay/FieldGearTest.java Bunker-Relay/mod/src/main/java/dev/bunkerrelay/FieldGearTest.java
 --- a/mod/src/main/java/dev/bunkerrelay/FieldGearTest.java	2026-11-26 22:55:46.603873401 +0500
-+++ b/mod/src/main/java/dev/bunkerrelay/FieldGearTest.java	2026-11-26 22:56:38.810096102 +0500
-@@ -25,21 +25,8 @@
++++ b/mod/src/main/java/dev/bunkerrelay/FieldGearTest.java	2026-11-26 23:00:57.842430229 +0500
+@@ -25,21 +25,25 @@
          var bench=BlockPos.of(state.structureLayouts.getLong("forgeBench"));
          player.moveTo(bench.getX()+1,bench.getY(),bench.getZ()+.5);
          player.getInventory().clearContent();
@@ -124,6 +124,23 @@ diff -ruN orig/Bunker-Relay/mod/src/main/java/dev/bunkerrelay/FieldGearTest.java
 -        }
 +        check(hub.getBlockState(bench).is(ForgeRoom.table()),"native reforging bench");
 +        check(!ForgeRoom.gem(hub.registryAccess(),"guardian","perfect").isEmpty(),"perfect gem");
++        var provider=hub.getBlockState(bench).getMenuProvider(hub,bench);
++        var menu=provider.createMenu(1,player.getInventory(),player);
++        var weapon=com.tacz.guns.api.item.builder.GunItemBuilder.create()
++                .setId(ResourceLocation.parse("tacz:glock_17")).setAmmoCount(0).build(hub.registryAccess());
++        check(menu.getSlot(0).mayPlace(weapon),"TaCZ weapon category");
++        menu.getSlot(0).set(weapon);
++        menu.getSlot(1).set(new ItemStack(ForgeRoom.material(0)));
++        menu.slotsChanged(player.getInventory());
++        check(!menu.getSlot(3).getItem().isEmpty(),"native gun preview");
++        check(!menu.getSlot(3).mayPickup(player),"experience required");
++        player.giveExperienceLevels(1);
++        check(menu.getSlot(3).mayPickup(player),"one-level common recipe");
++        menu.clicked(3,0,net.minecraft.world.inventory.ClickType.PICKUP,player);
++        check(!menu.getCarried().isEmpty() && menu.getSlot(1).getItem().isEmpty(),"native reforge consumed material");
++        check(player.experienceLevel==0,"native reforge charged experience");
++        menu.setCarried(ItemStack.EMPTY);
++        menu.removed(player);
          var bike=BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse("simplebikes:basic_bike")).create(hub);
          CargoBike.bag(bike).setItem(5,new ItemStack(Items.DIAMOND,3));
          CargoBike.bags.remove(bike);
