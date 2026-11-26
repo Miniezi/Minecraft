@@ -57,6 +57,27 @@ public class ArsenalCheck {
             if(!SiegeBoss.weapon(kind,random).getTag().getString(SiegeBoss.RELIC).equals(kind))throw new AssertionError("Boss pool");
         }
         if(!(SiegeBoss.scale("guard",5)>1 && SiegeBoss.scale("guard",22)<1 && SiegeBoss.scale("scout",5)<1 && SiegeBoss.scale("scout",22)>1))throw new AssertionError("Boss tradeoffs");
+        for(int wave=1;wave<=60;wave++){
+            var plan=Director.plan(wave);
+            for(String id:plan)if(Director.type(id)==null)throw new AssertionError("Registry: "+id);
+            if(plan.stream().filter(Director::calamity).count()!=(wave>=10&&wave%5==0?1:0))throw new AssertionError("Boss cadence");
+            if(wave<5&&plan.stream().anyMatch(id->!java.util.Arrays.asList(Director.BASIC).contains(id)))throw new AssertionError("Stage leakage");
+        }
+        Director.muster(level,marker,1);
+        Director.step(level,marker);
+        var tickets=level.getEntitiesOfClass(net.minecraft.world.entity.Marker.class,marker.getBoundingBox().inflate(3),e->e.getTags().contains(Director.TICKET));
+        if(tickets.size()!=2)throw new AssertionError("Wave one");
+        var ticket=tickets.get(0);
+        var enemy=(net.minecraft.world.entity.Mob)level.getEntity(ticket.getPersistentData().getUUID("mob"));
+        if(Director.finish(enemy,level.damageSources().generic())||!enemy.isAlive())throw new AssertionError("Uncredited death");
+        if(!Director.finish(enemy,level.damageSources().playerAttack(player))||!ticket.isRemoved())throw new AssertionError("Player finish");
+        for(String id:Director.CAL){
+            var ticket2=net.minecraft.world.entity.EntityType.MARKER.create(level);
+            ticket2.moveTo(marker.position());ticket2.addTag(Director.TICKET);ticket2.getPersistentData().putString("form",id);level.addFreshEntity(ticket2);
+            var boss=Director.spawn(level,ticket2);
+            if(!boss.getClass().getName().contains(".Calamities."))throw new AssertionError("Wrong boss: "+id);
+            if(!Director.finish(boss,level.damageSources().playerAttack(player)))throw new AssertionError("No trophy for "+id);
+        }
         marker.discard();
         System.out.println("PERIMETER_ARSENAL_PASS");
         event.getServer().halt(false);
