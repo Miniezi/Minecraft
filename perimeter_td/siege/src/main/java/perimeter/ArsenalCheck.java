@@ -70,7 +70,11 @@ public class ArsenalCheck {
         var ticket=tickets.get(0);
         var enemy=(net.minecraft.world.entity.Mob)level.getEntity(ticket.getPersistentData().getUUID("mob"));
         if(Director.finish(enemy,level.damageSources().generic())||!enemy.isAlive())throw new AssertionError("Uncredited death");
-        if(!Director.finish(enemy,level.damageSources().playerAttack(player))||!ticket.isRemoved())throw new AssertionError("Player finish");
+        enemy.setHealth(1);enemy.invulnerableTime=0;
+        enemy.hurt(level.damageSources().generic(),10);
+        if(enemy.isRemoved()||ticket.isRemoved()||enemy.getHealth()<1)throw new AssertionError("Environment completed ticket");
+        enemy.invulnerableTime=0;enemy.hurt(level.damageSources().playerAttack(player),50);
+        if(!enemy.isRemoved()||!ticket.isRemoved())throw new AssertionError("Player finish");
         for(String id:Director.CAL){
             var ticket2=net.minecraft.world.entity.EntityType.MARKER.create(level);
             ticket2.moveTo(marker.position());ticket2.addTag(Director.TICKET);ticket2.getPersistentData().putString("form",id);level.addFreshEntity(ticket2);
