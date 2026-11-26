@@ -113,7 +113,7 @@ public class ArsenalCheck {
     @SubscribeEvent public static void verifyMove(net.minecraftforge.event.TickEvent.ServerTickEvent e){
         if(oldCore==null||e.phase!=net.minecraftforge.event.TickEvent.Phase.END)return;
         var l=e.getServer().overworld();var next=BaseOps.anchor(l);
-        if(oldCore.isRemoved()&&next!=null&&next.distanceToSqr(oldCore)>350*350&&BaseOps.get(l,"hp")==120&&BaseOps.get(l,"wave")==0){
+        if(oldCore.isRemoved()&&next!=null&&next.distanceToSqr(oldCore)>350*350&&next.getY()>l.getMinBuildHeight()+4&&!l.getBlockState(next.blockPosition().below()).isAir()&&BaseOps.get(l,"hp")==120&&BaseOps.get(l,"wave")==0){
             oldCore=null;System.out.println("PERIMETER_ARSENAL_PASS");e.getServer().halt(false);return;
         }
         if(++elapsed>400)throw new AssertionError("Relocation: oldRemoved="+oldCore.isRemoved()+" replacement="+next+" hp="+BaseOps.get(l,"hp")+" wave="+BaseOps.get(l,"wave"));
