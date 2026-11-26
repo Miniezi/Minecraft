@@ -8015,58 +8015,6 @@ index a8b7e52..1a7018c 100644
    "name": "Bunker Relay",
    "summary": "Cooperative expeditions, ECHO encounters, threats, extraction and persistent bunker.",
    "files": [
-@@ -844,6 +844,51 @@
-         "https://cdn.modrinth.com/data/eE2Db4YU/versions/B2YtQYCh/immersive_armors-1.7.6%2B1.21.1-neoforge.jar"
-       ],
-       "fileSize": 1274167
-+    },
-+    {
-+      "path": "mods/superbwarfare-0.8.9.2-hotfix-mc1.21.1-e0c2b27f.jar",
-+      "hashes": {
-+        "sha1": "e62188c36582bf17c968593061bec7de2e3a9649",
-+        "sha512": "1a61ed2d6ed6c7e91334469650fe8649d9f115183818eed011cb1e93b0e3e0d8cf0a21ba71063219a9c939815b9b74506b4ab45e0aa96d52ecf97b9bb0c9f637"
-+      },
-+      "env": {
-+        "client": "required",
-+        "server": "required"
-+      },
-+      "downloads": [
-+        "https://cdn.modrinth.com/data/Cd3DYqzn/versions/izD7dnxq/superbwarfare-0.8.9.2-hotfix-mc1.21.1-e0c2b27f.jar"
-+      ],
-+      "fileSize": 41638430
-+    },
-+    {
-+      "path": "mods/kotlinforforge-5.13.0-all.jar",
-+      "hashes": {
-+        "sha512": "64a26f73e3299ad09b350d3421e3f97a5ccd158d1936fb50fc57f3c88bf6fd33814568bf43a0886f79ada4be65d65d232d9e20a901833150ec5b89a01c46d459",
-+        "sha1": "b1d5563f4e3db9ec4a4a2b371560aa171d6de237"
-+      },
-+      "env": {
-+        "client": "optional",
-+        "server": "optional"
-+      },
-+      "downloads": [
-+        "https://cdn.modrinth.com/data/ordsPcFz/versions/9ZlVvei8/kotlinforforge-5.13.0-all.jar"
-+      ],
-+      "fileSize": 7364729
-+    },
-+    {
-+      "path": "mods/simplebikes-1.0-neoforge-1.21.1.jar",
-+      "hashes": {
-+        "sha512": "7fa881fba6fb17d8525b4630a005b49ca0d742292e17ee07d692e8116374af2efb6b92d5b397e50cc81d962f6b2b17020204040cd0972b55fff0883b2f7d512e",
-+        "sha1": "73f38b74031c244a3759a26e9fc2b84f5a4d2cc1"
-+      },
-+      "env": {
-+        "client": "required",
-+        "server": "required"
-+      },
-+      "downloads": [
-+        "https://cdn.modrinth.com/data/KVUeWeA8/versions/zCV6RL5z/simplebikes-1.0-neoforge-1.21.1.jar"
-+      ],
-+      "fileSize": 229344
-     }
-   ],
-   "dependencies": {
 diff --git a/pack.lock.json b/pack.lock.json
 index d43f6aa..94cf91c 100644
 --- a/pack.lock.json
