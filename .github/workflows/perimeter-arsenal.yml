@@ -1,0 +1,48 @@
+name: Perimeter Arsenal
+on:
+  push:
+    branches: [perimeter-arsenal-0.4]
+    paths: ['perimeter_td/**', '.github/workflows/perimeter-arsenal.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.8'
+      - name: Compile Forge siege module
+        run: |
+          cp 'компилятор модов/settings.gradle' perimeter_td/siege/
+          cat >> perimeter_td/siege/build.gradle <<'GRADLE'
+          minecraft.runs {
+              arsenalTest {
+                  parent minecraft.runs.server
+                  workingDirectory project.file('runTest')
+                  property 'perimeter.testArsenal', 'true'
+                  args 'nogui'
+                  mods { perimeter_siege { source sourceSets.main } }
+              }
+          }
+          GRADLE
+          mkdir -p perimeter_td/siege/runTest
+          echo 'eula=true' > perimeter_td/siege/runTest/eula.txt
+          gradle -p perimeter_td/siege build runArsenalTest --no-daemon | tee arsenal-test.log
+          grep -q PERIMETER_ARSENAL_PASS arsenal-test.log
+      - name: Package Prism import
+        working-directory: perimeter_td
+        run: |
+          curl --fail --retry 3 -L https://mediafilez.forgecdn.net/files/7829/406/inf.zip -o inf.zip
+          python package_arsenal.py siege/build/libs/Perimeter-Siege-0.3.0.jar
+          unzip -t Perimeter-Arsenal-0.4.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Perimeter-Arsenal-0.4
+          path: perimeter_td/Perimeter-Arsenal-0.4.zip
