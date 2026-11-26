@@ -19,35 +19,46 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid="perimeter_siege")
 public class SiegeBoss {
     static final String RELIC="PerimeterRelic";
+    record Gun(String id,String name,int mag,int min,int max,double strong,double weak){}
+    static final java.util.Map<String,Gun> GUNS=java.util.Map.of(
+        "guard",new Gun("ak47","Пролом",30,0,10,1.5,.75),
+        "scout",new Gun("m4a1","Дальний дозор",30,18,256,1.6,.65),
+        "fang",new Gun("deagle","Клык осады",7,5,16,1.45,.85),
+        "ram",new Gun("m870","Таран",5,0,8,1.5,.70),
+        "spotter",new Gun("m700","Корректировщик",5,22,256,1.6,.65),
+        "mortar",new Gun("m320","Навес",1,12,30,1.35,.75));
+    static String[] pool(String kind){return switch(kind){
+        case "sieger"->new String[]{"ram","guard"};
+        case "howitzer"->new String[]{"mortar","spotter"};
+        case "hindenburg"->new String[]{"fang","scout"};
+        default->new String[]{kind};};}
     static ItemStack box(String kind){
         ItemStack s=Arsenal.supply(true);
         s.getOrCreateTag().putString("SiegeBossBox",kind);
-        s.setHoverName(Component.literal("Трофей: "+(kind.equals("guard")?"Панцирник":"Дозорный")).withStyle(ChatFormatting.GOLD));
+        s.setHoverName(Component.literal("Трофей: "+(switch(kind){case "sieger"->"Sieger";case "howitzer"->"Howitzer";case "hindenburg"->"Hindenburg";case "guard"->"Панцирник";default->"Дозорный";})).withStyle(ChatFormatting.GOLD));
         return s;
     }
     static ItemStack weapon(String kind,net.minecraft.util.RandomSource random){
-        boolean guard=kind.equals("guard");
+        String[] options=pool(kind);kind=options[random.nextInt(options.length)];Gun gun=GUNS.get(kind);
         Item item=ForgeRegistries.ITEMS.getValue(new ResourceLocation("tacz","modern_kinetic_gun"));
         ItemStack s;
         if(item==null||item==Items.AIR)s=new ItemStack(Items.CROSSBOW);
         else{
             s=new ItemStack(item);
-            s.getOrCreateTag().putString("GunId",guard?"tacz:ak47":"tacz:m4a1");
-            s.getOrCreateTag().putInt("GunCurrentAmmoCount",30);
+            s.getOrCreateTag().putString("GunId","tacz:"+gun.id());
+            s.getOrCreateTag().putInt("GunCurrentAmmoCount",gun.mag());
         }
         s.getOrCreateTag().putString(RELIC,kind);
-        s.setHoverName(Component.literal(guard?"Пролом":"Дальний дозор").withStyle(ChatFormatting.GOLD));
+        s.setHoverName(Component.literal(gun.name()).withStyle(ChatFormatting.GOLD));
         Arsenal.roll(s,random);Arsenal.affix(s).putInt("tier",4);
         return s;
     }
     static double scale(String kind,double range){
-        if(kind.equals("guard"))return range<=10?1.5:0.75;
-        if(kind.equals("scout"))return range>=18?1.6:0.65;
-        return 1;
+        Gun g=GUNS.get(kind);return g==null?1:range>=g.min()&&range<=g.max()?g.strong():g.weak();
     }
     @SubscribeEvent public static void tooltip(net.minecraftforge.event.entity.player.ItemTooltipEvent e){
         ItemStack s=e.getItemStack();
-        if(s.hasTag()&&s.getTag().contains(RELIC))e.getToolTip().add(Component.literal(s.getTag().getString(RELIC).equals("guard")?"До 10 блоков: +50% к выстрелу; дальше: −25%":"От 18 блоков: +60% к выстрелу; ближе: −35%").withStyle(ChatFormatting.GOLD));
+        if(s.hasTag()&&s.getTag().contains(RELIC)){Gun g=GUNS.get(s.getTag().getString(RELIC));if(g!=null)e.getToolTip().add(Component.literal("Дистанция "+g.min()+"–"+g.max()+" бл.: ×"+g.strong()+"; вне диапазона: ×"+g.weak()).withStyle(ChatFormatting.GOLD));}
     }
     @SubscribeEvent public static void fired(EntityJoinLevelEvent e){
         if(!e.getLevel().isClientSide && e.getEntity() instanceof Projectile shot&&shot.getOwner() instanceof ServerPlayer p){
@@ -65,26 +76,5 @@ public class SiegeBoss {
         }else if(e.getSource().typeHolder().unwrapKey().map(k->k.location().getNamespace().equals("tacz")).orElse(false)){
             var tag=p.getMainHandItem().getTag();if(tag!=null)e.setAmount((float)(e.getAmount()*scale(tag.getString(RELIC),p.distanceTo(e.getEntity()))));
         }
-    }
-    @SubscribeEvent public static void bossTick(LivingEvent.LivingTickEvent event){
-        if(!(event.getEntity() instanceof Mob mob)||!(mob.level() instanceof ServerLevel l)||!mob.getTags().contains("rd.boss"))return;
-        boolean guard=mob.getTags().contains("rd.guardboss");String kind=guard?"guard":"scout";
-        if(!mob.getPersistentData().getBoolean("armed")){
-            mob.setItemSlot(EquipmentSlot.MAINHAND,weapon(kind,mob.getRandom()));mob.setDropChance(EquipmentSlot.MAINHAND,0);
-            mob.getPersistentData().putBoolean("armed",true);
-        }
-        if(mob.tickCount%60!=0)return;
-        var target=l.getNearestPlayer(mob,guard?10:28);
-        if(target==null||target.isCreative()||target.isSpectator()||!mob.hasLineOfSight(target))return;
-        target.hurt(l.damageSources().mobAttack(mob),guard?5:target.distanceTo(mob)>=18?6:2);
-        mob.playSound(SoundEvents.FIREWORK_ROCKET_BLAST,1,guard?.7f:1.2f);
-    }
-    @SubscribeEvent public static void drops(LivingDropsEvent e){
-        LivingEntity mob=e.getEntity();
-        if(!mob.getTags().contains("rd.boss"))return;
-        e.getDrops().removeIf(i->i.getItem().hasTag()&&i.getItem().getTag().contains(RELIC));
-        if(mob.getTags().contains("rd.cleanup")||e.getSource().is(net.minecraft.world.damagesource.DamageTypes.GENERIC_KILL))return;
-        String kind=mob.getTags().contains("rd.guardboss")?"guard":"scout";
-        e.getDrops().add(new ItemEntity(mob.level(),mob.getX(),mob.getY(),mob.getZ(),box(kind)));
     }
 }
