@@ -64,7 +64,7 @@ public class Siege {
     static void strike(ServerLevel l,Entity mob,BlockPos p){
         BlockState s=l.getBlockState(p);
         float hard=s.getDestroySpeed(l,p);
-        if(hard<0 || !solid(l,p) || s.hasBlockEntity() || !s.getFluidState().isEmpty() || s.getPistonPushReaction()==PushReaction.BLOCK)return;
+        if(hard<0 || !solid(l,p) || s.hasBlockEntity() || !s.getFluidState().isEmpty() || (s.getPistonPushReaction()==PushReaction.BLOCK && !s.is(net.minecraft.world.level.block.Blocks.CRYING_OBSIDIAN)))return;
         Ledger d=Ledger.get(l);
         int hp=Math.max(6,Math.min(600,(int)Math.ceil(8+hard*12)));
         int damage=d.hits.merge(p.immutable(),2,Integer::sum);
