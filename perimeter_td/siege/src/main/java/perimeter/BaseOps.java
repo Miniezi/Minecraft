@@ -69,13 +69,15 @@ public class BaseOps {
             double angle=l.random.nextDouble()*Math.PI*2;int radius=400+l.random.nextInt(300);
             BlockPos p=pos.offset((int)(radius*Math.cos(angle)),0,(int)(radius*Math.sin(angle)));
             if(!l.getWorldBorder().isWithinBounds(p))continue;
+            l.getChunkAt(p);
             var ground=l.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,p);
-            if(!l.getFluidState(ground.below()).isEmpty()||ground.getY()+5>=l.getMaxBuildHeight())continue;
+            if(ground.getY()<=l.getMinBuildHeight()+4||l.getBlockState(ground.below()).getCollisionShape(l,ground.below()).isEmpty()||!l.getFluidState(ground.below()).isEmpty()||ground.getY()+5>=l.getMaxBuildHeight())continue;
             next=ground;break;
         }
         if(next==null)return;
         old.getPersistentData().putLong("evacPos",next.asLong());l.setChunkForced(next.getX()>>4,next.getZ()>>4,true);
         if(!l.isPositionEntityTicking(next))return;
+        for(int dx:new int[]{-16,0,16})for(int dz:new int[]{-16,0,16})l.getChunkAt(next.offset(dx,0,dz));
         var src=old.createCommandSourceStack();clearWave(l);
         var ledger=Siege.Ledger.get(l);ledger.hits.keySet().forEach(p->l.destroyBlockProgress(Siege.crackId(p),p,-1));ledger.hits.clear();ledger.repair.clear();ledger.setDirty();
         for(Entity e:l.getEntities(old,new AABB(pos).inflate(130),e->operator(e)||e.getTags().contains("rd.clock")||e.getTags().contains("rd.site")||e.getTags().contains("rd.guard")))e.discard();
