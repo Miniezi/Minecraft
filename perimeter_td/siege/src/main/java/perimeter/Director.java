@@ -41,7 +41,7 @@ public class Director {
     }
     static boolean calamity(String id){return Arrays.asList(CAL).contains(id);}
     static boolean campaign(Entity e){return e.getPersistentData().hasUUID("rdTicket");}
-    static EntityType<?> type(String id){return ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation("spore",id));}
+    static EntityType<?> type(String id){ResourceLocation key=new ResourceLocation("spore",id);return ForgeRegistries.ENTITY_TYPES.containsKey(key)?ForgeRegistries.ENTITY_TYPES.getValue(key):null;}
     static int muster(ServerLevel l,Entity core,int wave){
         var roster=plan(wave);
         for(String id:roster)if(type(id)==null)throw new IllegalStateException("Missing Spore mob "+id);
@@ -79,7 +79,7 @@ public class Director {
     }
     @SubscribeEvent public static void lock(LivingEvent.LivingTickEvent event){
         if(!(event.getEntity() instanceof Mob mob)||!(mob.level() instanceof ServerLevel l)||!campaign(mob))return;
-        if(mob instanceof Infected inf){inf.setEvoPoints(0);inf.setEvolution(0);}
+        if(mob instanceof Infected inf){inf.setEvoPoints(0);inf.setEvolution(0);inf.getEntityData().set(Infected.HUNGER,0);}
         var starvation=ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation("spore","starvation"));if(starvation!=null&&mob.hasEffect(starvation))mob.removeEffect(starvation);
         if(mob.tickCount%20==0){
             Entity ticket=l.getEntity(mob.getPersistentData().getUUID("rdTicket"));
