@@ -1,0 +1,189 @@
+diff -ruN baseline-mod/build.gradle Bunker-Relay/mod/build.gradle
+--- a/mod/build.gradle	2026-11-26 23:35:05.643271496 +0500
++++ b/mod/build.gradle	2026-11-26 23:35:05.690363659 +0500
+@@ -2,6 +2,7 @@
+ version = '0.67.0'
+ group = 'dev.bunkerrelay'
+ base { archivesName = 'bunkerrelay' }
++tasks.named('jar') { archiveVersion = '0.67.1' }
+ java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+ neoForge {
+     version = '21.1.265'
+diff -ruN baseline-mod/src/main/java/dev/bunkerrelay/FieldGearTest.java Bunker-Relay/mod/src/main/java/dev/bunkerrelay/FieldGearTest.java
+--- a/mod/src/main/java/dev/bunkerrelay/FieldGearTest.java	2026-11-26 23:35:05.604617848 +0500
++++ b/mod/src/main/java/dev/bunkerrelay/FieldGearTest.java	2026-11-26 23:35:05.690034022 +0500
+@@ -27,6 +27,14 @@
+         player.getInventory().clearContent();
+         check(hub.getBlockState(bench).is(ForgeRoom.table()),"native reforging bench");
+         check(!ForgeRoom.gem(hub.registryAccess(),"guardian","perfect").isEmpty(),"perfect gem");
++        for(String id:java.util.List.of("timeworn_fabric","luminous_crystal_shard","arcane_sands","godforged_pearl","sigil_of_rebirth","sigil_of_enhancement","sigil_of_supremacy")){
++            var offer=RelayEconomy.offers(player).stream().filter(o->o.id().equals(id)).findFirst().orElseThrow();
++            check(offer.stack(player).is(BuiltInRegistries.ITEM.get(ResourceLocation.parse("apotheosis:"+id))),id);
++        }
++        for(int x:new int[]{-2,2}){
++            var at=bench.offset(x,0,-2);
++            check(hub.getBlockState(at).getMenuProvider(hub,at)!=null,"crafting station "+x);
++        }
+         var provider=hub.getBlockState(bench).getMenuProvider(hub,bench);
+         var menu=provider.createMenu(1,player.getInventory(),player);
+         var weapon=com.tacz.guns.api.item.builder.GunItemBuilder.create()
+diff -ruN baseline-mod/src/main/java/dev/bunkerrelay/ForgeRoom.java Bunker-Relay/mod/src/main/java/dev/bunkerrelay/ForgeRoom.java
+--- a/mod/src/main/java/dev/bunkerrelay/ForgeRoom.java	2026-11-26 23:35:05.604642665 +0500
++++ b/mod/src/main/java/dev/bunkerrelay/ForgeRoom.java	2026-11-26 23:35:05.689949775 +0500
+@@ -28,6 +28,8 @@
+             level.setBlock(o,table().defaultBlockState(),2);
+             level.setBlock(o.west(2),Blocks.ANVIL.defaultBlockState(),2);
+             level.setBlock(o.east(2),Blocks.BLAST_FURNACE.defaultBlockState(),2);
++            addStations(level,o);
++            state.structureLayouts.putBoolean("forgeStations",true);
+             state.structureLayouts.putLong("forgeBench",o.asLong());state.setDirty();return true;
+         }
+         return false;
+@@ -42,7 +44,26 @@
+             player.level().setBlockAndUpdate(pos,table().defaultBlockState());
+         }
+     }
++    private static void addStations(net.minecraft.server.level.ServerLevel level,BlockPos center){
++        for(String id:java.util.List.of("gem_cutting_table","augmenting_table")){
++            int x=id.equals("gem_cutting_table")?-2:2;
++            var block=net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(net.minecraft.resources.ResourceLocation.parse("apotheosis:"+id));
++            for(var pos:java.util.List.of(center.offset(x,0,-2),center.offset(x,0,-1),center.offset(x,0,1))){
++                if(level.getBlockState(pos).is(block))break;
++                if(level.isEmptyBlock(pos)){level.setBlockAndUpdate(pos,block.defaultBlockState());break;}
++            }
++        }
++    }
+     static void migrateItems(ServerPlayer player){
++        var state=RelayState.get(player.server);
++        if(player.level().dimension().equals(BunkerRelay.HUB) && state.structureLayouts.contains("forgeBench") && !state.structureLayouts.getBoolean("forgeStations")){
++            var center=BlockPos.of(state.structureLayouts.getLong("forgeBench"));
++            if(player.distanceToSqr(center.getX(),center.getY(),center.getZ())<1024){
++                addStations(player.serverLevel(),center);
++                state.structureLayouts.putBoolean("forgeStations",true);
++                state.setDirty();
++            }
++        }
+         var inv=player.getInventory();
+         for(int i=0;i<inv.getContainerSize();i++){
+             var item=inv.getItem(i);
+@@ -81,7 +102,7 @@
+         if(!(event.getSource().getEntity() instanceof ServerPlayer player) || !BunkerRelay.expedition(player.level()) || !SporeEncounters.isSpore(mob))return;
+         var random=mob.getRandom();
+         if(random.nextInt(24)!=0)return;
+-        var loot=random.nextInt(3)==0?gem(player.registryAccess(),"guardian","chipped"):new ItemStack(material(random.nextInt(Math.clamp(RelayState.get(player.server).activeLoot,1,5))));
++        var loot=random.nextInt(3)==0?gem(player.registryAccess(),"guardian","chipped"):new ItemStack(material(random.nextInt(Math.clamp(RelayState.get(player.server).activeLoot,1,4))));
+         event.getDrops().add(new net.minecraft.world.entity.item.ItemEntity(mob.level(),mob.getX(),mob.getY(),mob.getZ(),loot));
+     }
+     private ForgeRoom(){}
+diff -ruN baseline-mod/src/main/java/dev/bunkerrelay/RaidBosses.java Bunker-Relay/mod/src/main/java/dev/bunkerrelay/RaidBosses.java
+--- a/mod/src/main/java/dev/bunkerrelay/RaidBosses.java	2026-11-26 23:35:05.575643570 +0500
++++ b/mod/src/main/java/dev/bunkerrelay/RaidBosses.java	2026-11-26 23:35:05.688868424 +0500
+@@ -86,7 +86,7 @@
+   entity.spawnAtLocation(new ItemStack(BossTrophies.trophy(s.activeTheme),s.activeDifficulty>=5?2:1));
+   entity.spawnAtLocation(new ItemStack(Items.DIAMOND,1+s.activeLoot));
+   entity.spawnAtLocation(new ItemStack(Items.EXPERIENCE_BOTTLE,3+s.activeLoot));
+-  if(entity.getRandom().nextInt(8)==0)entity.spawnAtLocation(ForgeRoom.gem(level.registryAccess(),"guardian","perfect"));
++  if(entity.getRandom().nextInt(8)==0)entity.spawnAtLocation(new ItemStack(ForgeRoom.material(4)));
+   TrophyWeapons.drop(entity,s.activeTheme,s.activeLoot,true,name(s));
+   for(var p:level.getServer().getPlayerList().getPlayers())if(p.serverLevel()==level&&RaidRules.active(p))
+    RaidRules.chat(p,name(s)+" повержен. Добыча · "+entity.blockPosition().toShortString());
+diff -ruN baseline-mod/src/main/java/dev/bunkerrelay/RelayEconomy.java Bunker-Relay/mod/src/main/java/dev/bunkerrelay/RelayEconomy.java
+--- a/mod/src/main/java/dev/bunkerrelay/RelayEconomy.java	2026-11-26 23:35:05.596636138 +0500
++++ b/mod/src/main/java/dev/bunkerrelay/RelayEconomy.java	2026-11-26 23:36:37.366230456 +0500
+@@ -20,7 +20,6 @@
+  public static final long MAX_BALANCE=1_000_000_000L;
+  public record Offer(String id,String name,String item,int quantity,int buy,int sell,int stock,boolean staple) {
+   public ItemStack stack(ServerPlayer p){
+-   if(id.equals("perfect_guardian"))return ForgeRoom.gem(p.registryAccess(),"guardian","perfect");
+    if(item.startsWith("ammo/"))return AmmoItemBuilder.create().setId(ResourceLocation.parse("tacz:"+item.substring(5))).setCount(quantity).build();
+    if(item.startsWith("attachment/"))return AttachmentItemBuilder.create().setId(ResourceLocation.parse("tacz:"+item.substring(11))).build();
+    if(item.startsWith("gun/"))return GunItemBuilder.create().setId(ResourceLocation.parse(item.substring(4).contains(":")?item.substring(4):"tacz:"+item.substring(4))).setAmmoCount(0).build(p.registryAccess());
+@@ -49,7 +48,7 @@
+   new Offer("alloy","Андезитовый сплав ×8","create:andesite_alloy",8,160,40,3,false),
+   new Offer("apple","Золотое яблоко","minecraft:golden_apple",1,240,60,2,false)
+  );
+- public enum Merchant { WEAPONS("Оружейник",Items.CROSSBOW),MECHANISMS("Механик",Items.PISTON),RESOURCES("Ресурсы",Items.IRON_INGOT),BUILDING("Строитель",Items.BRICKS),SUPPLIES("Снаряжение",Items.BREAD),MEDIC("Медик",Items.POTION),JEWELER("Огранщик",Items.AMETHYST_SHARD);public final String title;public final Item icon;Merchant(String title,Item icon){this.title=title;this.icon=icon;} }
++ public enum Merchant { WEAPONS("Оружейник",Items.CROSSBOW),MECHANISMS("Механик",Items.PISTON),RESOURCES("Ресурсы",Items.IRON_INGOT),BUILDING("Строитель",Items.BRICKS),SUPPLIES("Снаряжение",Items.BREAD),MEDIC("Медик",Items.POTION),JEWELER("Огранщик",Items.AMETHYST_SHARD),SUPERB_AMMO("Боеприпасы Superb Warfare",Items.GUNPOWDER);public final String title;public final Item icon;Merchant(String title,Item icon){this.title=title;this.icon=icon;} }
+  private static final Map<String,Merchant> categories=new HashMap<>();
+  public static final List<Offer> CATALOG=catalog();
+  private static List<Offer> catalog(){var list=new ArrayList<>(ORIGINAL);
+@@ -233,10 +232,23 @@
+   list.add(new Offer("honey_flask","Мёд в бутылке","minecraft:honey_bottle",1,34,6,8,true));categories.put("honey_flask",Merchant.MEDIC);
+   list.add(new Offer("bike","Велосипед","simplebikes:basic_bike_item",1,650,120,3,true));categories.put("bike",Merchant.MECHANISMS);
+   list.add(new Offer("cargo_bike","Грузовой велосипед · 9 ячеек","bunkerrelay:cargo_bike",1,1100,220,2,true));categories.put("cargo_bike",Merchant.MECHANISMS);
+-  list.add(new Offer("forge_crystal","Материал перековки","apotheosis:mysterious_scrap_metal",1,230,45,8,true));categories.put("forge_crystal",Merchant.JEWELER);
+-  list.add(new Offer("perfect_guardian","Совершенный самоцвет стража","apotheosis:gem",1,65000,0,1,true));categories.put("perfect_guardian",Merchant.JEWELER);
++  list.add(new Offer("forge_crystal","Таинственный металлолом","apotheosis:mysterious_scrap_metal",1,230,45,8,true));categories.put("forge_crystal",Merchant.JEWELER);
++  list.add(new Offer("timeworn_fabric","Изношенная временем ткань","apotheosis:timeworn_fabric",1,650,1,8,true));categories.put("timeworn_fabric",Merchant.JEWELER);
++  list.add(new Offer("luminous_crystal_shard","Светящийся осколок кристалла","apotheosis:luminous_crystal_shard",1,1600,1,6,true));categories.put("luminous_crystal_shard",Merchant.JEWELER);
++  list.add(new Offer("arcane_sands","Чародейские пески","apotheosis:arcane_sands",1,5200,1,4,true));categories.put("arcane_sands",Merchant.JEWELER);
++  list.add(new Offer("godforged_pearl","Выкованная богом жемчужина","apotheosis:godforged_pearl",1,65000,1,1,true));categories.put("godforged_pearl",Merchant.JEWELER);
++  list.add(new Offer("sigil_of_rebirth","Печать перерождения","apotheosis:sigil_of_rebirth",1,450,1,24,true));categories.put("sigil_of_rebirth",Merchant.JEWELER);
++  list.add(new Offer("sigil_of_enhancement","Печать улучшения","apotheosis:sigil_of_enhancement",1,800,1,16,true));categories.put("sigil_of_enhancement",Merchant.JEWELER);
++  list.add(new Offer("sigil_of_socketing","Печать гнездования","apotheosis:sigil_of_socketing",1,2800,1,4,true));categories.put("sigil_of_socketing",Merchant.JEWELER);
++  list.add(new Offer("sigil_of_withdrawal","Печать извлечения","apotheosis:sigil_of_withdrawal",1,1600,1,4,true));categories.put("sigil_of_withdrawal",Merchant.JEWELER);
++  list.add(new Offer("sigil_of_unnaming","Печать безымянности","apotheosis:sigil_of_unnaming",1,600,1,4,true));categories.put("sigil_of_unnaming",Merchant.JEWELER);
++  list.add(new Offer("sigil_of_malice","Печать злобы","apotheosis:sigil_of_malice",1,6500,1,2,true));categories.put("sigil_of_malice",Merchant.JEWELER);
++  list.add(new Offer("sigil_of_supremacy","Печать превосходства","apotheosis:sigil_of_supremacy",1,18000,1,1,true));categories.put("sigil_of_supremacy",Merchant.JEWELER);
++  list.add(new Offer("sbw_rifle","Винтовочный патрон","superbwarfare:rifle_ammo",1,16,1,128,true));categories.put("sbw_rifle",Merchant.SUPERB_AMMO);
++  list.add(new Offer("sbw_shotgun","Патрон дробовика","superbwarfare:shotgun_ammo",1,14,1,128,true));categories.put("sbw_shotgun",Merchant.SUPERB_AMMO);
++  list.add(new Offer("sbw_sniper","Снайперский патрон","superbwarfare:sniper_ammo",1,28,1,128,true));categories.put("sbw_sniper",Merchant.SUPERB_AMMO);
+   return list.stream().map(o->{
+-   int factor=o.id().equals("glock")?85:o.item().startsWith("gun/")?180:o.item().startsWith("attachment/")?140:
++   int factor=merchant(o)==Merchant.JEWELER?100:o.id().equals("glock")?85:o.item().startsWith("gun/")?180:o.item().startsWith("attachment/")?140:
+        o.item().startsWith("ammo/")?115:merchant(o)==Merchant.MEDIC?90:merchant(o)==Merchant.MECHANISMS?130:110;
+    return new Offer(o.id(),o.name(),o.item(),o.quantity(),(o.buy()*factor+99)/100,
+        Math.max(1,o.sell()*factor/100),o.stock(),o.staple());
+@@ -323,7 +335,7 @@
+   private void relist(){visible=(selling?CATALOG:offers(owner)).stream().filter(o->merchant(o)==category).filter(o->category!=Merchant.WEAPONS||armoryFilter==0||o.item().startsWith(armoryFilter==1?"gun/":armoryFilter==2?"attachment/":"ammo/")).toList();page=0;}
+   private void icon(int slot,ItemStack stack,String title,String... lore){stack=stack.copyWithCount(1);stack.set(DataComponents.CUSTOM_NAME,Component.literal(title));stack.set(DataComponents.LORE,new ItemLore(Arrays.stream(lore).map(Component::literal).map(c->(Component)c).toList()));panel.setItem(slot,stack);}
+   private void refresh(){panel.clearContent();var warehouse=new Warehouse(owner);for(var m:Merchant.values())icon(m.ordinal(),new ItemStack(m.icon),(m==category?"▶ ":"")+m.title,"Открыть раздел");
+-   icon(7,new ItemStack(Items.GOLD_NUGGET),"Счёт: "+balance(owner)+" кр.","Скупка без лимита");icon(8,new ItemStack(selling?Items.HOPPER:Items.EMERALD),selling?"СКУПКА":"МАГАЗИН","ЛКМ: 1 шт. · ПКМ: максимум");
++   icon(8,new ItemStack(Items.GOLD_NUGGET),"Счёт: "+balance(owner)+" кр.","Скупка без лимита");
+    if(selling){for(int i=0;i<36;i++){
+     var stack=getSlot(54+i).getItem();if(stack.isEmpty())continue;
+     int quote=SalvageValue.price(stack);
+diff -ruN baseline-mod/src/main/java/dev/bunkerrelay/SiteCrate.java Bunker-Relay/mod/src/main/java/dev/bunkerrelay/SiteCrate.java
+--- a/mod/src/main/java/dev/bunkerrelay/SiteCrate.java	2026-11-26 23:35:05.583857902 +0500
++++ b/mod/src/main/java/dev/bunkerrelay/SiteCrate.java	2026-11-26 23:35:05.689622411 +0500
+@@ -67,7 +67,7 @@
+             if(pattern==0)chest.setItem(21,new ItemStack(Medicine.TRAUMA.get()));
+             if(pattern==1)chest.setItem(21,new ItemStack(Items.HONEY_BOTTLE));
+         }else if(pattern==0)chest.setItem(21,new ItemStack(second));
+-        if((this==MINE||this==ARMORER||this==LAB)&&random.nextInt(12)==0)chest.setItem(23,random.nextBoolean()?ForgeRoom.gem(level.registryAccess(),"brawlers","flawed"):new ItemStack(ForgeRoom.material(random.nextInt(Math.clamp(state.activeLoot,1,5)))));
++        if((this==MINE||this==ARMORER||this==LAB)&&random.nextInt(12)==0)chest.setItem(23,random.nextBoolean()?ForgeRoom.gem(level.registryAccess(),"brawlers","flawed"):new ItemStack(ForgeRoom.material(random.nextInt(Math.clamp(state.activeLoot,1,4)))));
+         PersonalLoot.convert(level,at,chest);
+         if(level.getBlockEntity(at) instanceof BaseContainerBlockEntity personal){
+             var tag=personal.saveWithoutMetadata(level.registryAccess()); tag.putString("CustomName",Component.Serializer.toJson(Component.literal(title),level.registryAccess())); personal.loadWithComponents(tag,level.registryAccess());
+diff -ruN baseline-mod/src/main/java/dev/bunkerrelay/TrophyWeapons.java Bunker-Relay/mod/src/main/java/dev/bunkerrelay/TrophyWeapons.java
+--- a/mod/src/main/java/dev/bunkerrelay/TrophyWeapons.java	2026-11-26 23:35:05.599901503 +0500
++++ b/mod/src/main/java/dev/bunkerrelay/TrophyWeapons.java	2026-11-26 23:36:37.365270197 +0500
+@@ -22,6 +22,16 @@
+         int tier = Math.clamp(loot, 1, 5);
+         int chance = boss ? 16 + 4 * tier : 4 + tier;
+         if (level.random.nextInt(100) >= chance) return;
++        if (boss && level.random.nextBoolean()) {
++            String model = switch (theme) {
++                case "forest", "winter" -> "awm";
++                case "infected" -> "m_870";
++                default -> "hk_416";
++            };
++            var item = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(ResourceLocation.parse("superbwarfare:" + model));
++            source.spawnAtLocation(item.getDefaultInstance());
++            return;
++        }
+         var weapon = create(level, theme, boss, name, boss ? 8 + level.random.nextInt(7) : 3 + level.random.nextInt(5));
+         if (!weapon.isEmpty()) source.spawnAtLocation(weapon);
+     }
+diff -ruN baseline-mod/src/main/resources/META-INF/neoforge.mods.toml Bunker-Relay/mod/src/main/resources/META-INF/neoforge.mods.toml
+--- a/mod/src/main/resources/META-INF/neoforge.mods.toml	2026-11-26 23:35:05.604987726 +0500
++++ b/mod/src/main/resources/META-INF/neoforge.mods.toml	2026-11-26 23:35:05.690176557 +0500
+@@ -3,7 +3,7 @@
+ license="MIT"
+ [[mods]]
+ modId="bunkerrelay"
+-version="0.67.0"
++version="0.67.1"
+ displayName="Bunker Relay"
+ description="Cooperative bunker, garage and procedural expeditions. Early prototype."
+ [[dependencies.bunkerrelay]]
