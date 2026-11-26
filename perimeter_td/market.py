@@ -43,3 +43,5 @@ def install():
     d.files[key('input')]=d.files[key('input')].replace('matches ..59','matches ..179')
     d.files[key('arrival')]='\n'.join(s for s in d.files[key('arrival')].splitlines() if not s.startswith('tellraw'))+'\n'
     append('arrival',d.say('ПКМ по жителю с надписью «Ядро» открывает штаб. Первая волна запускается в штабе.'))
+
+    d.files.pop(key('arsenal_reforge'),None)
