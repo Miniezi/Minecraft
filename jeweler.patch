@@ -9,9 +9,20 @@ diff -ruN baseline-mod/build.gradle Bunker-Relay/mod/build.gradle
  java.toolchain.languageVersion = JavaLanguageVersion.of(21)
  neoForge {
      version = '21.1.265'
+diff -ruN baseline-mod/src/main/java/dev/bunkerrelay/BunkerRelay.java Bunker-Relay/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java
+--- a/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java	2026-11-26 23:35:05.588252401 +0500
++++ b/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java	2026-11-26 23:43:09.000181266 +0500
+@@ -78,6 +78,7 @@
+   if(s.initialized){borders(server);if(s.hubV2){HubBuilder.upgradeTerminal(server.getLevel(HUB));BunkerAnnex.install(server.getLevel(HUB),s);CourtyardWorkshop.install(server.getLevel(HUB),s);}}
+   if(Boolean.getBoolean("bunkerrelay.supplySitesTest")){SupplySitesIntegrationTest.run(server,s);return;}
+   if(Boolean.getBoolean("bunkerrelay.meetingTest")){MeetingIntegrationTest.run(server,s);return;}
++  if(Boolean.getBoolean("bunkerrelay.fieldGearOnly")){HubBuilder.build(server.getLevel(HUB));FieldGearTest.verify(server,s);server.halt(false);return;}
+   if(Boolean.getBoolean("bunkerrelay.zone27Test")){Zone27IntegrationTest.start(server,s);return;}
+   if(Boolean.getBoolean("bunkerrelay.liveRefreshTest")){LiveRefreshTest.start(server,s);return;}
+   if(Boolean.getBoolean("bunkerrelay.update20Test")){Update20IntegrationTest.run(server,s);return;}
 diff -ruN baseline-mod/src/main/java/dev/bunkerrelay/FieldGearTest.java Bunker-Relay/mod/src/main/java/dev/bunkerrelay/FieldGearTest.java
 --- a/mod/src/main/java/dev/bunkerrelay/FieldGearTest.java	2026-11-26 23:35:05.604617848 +0500
-+++ b/mod/src/main/java/dev/bunkerrelay/FieldGearTest.java	2026-11-26 23:37:08.373306324 +0500
++++ b/mod/src/main/java/dev/bunkerrelay/FieldGearTest.java	2026-11-26 23:43:08.999653770 +0500
 @@ -27,6 +27,19 @@
          player.getInventory().clearContent();
          check(hub.getBlockState(bench).is(ForgeRoom.table()),"native reforging bench");
@@ -22,7 +33,7 @@ diff -ruN baseline-mod/src/main/java/dev/bunkerrelay/FieldGearTest.java Bunker-R
 +        }
 +        for(int x:new int[]{-2,2}){
 +            var at=bench.offset(x,0,-2);
-+            check(hub.getBlockState(at).getMenuProvider(hub,at)!=null,"crafting station "+x);
++            check(hub.getBlockState(at).is(BuiltInRegistries.BLOCK.get(ResourceLocation.parse(x<0?"apotheosis:gem_cutting_table":"apotheosis:augmenting_table"))),"crafting station "+x);
 +        }
 +        var ammoMenu=new RelayEconomy.MarketMenu(2,player.getInventory(),player,false);
 +        ammoMenu.clicked(7,0,net.minecraft.world.inventory.ClickType.PICKUP,player);
