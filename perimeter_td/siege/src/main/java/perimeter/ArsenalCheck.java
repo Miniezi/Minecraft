@@ -63,7 +63,11 @@ public class ArsenalCheck {
             if(plan.stream().filter(Director::calamity).count()!=(wave>=10&&wave%5==0?1:0))throw new AssertionError("Boss cadence");
             if(wave<5&&plan.stream().anyMatch(id->!java.util.Arrays.asList(Director.BASIC).contains(id)))throw new AssertionError("Stage leakage");
         }
-        Director.muster(level,marker,1);
+        for(String fn:new String[]{"wave","battle","win","base_tick","rest","input"}){
+            if(event.getServer().getFunctions().get(new net.minecraft.resources.ResourceLocation("relay",fn)).isEmpty())throw new AssertionError("Unloaded wave function: "+fn);
+        }
+        event.getServer().getCommands().performPrefixedCommand(marker.createCommandSourceStack().withPermission(2),"function relay:wave");
+        if(board.getOrCreatePlayerScore("#rostered",objective).getScore()!=1)throw new AssertionError("Wave not armed");
         Director.step(level,marker);
         var tickets=level.getEntitiesOfClass(net.minecraft.world.entity.Marker.class,marker.getBoundingBox().inflate(3),e->e.getTags().contains(Director.TICKET));
         if(tickets.size()!=2)throw new AssertionError("Wave one");
