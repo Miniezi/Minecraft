@@ -11,8 +11,8 @@ diff -ruN baseline-mod/build.gradle Bunker-Relay/mod/build.gradle
      version = '21.1.265'
 diff -ruN baseline-mod/src/main/java/dev/bunkerrelay/FieldGearTest.java Bunker-Relay/mod/src/main/java/dev/bunkerrelay/FieldGearTest.java
 --- a/mod/src/main/java/dev/bunkerrelay/FieldGearTest.java	2026-11-26 23:35:05.604617848 +0500
-+++ b/mod/src/main/java/dev/bunkerrelay/FieldGearTest.java	2026-11-26 23:35:05.690034022 +0500
-@@ -27,6 +27,14 @@
++++ b/mod/src/main/java/dev/bunkerrelay/FieldGearTest.java	2026-11-26 23:37:08.373306324 +0500
+@@ -27,6 +27,19 @@
          player.getInventory().clearContent();
          check(hub.getBlockState(bench).is(ForgeRoom.table()),"native reforging bench");
          check(!ForgeRoom.gem(hub.registryAccess(),"guardian","perfect").isEmpty(),"perfect gem");
@@ -24,6 +24,11 @@ diff -ruN baseline-mod/src/main/java/dev/bunkerrelay/FieldGearTest.java Bunker-R
 +            var at=bench.offset(x,0,-2);
 +            check(hub.getBlockState(at).getMenuProvider(hub,at)!=null,"crafting station "+x);
 +        }
++        var ammoMenu=new RelayEconomy.MarketMenu(2,player.getInventory(),player,false);
++        ammoMenu.clicked(7,0,net.minecraft.world.inventory.ClickType.PICKUP,player);
++        check(ammoMenu.getSlot(9).getItem().is(BuiltInRegistries.ITEM.get(ResourceLocation.parse("superbwarfare:rifle_ammo"))),"Superb vendor");
++        ammoMenu.clicked(9,0,net.minecraft.world.inventory.ClickType.PICKUP,player);
++        check(player.getInventory().contains(new ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.parse("superbwarfare:rifle_ammo")))),"Superb ammo purchase");
          var provider=hub.getBlockState(bench).getMenuProvider(hub,bench);
          var menu=provider.createMenu(1,player.getInventory(),player);
          var weapon=com.tacz.guns.api.item.builder.GunItemBuilder.create()
