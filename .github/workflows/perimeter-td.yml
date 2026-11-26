@@ -1,0 +1,33 @@
+name: Spore Perimeter TD
+on:
+  push:
+    branches: [spore-perimeter-td-0.2]
+    paths: ['perimeter_td/**', '.github/workflows/perimeter-td.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Resolve structure library with the repository builder
+        run: |
+          python - <<'PY'
+          import build_mrpack
+          version=build_mrpack.choose("explorify")
+          print("Forge 1.20.1 structure library available:",version["version_number"])
+          PY
+      - name: Build CurseForge import
+        working-directory: perimeter_td
+        run: |
+          curl --fail --location --retry 3 https://mediafilez.forgecdn.net/files/7829/406/inf.zip -o inf.zip
+          python defense.py
+          python package_td.py
+          unzip -t Perimeter-TD-CurseForge.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Perimeter-TD-0.2.0
+          path: |
+            perimeter_td/Perimeter-TD-CurseForge.zip
+            perimeter_td/Perimeter-TD-0.2.0.jar
