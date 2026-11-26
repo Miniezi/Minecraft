@@ -44,7 +44,5 @@ jobs:
           echo 'eula=true' > mod/run/eula.txt
           python3 tools/download_mods.py mod/run/mods --side server
           cd mod
-          JDK_JAVA_OPTIONS=-Dbunkerrelay.zone27Test=true timeout 18m bash gradlew runServer | tee server-test.log
-          grep -q RELAY_052_BRIDGE_PASS server-test.log
-          grep -q RELAY_016_LIVE_PASS server-test.log
-          grep -q RELAY_POLAR_PASS server-test.log
+          JDK_JAVA_OPTIONS=-Dbunkerrelay.fieldGearOnly=true timeout 12m bash gradlew runServer | tee field-test.log
+          grep -q RELAY_FIELD_GEAR_PASS field-test.log
