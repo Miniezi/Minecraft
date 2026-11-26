@@ -91,7 +91,7 @@ public class Siege {
                 Entity goal=mob.getTarget();
                 if(goal==null && wave(mob))goal=core;
                 if(goal==null)continue;
-                if(wave(mob) && mob.getNavigation().isDone())mob.getNavigation().moveTo(goal.getX(),goal.getY(),goal.getZ(),1);
+                if(wave(mob) && !mob.getTags().contains("rd.boss") && mob.getNavigation().isDone())mob.getNavigation().moveTo(goal.getX(),goal.getY(),goal.getZ(),1);
                 double dx=goal.getX()-mob.getX(), dz=goal.getZ()-mob.getZ();
                 double dist=Math.hypot(dx,dz);
                 if(dist<1)continue;
