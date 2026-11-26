@@ -8998,3 +8998,29 @@ index b6d1559..b71ebe6 100644
          WarehouseIntegrationTest.verify(server);
          DismantleIntegrationTest.verify(server);
          BunkerRequestsIntegrationTest.verify(server,state);
+diff --git a/mod/src/main/java/dev/bunkerrelay/CargoBike.java b/mod/src/main/java/dev/bunkerrelay/CargoBike.java
+index 171a8f4..35a084c 100644
+--- a/mod/src/main/java/dev/bunkerrelay/CargoBike.java
++++ b/mod/src/main/java/dev/bunkerrelay/CargoBike.java
+@@ -32,9 +32,19 @@ final class CargoBike extends Item {
+     static SimpleContainer bag(Entity bike){
+         return bags.computeIfAbsent(bike,key->{
+             var box=new SimpleContainer(9);
+-            box.fromTag(key.getPersistentData().getList("relayPannier",10),key.registryAccess());
++            var saved=key.getPersistentData().getCompound("relayPannier");
++            for(int slot=0;slot<box.getContainerSize();slot++){
++                String id=Integer.toString(slot);
++                if(saved.contains(id))box.setItem(slot,net.minecraft.world.item.ItemStack.parseOptional(key.registryAccess(),saved.getCompound(id)));
++            }
+             var ref=new java.lang.ref.WeakReference<>(key);
+-            box.addListener(c->{var e=ref.get();if(e!=null)e.getPersistentData().put("relayPannier",box.createTag(e.registryAccess()));});
++            box.addListener(c->{
++                var e=ref.get();if(e==null)return;
++                var contents=new net.minecraft.nbt.CompoundTag();
++                for(int slot=0;slot<c.getContainerSize();slot++)if(!c.getItem(slot).isEmpty())
++                    contents.put(Integer.toString(slot),c.getItem(slot).save(e.registryAccess()));
++                e.getPersistentData().put("relayPannier",contents);
++            });
+             return box;
+         });
+     }
