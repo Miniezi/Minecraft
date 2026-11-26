@@ -95,7 +95,9 @@ public class Arsenal {
         if(s.getTag().getString(SUPPLY).equals("box")){
             CompoundTag data=record(p);
             if(data.contains(QUEUE))return;
-            data.put(QUEUE,prize(p).save(new CompoundTag()));data.putInt("RollTicks",0);save(p,data);
+            String boss=s.getTag().getString("SiegeBossBox");
+            data.putString("RollBoss",boss);
+            data.put(QUEUE,(boss.isEmpty()?prize(p):SiegeBoss.weapon(boss,p.getRandom())).save(new CompoundTag()));data.putInt("RollTicks",0);save(p,data);
         }else{
             if(p.getCooldowns().isOnCooldown(s.getItem()))return;
             p.addEffect(new MobEffectInstance(MobEffects.HEAL,1,1));
@@ -120,7 +122,7 @@ public class Arsenal {
             int time=data.getInt("RollTicks")+1;data.putInt("RollTicks",time);
             if(time>=56){
                 ItemStack win=ItemStack.of(data.getCompound(QUEUE));data.remove(QUEUE);grant(p,win);preview(p,win,true);
-            }else if(time<=24&&time%3==0||time==29||time==35||time==43||time==51)preview(p,prize(p),false);
+            }else if(time<=24&&time%3==0||time==29||time==35||time==43||time==51)preview(p,data.getString("RollBoss").isEmpty()?prize(p):SiegeBoss.weapon(data.getString("RollBoss"),p.getRandom()),false);
             save(p,data);
         }
         if(p.tickCount%20!=0)return;
@@ -152,7 +154,7 @@ public class Arsenal {
         }
     }
     @SubscribeEvent public static void commands(RegisterCommandsEvent e){
-        for(String name:List.of("crate","injector","reforge")){
+        for(String name:List.of("crate","injector")){
             e.getDispatcher().register(literal("perimeter_"+name).requires(s->s.hasPermission(2)).executes(c->{
                 ServerPlayer p=c.getSource().getPlayerOrException();
                 if(name.equals("reforge")){
