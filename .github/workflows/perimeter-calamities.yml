@@ -33,6 +33,20 @@ jobs:
           GRADLE
           mkdir -p perimeter_td/siege/runTest
           echo 'eula=true' > perimeter_td/siege/runTest/eula.txt
+          (cd perimeter_td && python - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import defense, upgrade, arsenal_campaign, market
+          upgrade.install()
+          arsenal_campaign.install()
+          market.install()
+          target=Path("siege/runTest/world/datapacks/relay.zip")
+          target.parent.mkdir(parents=True,exist_ok=True)
+          with ZipFile(target,"w") as pack:
+              for path,data in defense.files.items():
+                  if path.startswith("data/") or path=="pack.mcmeta": pack.writestr(path,data)
+          PY
+          )
           gradle -p perimeter_td/siege build runServer --no-daemon | tee arsenal-test.log
           grep -q PERIMETER_ARSENAL_PASS arsenal-test.log
       - name: Package Prism import
