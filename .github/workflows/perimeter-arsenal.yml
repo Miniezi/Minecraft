@@ -23,8 +23,7 @@ jobs:
           cp 'компилятор модов/settings.gradle' perimeter_td/siege/
           cat >> perimeter_td/siege/build.gradle <<'GRADLE'
           minecraft.runs {
-              arsenalTest {
-                  parent minecraft.runs.server
+              server {
                   workingDirectory project.file('runTest')
                   property 'perimeter.testArsenal', 'true'
                   args 'nogui'
@@ -34,7 +33,7 @@ jobs:
           GRADLE
           mkdir -p perimeter_td/siege/runTest
           echo 'eula=true' > perimeter_td/siege/runTest/eula.txt
-          gradle -p perimeter_td/siege build runArsenalTest --no-daemon | tee arsenal-test.log
+          gradle -p perimeter_td/siege build runServer --no-daemon | tee arsenal-test.log
           grep -q PERIMETER_ARSENAL_PASS arsenal-test.log
       - name: Package Prism import
         working-directory: perimeter_td
