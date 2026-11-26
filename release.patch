@@ -5202,3 +5202,264 @@ index afe5b47..658f60d 100644
    z.write(arsenal,'overrides/mods/'+arsenal.name)
    z.write(factories,'overrides/mods/'+factories.name)
    z.write(lights,'overrides/mods/'+lights.name)
+diff --git a/README_RU.md b/README_RU.md
+index 3957bcc..e5cdefb 100644
+--- a/README_RU.md
++++ b/README_RU.md
+@@ -1,4 +1,4 @@
+-# Bunker Relay 0.61.1
++# Bunker Relay 0.62.0
+ 
+ Изменения релиза см. в WORK_0.56.md.
+ 
+diff --git a/WORK_0.62.md b/WORK_0.62.md
+new file mode 100644
+index 0000000..a449957
+--- /dev/null
++++ b/WORK_0.62.md
+@@ -0,0 +1,3 @@
++# 0.62.0
++
++48 дополнительных построек из Towns and Towers (https://modrinth.com/mod/towns-and-towers), по восемь для каждой зоны. Оригинальные шаблоны загружаются из установленного мода. Шанс зданий Lost Cities в новых городских чанках снижен до 25%, 21% и 16% для промзоны, заражённого города и пустоши.
+diff --git a/mod/build.gradle b/mod/build.gradle
+index 2212043..7addb5c 100644
+--- a/mod/build.gradle
++++ b/mod/build.gradle
+@@ -1,5 +1,5 @@
+ plugins { id 'java-library'; id 'net.neoforged.moddev' version '2.0.148' }
+-version = '0.61.1'
++version = '0.62.0'
+ group = 'dev.bunkerrelay'
+ base { archivesName = 'bunkerrelay' }
+ java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+diff --git a/mod/src/main/java/dev/bunkerrelay/CityIntegration.java b/mod/src/main/java/dev/bunkerrelay/CityIntegration.java
+index 3cf317a..6903173 100644
+--- a/mod/src/main/java/dev/bunkerrelay/CityIntegration.java
++++ b/mod/src/main/java/dev/bunkerrelay/CityIntegration.java
+@@ -2,7 +2,7 @@ package dev.bunkerrelay;
+ import net.minecraft.server.MinecraftServer;
+ import net.neoforged.fml.ModList;
+ public final class CityIntegration {
+- public static void profiles(){if(!ModList.get().isLoaded("lostcities"))return;profile("relay_city","default",.42f);profile("relay_infected","ancient",.36f);profile("relay_ash","wasteland",.30f);}
++ public static void profiles(){if(!ModList.get().isLoaded("lostcities"))return;profile("relay_city","default",.25f);profile("relay_infected","ancient",.21f);profile("relay_ash","wasteland",.16f);}
+  @SuppressWarnings("unchecked")
+  public static void register(MinecraftServer server){if(!ModList.get().isLoaded("lostcities"))return;profiles();
+   var value=(net.neoforged.neoforge.common.ModConfigSpec.ConfigValue<java.util.List<? extends String>>)mcjty.lostcities.setup.Config.COMMON_CONFIG.getValues().get(java.util.List.of("profiles","dimensionsWithProfiles"));
+diff --git a/mod/src/main/java/dev/bunkerrelay/CommunitySites.java b/mod/src/main/java/dev/bunkerrelay/CommunitySites.java
+new file mode 100644
+index 0000000..4e27f10
+--- /dev/null
++++ b/mod/src/main/java/dev/bunkerrelay/CommunitySites.java
+@@ -0,0 +1,67 @@
++package dev.bunkerrelay;
++
++import java.util.List;
++
++// Towns and Towers supplies these templates at runtime through its kaisyn namespace.
++final class CommunitySites {
++    static List<ZoneLandmarks.Plan> forTheme(String theme){
++        return switch(theme){
++            case "winter" -> List.of(
++                new ZoneLandmarks.Plan("Северная бронная мастерская","kaisyn:village/snowy_taiga_viking/houses/snowy_taiga_armorer_1",SupplySites.Kind.ARMORY,false),
++                new ZoneLandmarks.Plan("Морозильный склад","kaisyn:village/snowy_taiga_viking/houses/snowy_taiga_butcher_1",SupplySites.Kind.CANTEEN,false),
++                new ZoneLandmarks.Plan("Мастерская охотника","kaisyn:village/snowy_taiga_viking/houses/snowy_taiga_fletcher_1",SupplySites.Kind.ARMORY,false),
++                new ZoneLandmarks.Plan("Зимовье промысловиков","kaisyn:village/snowy_taiga_viking/houses/snowy_taiga_small_house_3",SupplySites.Kind.WAREHOUSE,false),
++                new ZoneLandmarks.Plan("Зимняя каменоломня","kaisyn:village/snowy_taiga_viking/houses/snowy_taiga_mason_1",SupplySites.Kind.FACTORY,false),
++                new ZoneLandmarks.Plan("Дом пастухов","kaisyn:village/snowy_taiga_viking/houses/snowy_taiga_shepherd_1",SupplySites.Kind.WAREHOUSE,false),
++                new ZoneLandmarks.Plan("Полярная ферма","kaisyn:village/snowy_taiga_viking/houses/snowy_taiga_large_farm_1",SupplySites.Kind.CANTEEN,false),
++                new ZoneLandmarks.Plan("Северная часовня","kaisyn:village/snowy_taiga_viking/houses/snowy_taiga_temple_1",SupplySites.Kind.WAREHOUSE,false));
++            case "forest" -> List.of(
++                new ZoneLandmarks.Plan("Таёжная картографическая станция","kaisyn:village/old_growth_taiga_polish/houses/old_growth_taiga_cartographer_1",SupplySites.Kind.WAREHOUSE,false),
++                new ZoneLandmarks.Plan("Таёжная стрелковая мастерская","kaisyn:village/old_growth_taiga_polish/houses/old_growth_taiga_fletcher_1",SupplySites.Kind.ARMORY,false),
++                new ZoneLandmarks.Plan("Таёжная кожевня","kaisyn:village/old_growth_taiga_polish/houses/old_growth_taiga_leatherworker_1",SupplySites.Kind.WAREHOUSE,false),
++                new ZoneLandmarks.Plan("Лесной архив","kaisyn:village/old_growth_taiga_polish/houses/old_growth_taiga_library_1",SupplySites.Kind.WAREHOUSE,false),
++                new ZoneLandmarks.Plan("Дом каменотёса","kaisyn:village/old_growth_taiga_polish/houses/old_growth_taiga_mason_1",SupplySites.Kind.FACTORY,false),
++                new ZoneLandmarks.Plan("Таёжное подворье","kaisyn:village/old_growth_taiga_polish/houses/old_growth_taiga_shepherd_1",SupplySites.Kind.CANTEEN,false),
++                new ZoneLandmarks.Plan("Заимка","kaisyn:village/old_growth_taiga_polish/houses/old_growth_taiga_small_farm_1",SupplySites.Kind.CANTEEN,false),
++                new ZoneLandmarks.Plan("Таёжная кузница","kaisyn:village/old_growth_taiga_polish/houses/old_growth_taiga_toolsmith_and_weaponsmith_1",SupplySites.Kind.ARMORY,false));
++            case "industrial" -> List.of(
++                new ZoneLandmarks.Plan("Цех камнеобработки","kaisyn:village/birch_forest_romanian/houses/birch_forest_mason_1",SupplySites.Kind.FACTORY,false),
++                new ZoneLandmarks.Plan("Кожевенный цех","kaisyn:village/birch_forest_romanian/houses/birch_forest_butcher_and_leatherworker_1",SupplySites.Kind.FACTORY,false),
++                new ZoneLandmarks.Plan("Общежитие мастеров","kaisyn:village/birch_forest_romanian/houses/birch_forest_large_house_1",SupplySites.Kind.WAREHOUSE,false),
++                new ZoneLandmarks.Plan("Технический архив","kaisyn:village/birch_forest_romanian/houses/birch_forest_cartographer_and_library_1",SupplySites.Kind.WAREHOUSE,false),
++                new ZoneLandmarks.Plan("Рабочий барак","kaisyn:village/birch_forest_romanian/houses/birch_forest_medium_house_1",SupplySites.Kind.WAREHOUSE,false),
++                new ZoneLandmarks.Plan("Дом сменного мастера","kaisyn:village/birch_forest_romanian/houses/birch_forest_medium_house_2",SupplySites.Kind.WAREHOUSE,false),
++                new ZoneLandmarks.Plan("Рыбный склад","kaisyn:village/birch_forest_romanian/houses/birch_forest_fisher_1",SupplySites.Kind.CANTEEN,false),
++                new ZoneLandmarks.Plan("Мастерская снабжения","kaisyn:village/birch_forest_romanian/houses/birch_forest_fletcher_1",SupplySites.Kind.ARMORY,false));
++            case "infected" -> List.of(
++                new ZoneLandmarks.Plan("Карантинная часовня в руинах","kaisyn:village/forest_ruins/houses/forest_temple_1",SupplySites.Kind.CANTEEN,true),
++                new ZoneLandmarks.Plan("Заброшенный стационар","kaisyn:village/forest_ruins/houses/forest_large_house_1",SupplySites.Kind.CANTEEN,true),
++                new ZoneLandmarks.Plan("Архив карантинной службы","kaisyn:village/forest_ruins/houses/forest_library_1",SupplySites.Kind.WAREHOUSE,false),
++                new ZoneLandmarks.Plan("Изолированные стойла","kaisyn:village/forest_ruins/houses/forest_stable_1",SupplySites.Kind.WAREHOUSE,false),
++                new ZoneLandmarks.Plan("Закрытая бойня","kaisyn:village/forest_ruins/houses/forest_butcher_1",SupplySites.Kind.CANTEEN,false),
++                new ZoneLandmarks.Plan("Заражённая ферма","kaisyn:village/forest_ruins/houses/forest_large_farm_1",SupplySites.Kind.CANTEEN,false),
++                new ZoneLandmarks.Plan("Заражённая мастерская","kaisyn:village/forest_ruins/houses/forest_toolsmith_1",SupplySites.Kind.FACTORY,false),
++                new ZoneLandmarks.Plan("Оружейная в руинах","kaisyn:village/forest_ruins/houses/forest_armorer_1",SupplySites.Kind.ARMORY,false));
++            case "ash" -> List.of(
++                new ZoneLandmarks.Plan("Склад караванной охраны","kaisyn:village/badlands_pueblo/houses/badlands_large_house_3",SupplySites.Kind.ARMORY,false),
++                new ZoneLandmarks.Plan("Дом проводников","kaisyn:village/badlands_pueblo/houses/badlands_large_house_4",SupplySites.Kind.WAREHOUSE,false),
++                new ZoneLandmarks.Plan("Обожжённая каменоломня","kaisyn:village/badlands_pueblo/houses/badlands_mason_1",SupplySites.Kind.FACTORY,false),
++                new ZoneLandmarks.Plan("Часовня красных песков","kaisyn:village/badlands_pueblo/houses/badlands_temple_1",SupplySites.Kind.WAREHOUSE,false),
++                new ZoneLandmarks.Plan("Оружейный двор пустоши","kaisyn:village/badlands_pueblo/houses/badlands_toolsmith_and_weaponsmith_1",SupplySites.Kind.ARMORY,false),
++                new ZoneLandmarks.Plan("Караванный дом","kaisyn:village/badlands_pueblo/houses/badlands_large_house_1",SupplySites.Kind.CANTEEN,false),
++                new ZoneLandmarks.Plan("Постоялый двор","kaisyn:village/badlands_pueblo/houses/badlands_large_house_2",SupplySites.Kind.CANTEEN,false),
++                new ZoneLandmarks.Plan("Ремесленный двор","kaisyn:village/badlands_pueblo/houses/badlands_misc_professions_1",SupplySites.Kind.FACTORY,false));
++            case "hell" -> List.of(
++                new ZoneLandmarks.Plan("Загон пиглинов","kaisyn:village/exclusives/piglin/houses/piglin_animal_pen_1",SupplySites.Kind.CANTEEN,false),
++                new ZoneLandmarks.Plan("Адская бойня","kaisyn:village/exclusives/piglin/houses/piglin_butchery_2",SupplySites.Kind.CANTEEN,false),
++                new ZoneLandmarks.Plan("Разделочный двор","kaisyn:village/exclusives/piglin/houses/piglin_butchery_3",SupplySites.Kind.CANTEEN,false),
++                new ZoneLandmarks.Plan("Чертог пиглинов","kaisyn:village/exclusives/piglin/houses/piglin_large_house_1",SupplySites.Kind.ARMORY,false),
++                new ZoneLandmarks.Plan("Дом старейшины","kaisyn:village/exclusives/piglin/houses/piglin_large_house_2",SupplySites.Kind.WAREHOUSE,false),
++                new ZoneLandmarks.Plan("Обитель стражи","kaisyn:village/exclusives/piglin/houses/piglin_large_house_3",SupplySites.Kind.ARMORY,false),
++                new ZoneLandmarks.Plan("Глубокая штольня","kaisyn:village/exclusives/piglin/houses/piglin_mine_2",SupplySites.Kind.FACTORY,false),
++                new ZoneLandmarks.Plan("Лагерь охотников","kaisyn:village/exclusives/piglin/houses/piglin_skull_tent_1",SupplySites.Kind.ARMORY,false));
++            default -> List.of();
++        };
++    }
++    private CommunitySites(){}
++}
+diff --git a/mod/src/main/java/dev/bunkerrelay/RegionalIntegrationTest.java b/mod/src/main/java/dev/bunkerrelay/RegionalIntegrationTest.java
+index 624d3a7..bbfe5a6 100644
+--- a/mod/src/main/java/dev/bunkerrelay/RegionalIntegrationTest.java
++++ b/mod/src/main/java/dev/bunkerrelay/RegionalIntegrationTest.java
+@@ -28,7 +28,10 @@ final class RegionalIntegrationTest {
+                 if(variants.add(candidate.template()))check(level.getStructureManager()
+                     .get(SporeStorySites.templateId(candidate.template())).isPresent(),"missing "+candidate.template());
+             }
+-            check(variants.size()==10,"seeded structure pool "+profile.id);
++            var pool=ZoneLandmarks.pool(profile.id);
++            check(pool.stream().map(ZoneLandmarks.Plan::template).distinct().count()==18,"distinct regional templates "+profile.id);
++            for(var plan:pool)check(level.getStructureManager().get(SporeStorySites.templateId(plan.template())).isPresent(),"missing "+plan.template());
++            check(variants.size()>10,"seeded structure pool "+profile.id);
+             state.activeTheme=profile.id;
+             state.centerX=4000+profile.ordinal()*1500;
+             state.centerZ=4000;
+diff --git a/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java b/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java
+index ceae9e4..a1e99cf 100644
+--- a/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java
++++ b/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java
+@@ -62,11 +62,12 @@ final class ZoneLandmarks {
+     // Keep the contract sites fixed; vary one support site per region and expedition.
+     private static final java.util.Map<String,List<Plan>> POOLS=new java.util.HashMap<>();
+ 
+-    private static List<Plan> pool(String theme){
++    static List<Plan> pool(String theme){
+         return POOLS.computeIfAbsent(theme,key->{
+             var sites=new java.util.LinkedHashSet<Plan>(plans(key));
+             for(int sample=0;sample<64;sample++)for(int slot=3;slot<5;slot++)
+                 sites.add(variant(key,slot,sample));
++            sites.addAll(CommunitySites.forTheme(key));
+             return List.copyOf(sites);
+         });
+     }
+diff --git a/mod/src/main/resources/META-INF/neoforge.mods.toml b/mod/src/main/resources/META-INF/neoforge.mods.toml
+index 81d46fa..f21ab96 100644
+--- a/mod/src/main/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/main/resources/META-INF/neoforge.mods.toml
+@@ -3,7 +3,7 @@ loaderVersion="[4,)"
+ license="MIT"
+ [[mods]]
+ modId="bunkerrelay"
+-version="0.61.1"
++version="0.62.0"
+ displayName="Bunker Relay"
+ description="Cooperative bunker, garage and procedural expeditions. Early prototype."
+ [[dependencies.bunkerrelay]]
+@@ -56,7 +56,7 @@ side="BOTH"
+ [[dependencies.bunkerrelay]]
+ modId="relaylights"
+ type="required"
+-versionRange="[0.61.1]"
++versionRange="[0.62.0]"
+ ordering="AFTER"
+ side="BOTH"
+ 
+@@ -66,13 +66,13 @@ config="bunkerrelay.mixins.json"
+ [[dependencies.bunkerrelay]]
+ modId="relayfactories"
+ type="required"
+-versionRange="[0.61.1]"
++versionRange="[0.62.0]"
+ ordering="AFTER"
+ side="BOTH"
+ 
+ [[dependencies.bunkerrelay]]
+ modId="relayarsenal"
+ type="required"
+-versionRange="[0.61.1]"
++versionRange="[0.62.0]"
+ ordering="AFTER"
+ side="BOTH"
+diff --git a/mod/src/relayArsenal/resources/META-INF/neoforge.mods.toml b/mod/src/relayArsenal/resources/META-INF/neoforge.mods.toml
+index 47907d4..fd93646 100644
+--- a/mod/src/relayArsenal/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/relayArsenal/resources/META-INF/neoforge.mods.toml
+@@ -4,7 +4,7 @@ license="MIT"
+ 
+ [[mods]]
+ modId="relayarsenal"
+-version="0.61.1"
++version="0.62.0"
+ displayName="Relay Arsenal"
+ description="Historical TaCZ arsenal for Bunker Relay."
+ 
+diff --git a/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml b/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml
+index 2c06418..bf6db4c 100644
+--- a/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml
+@@ -4,7 +4,7 @@ license="MIT"
+ 
+ [[mods]]
+ modId="relayfactories"
+-version="0.61.1"
++version="0.62.0"
+ displayName="Relay Factories"
+ description="Factory structures for industrial expeditions."
+ 
+diff --git a/mod/src/relayLights/resources/META-INF/neoforge.mods.toml b/mod/src/relayLights/resources/META-INF/neoforge.mods.toml
+index a8e03ca..2522cf2 100644
+--- a/mod/src/relayLights/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/relayLights/resources/META-INF/neoforge.mods.toml
+@@ -4,7 +4,7 @@ license="MIT"
+ 
+ [[mods]]
+ modId="relaylights"
+-version="0.61.1"
++version="0.62.0"
+ displayName="Relay Lights"
+ description="Directional lights with personal and multiplayer modes."
+ 
+diff --git a/modrinth.index.json b/modrinth.index.json
+index 010a34c..6c5b3be 100644
+--- a/modrinth.index.json
++++ b/modrinth.index.json
+@@ -1,7 +1,7 @@
+ {
+   "formatVersion": 1,
+   "game": "minecraft",
+-  "versionId": "0.61.1",
++  "versionId": "0.62.0",
+   "name": "Bunker Relay",
+   "summary": "Cooperative expeditions, ECHO encounters, threats, extraction and persistent bunker.",
+   "files": [
+diff --git a/tools/package_release.py b/tools/package_release.py
+index 658f60d..2145794 100644
+--- a/tools/package_release.py
++++ b/tools/package_release.py
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env python3
+ import hashlib,pathlib,shutil,zipfile,sys
+ ROOT=pathlib.Path(__file__).resolve().parents[1];dist=ROOT/'dist';dist.mkdir(exist_ok=True)
+-VERSION='0.61.1';source='--source' in sys.argv;jar=ROOT/f'mod/build/libs/bunkerrelay-{VERSION}.jar'
++VERSION='0.62.0';source='--source' in sys.argv;jar=ROOT/f'mod/build/libs/bunkerrelay-{VERSION}.jar'
+ lights=ROOT/f'mod/build/libs/relaylights-{VERSION}.jar'
+ factories=ROOT/f'mod/build/libs/relayfactories-{VERSION}.jar'
+ if not source:
+@@ -69,6 +69,7 @@ if not source:
+   z.write(ROOT/'WORK_0.60.md','overrides/WORK_0.60.md')
+   z.write(ROOT/'WORK_0.61.md','overrides/WORK_0.61.md')
+   z.write(ROOT/'WORK_0.61.1.md','overrides/WORK_0.61.1.md')
++  z.write(ROOT/'WORK_0.62.md','overrides/WORK_0.62.md')
+   z.write(arsenal,'overrides/mods/'+arsenal.name)
+   z.write(factories,'overrides/mods/'+factories.name)
+   z.write(lights,'overrides/mods/'+lights.name)
