@@ -8,7 +8,7 @@ def install():
     append('turnin','perimeter_crate')
     for num,cost,command in [(40,8,'injector'),(41,20,'crate'),(42,10,'reforge')]:
         fn='arsenal_'+command
-        d.fn(fn,'execute store success score @s rd_buy run perimeter_'+command,
+        d.fn(fn,'execute store result score @s rd_buy run perimeter_'+command,
              f'execute if score @s rd_buy matches 1 run scoreboard players remove #cash rd {cost}')
         prepend('input',f'execute if score @s radio matches {num} if entity @e[tag=rd.core,distance=..8] if score #cash rd matches {cost}.. run function relay:{fn}')
     append('load','scoreboard objectives add rd_buy dummy')
