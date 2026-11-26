@@ -7359,3 +7359,1604 @@ index 80ada45..b3902a2 100644
    z.write(arsenal,'overrides/mods/'+arsenal.name)
    z.write(factories,'overrides/mods/'+factories.name)
    z.write(lights,'overrides/mods/'+lights.name)
+diff --git a/README_RU.md b/README_RU.md
+index 31af991..79626ce 100644
+--- a/README_RU.md
++++ b/README_RU.md
+@@ -1,4 +1,4 @@
+-# Bunker Relay 0.65.0
++# Bunker Relay 0.66.0
+ 
+ Изменения релиза см. в WORK_0.56.md.
+ 
+diff --git a/WORK_0.66.md b/WORK_0.66.md
+new file mode 100644
+index 0000000..50b580f
+--- /dev/null
++++ b/WORK_0.66.md
+@@ -0,0 +1,3 @@
++# 0.66.0
++
++Редкие долины душ. Транспорт Superb Warfare появляется у части ориентиров с полным зарядом. У механика скейтборд и два велосипеда. Грузовой багажник открывается Shift+ПКМ. Комната перековки покупается через Базу за 1500 кредитов. Кристаллы у огранщика и в специальных ящиках. Перековка заменяет префикс и ранг предмета. Иллюстрации Полярной станции и Адского разлома в терминале.
+diff --git a/mod/build.gradle b/mod/build.gradle
+index b406d54..3fb44f0 100644
+--- a/mod/build.gradle
++++ b/mod/build.gradle
+@@ -1,5 +1,5 @@
+ plugins { id 'java-library'; id 'net.neoforged.moddev' version '2.0.148' }
+-version = '0.65.0'
++version = '0.66.0'
+ group = 'dev.bunkerrelay'
+ base { archivesName = 'bunkerrelay' }
+ java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+@@ -68,3 +68,21 @@ tasks.register('relayArsenalJar', Jar) {
+     from sourceSets.relayArsenal.output
+ }
+ tasks.named('assemble') { dependsOn tasks.named('relayArsenalJar') }
++
++dependencies {
++    compileOnly "maven.modrinth:superb-warfare:izD7dnxq"
++}
++def previewAssets = layout.buildDirectory.dir('generated/expeditionArt')
++tasks.register('decodeExpeditionArt') {
++    inputs.files('../tools/winter_preview.b64','../tools/hell_preview.b64')
++    outputs.dir(previewAssets)
++    doLast {
++        ['winter','hell'].each { region ->
++            def image = previewAssets.get().file("assets/bunkerrelay/textures/gui/expedition_${region}.png").asFile
++            image.parentFile.mkdirs()
++            image.bytes = java.util.Base64.mimeDecoder.decode(file("../tools/${region}_preview.b64").text)
++        }
++    }
++}
++sourceSets.main.resources.srcDir(previewAssets)
++tasks.named('processResources') { dependsOn tasks.named('decodeExpeditionArt') }
+diff --git a/mod/src/main/java/dev/bunkerrelay/BaseUpgrades.java b/mod/src/main/java/dev/bunkerrelay/BaseUpgrades.java
+index 5f2d7f8..9a8f8a0 100644
+--- a/mod/src/main/java/dev/bunkerrelay/BaseUpgrades.java
++++ b/mod/src/main/java/dev/bunkerrelay/BaseUpgrades.java
+@@ -7,7 +7,7 @@ import net.minecraft.world.SimpleMenuProvider;
+ final class BaseUpgrades {
+     enum Upgrade {
+         STORAGE("Склад", 650), SUPPLY("Снабжение", 900),
+-        WORKSHOP("Мастерская", 800), INTEL("Разведцентр", 450);
++        WORKSHOP("Мастерская", 800), INTEL("Разведцентр", 450), FORGE("Комната перековки",1500);
+         final String title;
+         final int price;
+         Upgrade(String title, int price) { this.title = title; this.price = price; }
+@@ -20,6 +20,9 @@ final class BaseUpgrades {
+     static int buy(ServerPlayer player, Upgrade upgrade) {
+         if (!RelayEconomy.safe(player)) return unavailable(player);
+         if (has(player, upgrade)) { RaidRules.tell(player, "Улучшение уже куплено."); return 0; }
++        if(upgrade==Upgrade.FORGE&&RelayEconomy.balance(player)>=upgrade.price&&!ForgeRoom.install(player)){
++            RaidRules.tell(player,"Нет свободной площадки для кузницы.");return 0;
++        }
+         if (!charge(player, upgrade.price)) return 0;
+         var state = RelayState.get(player.server);
+         state.baseUpgrades |= 1 << upgrade.ordinal();
+diff --git a/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java b/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java
+index a358fa8..ae0195d 100644
+--- a/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java
++++ b/mod/src/main/java/dev/bunkerrelay/BunkerRelay.java
+@@ -43,10 +43,12 @@ public final class BunkerRelay {
+      case "tacz:scar_h" -> 1.06f;
+      default -> 1f;
+     };
++    multiplier*=1f+.04f*ForgeRoom.rank(stack);
+     multiplier*=1f+TrophyWeapons.bonus(stack)/100f;
+     if(multiplier!=1f)bullet.setShotDamageMultiplier(multiplier);
+    }
+   });
++  CargoBike.register();ForgeRoom.register();NeoForge.EVENT_BUS.addListener(net.neoforged.bus.api.EventPriority.HIGHEST,CargoBike::open);NeoForge.EVENT_BUS.addListener(CargoBike::unload);
+   TrophyResearch.register();Medicine.register();BossTrophies.ITEMS.register(modBus);RelayMenus.TYPES.register(modBus);StructureLoot.TYPES.register(modBus);modBus.addListener(ExitSignal::register);
+   RaidRules.register();DownedPlayers.register();NeoForge.EVENT_BUS.addListener(net.neoforged.bus.api.EventPriority.LOWEST,RaidBosses::died);NeoForge.EVENT_BUS.addListener(net.neoforged.bus.api.EventPriority.LOWEST,MiniBosses::died);NeoForge.EVENT_BUS.addListener(net.neoforged.bus.api.EventPriority.LOWEST,(ServerAboutToStartEvent e)->CityIntegration.profiles());
+   NeoForge.EVENT_BUS.addListener(this::clonePlayer);
+@@ -276,6 +278,7 @@ public final class BunkerRelay {
+  private void interact(PlayerInteractEvent.RightClickBlock e){
+   if(e.getHand()!=InteractionHand.MAIN_HAND||!(e.getEntity() instanceof ServerPlayer player))return;
+   var state=RelayState.get(player.server);
++  if(ForgeRoom.use(player,e.getPos())){e.setCanceled(true);return;}
+   if(!RaidRules.active(player)&&state.annexBuilt&&player.level().dimension().equals(HUB)&&e.getPos().equals(BunkerAnnex.exit(state))){
+    teleport(player,player.serverLevel(),homePos(state));e.setCanceled(true);return;
+   }
+@@ -378,7 +381,11 @@ public final class BunkerRelay {
+  private static boolean outsideBorder(RelayState s,BlockPos pos){
+   return !SectorPlan.contains(s.centerX,s.centerZ,s.activeSize,pos.getX()+0.5,pos.getZ()+0.5);
+  }
+- private void damage(LivingIncomingDamageEvent e){if(safe(e.getEntity().level())&&e.getEntity() instanceof ServerPlayer)e.setCanceled(true);}
++ private void damage(LivingIncomingDamageEvent e){if(safe(e.getEntity().level())&&e.getEntity() instanceof ServerPlayer){e.setCanceled(true);return;}
++  float amount=e.getAmount();
++  if(e.getSource().getDirectEntity() instanceof ServerPlayer user&&user.getMainHandItem().getItem() instanceof net.minecraft.world.item.SwordItem)amount*=1f+.04f*ForgeRoom.rank(user.getMainHandItem());
++  int protection=0;for(var armor:e.getEntity().getArmorSlots())protection+=ForgeRoom.rank(armor);
++  e.setAmount(amount*(1f-.01f*protection));}
+  private void spawn(MobSpawnEvent.PositionCheck e){
+   var mob=e.getEntity();
+   boolean spore=SporeEncounters.isSpore(mob);
+diff --git a/mod/src/main/java/dev/bunkerrelay/CargoBike.java b/mod/src/main/java/dev/bunkerrelay/CargoBike.java
+new file mode 100644
+index 0000000..171a8f4
+--- /dev/null
++++ b/mod/src/main/java/dev/bunkerrelay/CargoBike.java
+@@ -0,0 +1,56 @@
++package dev.bunkerrelay;
++
++import java.util.WeakHashMap;
++import net.minecraft.core.registries.BuiltInRegistries;
++import net.minecraft.resources.ResourceLocation;
++import net.minecraft.network.chat.Component;
++import net.minecraft.server.level.ServerPlayer;
++import net.minecraft.world.*;
++import net.minecraft.world.entity.Entity;
++import net.minecraft.world.inventory.ChestMenu;
++import net.minecraft.world.item.Item;
++import net.minecraft.world.item.context.UseOnContext;
++import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
++
++final class CargoBike extends Item {
++    static final java.util.function.Supplier<Item> ITEM=BossTrophies.ITEMS.register("cargo_bike",CargoBike::new);
++    static final WeakHashMap<Entity,SimpleContainer> bags=new WeakHashMap<>();
++    CargoBike(){super(new Item.Properties().stacksTo(1));}
++    static void register(){}
++    @Override public InteractionResult useOn(UseOnContext c){
++        var level=c.getLevel();if(level.isClientSide)return InteractionResult.SUCCESS;
++        var at=c.getClickedPos().relative(c.getClickedFace());
++        var bike=BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse("simplebikes:basic_bike")).create(level);
++        if(bike==null)return InteractionResult.FAIL;
++        bike.moveTo(at.getX()+.5,at.getY(),at.getZ()+.5);
++        if(!level.noCollision(bike))return InteractionResult.FAIL;
++        bike.addTag("relay_cargo_bike");bike.setCustomName(Component.literal("Грузовой велосипед"));
++        if(!level.addFreshEntity(bike))return InteractionResult.FAIL;
++        if(c.getPlayer()==null||!c.getPlayer().getAbilities().instabuild)c.getItemInHand().shrink(1);
++        return InteractionResult.CONSUME;
++    }
++    static SimpleContainer bag(Entity bike){
++        return bags.computeIfAbsent(bike,key->{
++            var box=new SimpleContainer(9);
++            box.fromTag(key.getPersistentData().getList("relayPannier",10),key.registryAccess());
++            var ref=new java.lang.ref.WeakReference<>(key);
++            box.addListener(c->{var e=ref.get();if(e!=null)e.getPersistentData().put("relayPannier",box.createTag(e.registryAccess()));});
++            return box;
++        });
++    }
++    static void open(PlayerInteractEvent.EntityInteract e){
++        if(!e.getTarget().getTags().contains("relay_cargo_bike")||!e.getEntity().isShiftKeyDown())return;
++        e.setCanceled(true);e.setCancellationResult(InteractionResult.SUCCESS);
++        if(e.getHand()==InteractionHand.MAIN_HAND&&e.getEntity() instanceof ServerPlayer p){
++            var bike=e.getTarget();var box=bag(bike);
++            p.openMenu(new SimpleMenuProvider((i,inv,owner)->new ChestMenu(net.minecraft.world.inventory.MenuType.GENERIC_9x1,i,inv,box,1){
++                @Override public boolean stillValid(net.minecraft.world.entity.player.Player who){return bike.isAlive()&&who.distanceToSqr(bike)<64;}
++            },Component.literal("Велосипед · багажник")));
++        }
++    }
++    static void unload(net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent e){
++        var bike=e.getEntity();if(!e.getLevel().isClientSide()&&bike.getTags().contains("relay_cargo_bike")&&bike.getRemovalReason()!=null&&bike.getRemovalReason().shouldDestroy()){
++            for(var stack:bag(bike).removeAllItems())bike.spawnAtLocation(stack);
++        }
++    }
++}
+diff --git a/mod/src/main/java/dev/bunkerrelay/FieldTransport.java b/mod/src/main/java/dev/bunkerrelay/FieldTransport.java
+new file mode 100644
+index 0000000..40c47cd
+--- /dev/null
++++ b/mod/src/main/java/dev/bunkerrelay/FieldTransport.java
+@@ -0,0 +1,32 @@
++package dev.bunkerrelay;
++
++import com.atsuishio.superbwarfare.entity.vehicle.base.VehicleEntity;
++import net.minecraft.core.BlockPos;
++import net.minecraft.core.registries.BuiltInRegistries;
++import net.minecraft.resources.ResourceLocation;
++import net.minecraft.server.level.ServerLevel;
++import net.minecraft.world.level.levelgen.Heightmap;
++
++final class FieldTransport {
++    static void park(ServerLevel level,RelayState state,BlockPos origin){
++        long roll=RaidDirector.roll(state.seed,origin.getX(),origin.getZ()+811);
++        if(Math.floorMod(roll,100)>=58)return;
++        String id=switch(Math.floorMod(roll>>>12,5)){case 0->"ah_6";case 1,2->"truck";default->"sodayo_pick_up";};
++        var type=BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse("superbwarfare:"+id));
++        if(!(type.create(level) instanceof VehicleEntity vehicle))return;
++        for(int i=0;i<12;i++){
++            double angle=i*Math.PI/6;
++            int x=origin.getX()+(int)(35*Math.cos(angle)),z=origin.getZ()+(int)(35*Math.sin(angle));
++            var at=level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,new BlockPos(x,0,z));
++            if(!level.getBlockState(at.below()).isFaceSturdy(level,at.below(),net.minecraft.core.Direction.UP)
++                ||!level.canSeeSky(at))continue;
++            vehicle.moveTo(x+.5,at.getY()+.1,z+.5,(float)(angle*180/Math.PI),0);
++            if(!level.noCollision(vehicle))continue;
++            vehicle.getPersistentData().putInt("relay_structure_generation",state.generation+(state.generating?1:0));
++            vehicle.addTag("relay_vehicle");
++            vehicle.setEnergy(vehicle.getMaxEnergy());
++            level.addFreshEntity(vehicle);return;
++        }
++    }
++    private FieldTransport(){}
++}
+diff --git a/mod/src/main/java/dev/bunkerrelay/ForgeRoom.java b/mod/src/main/java/dev/bunkerrelay/ForgeRoom.java
+new file mode 100644
+index 0000000..9c8816b
+--- /dev/null
++++ b/mod/src/main/java/dev/bunkerrelay/ForgeRoom.java
+@@ -0,0 +1,56 @@
++package dev.bunkerrelay;
++
++import net.minecraft.core.BlockPos;
++import net.minecraft.core.component.DataComponents;
++import net.minecraft.network.chat.Component;
++import net.minecraft.server.level.ServerPlayer;
++import net.minecraft.world.entity.EquipmentSlot;
++import net.minecraft.world.item.*;
++import net.minecraft.world.item.component.CustomData;
++import net.minecraft.world.level.block.Blocks;
++
++final class ForgeRoom {
++    static final java.util.function.Supplier<Item> GEM=BossTrophies.ITEMS.register("forge_crystal",()->new Item(new Item.Properties().rarity(Rarity.RARE)));
++    static void register(){}
++    static boolean install(ServerPlayer p){
++        var level=p.server.getLevel(BunkerRelay.HUB);
++        var state=RelayState.get(p.server);
++        for(int x:new int[]{40,-40,64,-64})for(int z:new int[]{-24,-48,72}){
++            var o=new BlockPos(x,96,z);
++            boolean free=true;
++            for(int a=-4;a<=4&&free;a++)for(int b=-4;b<=4&&free;b++)for(int h=0;h<=4;h++)if(!level.isEmptyBlock(o.offset(a,h,b))){free=false;break;}
++            if(!free)continue;
++            for(int a=-4;a<=4;a++)for(int b=-4;b<=4;b++)for(int h=-1;h<=4;h++){
++                var block=h==-1?Blocks.POLISHED_ANDESITE:h==4?((a==0&&b==0)?Blocks.SEA_LANTERN:Blocks.DEEPSLATE_TILES):
++                    (Math.abs(a)==4||Math.abs(b)==4)&&!(b==4&&Math.abs(a)<=1&&h<3)?Blocks.STONE_BRICKS:Blocks.AIR;
++                level.setBlock(o.offset(a,h,b),block.defaultBlockState(),2);
++            }
++            level.setBlock(o,Blocks.SMITHING_TABLE.defaultBlockState(),2);
++            level.setBlock(o.west(2),Blocks.ANVIL.defaultBlockState(),2);
++            level.setBlock(o.east(2),Blocks.BLAST_FURNACE.defaultBlockState(),2);
++            state.structureLayouts.putLong("forgeBench",o.asLong());state.setDirty();return true;
++        }
++        return false;
++    }
++    static int rank(ItemStack s){return Math.clamp(s.getOrDefault(DataComponents.CUSTOM_DATA,CustomData.EMPTY).copyTag().getInt("relayForgeRank"),0,3);}
++    static boolean use(ServerPlayer p,BlockPos at){
++        var state=RelayState.get(p.server);
++        if(!p.level().dimension().equals(BunkerRelay.HUB)||!state.structureLayouts.contains("forgeBench")||at.asLong()!=state.structureLayouts.getLong("forgeBench"))return false;
++        var item=p.getMainHandItem();
++        if(!(item.getItem() instanceof com.tacz.guns.api.item.IGun||item.getItem() instanceof ArmorItem||item.getItem() instanceof SwordItem)||StarterKit.marked(item)){
++            RaidRules.tell(p,"Возьмите оружие или броню в основную руку и кристалл во вторую.");return true;
++        }
++        if(!p.getOffhandItem().is(GEM.get())){RaidRules.tell(p,"Нужен кузнечный кристалл во второй руке.");return true;}
++        int roll=p.getRandom().nextInt(100);
++        int tier=roll<55?1:roll<90?2:3;
++        String prefix=new String[]{"","Добротный","Отборный","Мастерский"}[tier];
++        var data=item.getOrDefault(DataComponents.CUSTOM_DATA,CustomData.EMPTY).copyTag();
++        if(!data.contains("relayForgeBase"))data.putString("relayForgeBase",item.getHoverName().getString());
++        data.putInt("relayForgeRank",tier);item.set(DataComponents.CUSTOM_DATA,CustomData.of(data));
++        item.set(DataComponents.RARITY,new Rarity[]{Rarity.COMMON,Rarity.UNCOMMON,Rarity.RARE,Rarity.EPIC}[tier]);
++        item.set(DataComponents.CUSTOM_NAME,Component.literal(prefix+" · "+data.getString("relayForgeBase")));
++        p.getOffhandItem().shrink(1);RelayEconomy.save(p);
++        RaidRules.tell(p,"Перековка · "+prefix+" · "+(item.getItem() instanceof ArmorItem?"защита +"+tier+"%":"урон +"+(tier*4)+"%"));return true;
++    }
++    private ForgeRoom(){}
++}
+diff --git a/mod/src/main/java/dev/bunkerrelay/RelayEconomy.java b/mod/src/main/java/dev/bunkerrelay/RelayEconomy.java
+index d9d61df..a0b14a1 100644
+--- a/mod/src/main/java/dev/bunkerrelay/RelayEconomy.java
++++ b/mod/src/main/java/dev/bunkerrelay/RelayEconomy.java
+@@ -48,7 +48,7 @@ public final class RelayEconomy {
+   new Offer("alloy","Андезитовый сплав ×8","create:andesite_alloy",8,160,40,3,false),
+   new Offer("apple","Золотое яблоко","minecraft:golden_apple",1,240,60,2,false)
+  );
+- public enum Merchant { WEAPONS("Оружейник",Items.CROSSBOW),MECHANISMS("Механик",Items.PISTON),RESOURCES("Ресурсы",Items.IRON_INGOT),BUILDING("Строитель",Items.BRICKS),SUPPLIES("Снаряжение",Items.BREAD),MEDIC("Медик",Items.POTION);public final String title;public final Item icon;Merchant(String title,Item icon){this.title=title;this.icon=icon;} }
++ public enum Merchant { WEAPONS("Оружейник",Items.CROSSBOW),MECHANISMS("Механик",Items.PISTON),RESOURCES("Ресурсы",Items.IRON_INGOT),BUILDING("Строитель",Items.BRICKS),SUPPLIES("Снаряжение",Items.BREAD),MEDIC("Медик",Items.POTION),JEWELER("Огранщик",Items.AMETHYST_SHARD);public final String title;public final Item icon;Merchant(String title,Item icon){this.title=title;this.icon=icon;} }
+  private static final Map<String,Merchant> categories=new HashMap<>();
+  public static final List<Offer> CATALOG=catalog();
+  private static List<Offer> catalog(){var list=new ArrayList<>(ORIGINAL);
+@@ -230,6 +230,9 @@ public final class RelayEconomy {
+   list.add(new Offer("field_kar98","Kar98k · полевой","gun/relayarsenal:field_kar98",1,1750,350,2,true));
+   list.add(new Offer("skateboard","Скейтборд","skateboardmod:skateboard",1,390,78,4,true));categories.put("skateboard",Merchant.MECHANISMS);
+   list.add(new Offer("honey_flask","Мёд в бутылке","minecraft:honey_bottle",1,34,6,8,true));categories.put("honey_flask",Merchant.MEDIC);
++  list.add(new Offer("bike","Велосипед","simplebikes:basic_bike_item",1,650,120,3,true));categories.put("bike",Merchant.MECHANISMS);
++  list.add(new Offer("cargo_bike","Грузовой велосипед · 9 ячеек","bunkerrelay:cargo_bike",1,1100,220,2,true));categories.put("cargo_bike",Merchant.MECHANISMS);
++  list.add(new Offer("forge_crystal","Кузнечный кристалл","bunkerrelay:forge_crystal",1,230,45,8,true));categories.put("forge_crystal",Merchant.JEWELER);
+   return list.stream().map(o->{
+    int factor=o.id().equals("glock")?85:o.item().startsWith("gun/")?180:o.item().startsWith("attachment/")?140:
+        o.item().startsWith("ammo/")?115:merchant(o)==Merchant.MEDIC?90:merchant(o)==Merchant.MECHANISMS?130:110;
+@@ -327,11 +330,11 @@ public final class RelayEconomy {
+    }}
+    if(!selling)for(int i=0;i<36&&page*36+i<visible.size();i++){var o=visible.get(page*36+i);var stack=o.stack(owner);if(!stack.isEmpty())icon(9+i,stack,o.name().replaceAll(" ×[0-9]+$",""),unitBuy(owner,o)+" кр./шт. · запас "+remainingUnits(owner,o)+" · склад "+warehouse.count(stack),"В рюкзаке "+owned(owner,o),(permanent(o)?"Постоянный товар":"Поставка №"+rotation),"ЛКМ — 1 шт. · ПКМ — максимум",o.item().startsWith("attachment/")?"Совместимость зависит от оружия":"Принимаются предметы без изменений");}
+    if(BaseUpgrades.has(owner,BaseUpgrades.Upgrade.STORAGE))icon(51,new ItemStack(Items.BARREL),"Продать со склада",warehouse.entries().size()+" позиций в каталоге");
+-   if(!selling&&category==Merchant.WEAPONS)icon(6,new ItemStack(Items.SPYGLASS),new String[]{"Вся оружейная","Оружие","Модули","Боеприпасы"}[armoryFilter],"Нажмите для смены фильтра");
++   if(!selling&&category==Merchant.WEAPONS)icon(47,new ItemStack(Items.SPYGLASS),new String[]{"Вся оружейная","Оружие","Модули","Боеприпасы"}[armoryFilter],"Нажмите для смены фильтра");
+    if(!selling){icon(45,new ItemStack(Items.ARROW),"Назад","");icon(46,new ItemStack(Items.ARROW),"Далее","");}icon(48,new ItemStack(Items.CHEST),selling?"Купить":"Продать","Смена режима");icon(49,new ItemStack(Items.PAPER),"Страница "+(page+1)+" / "+Math.max(1,(visible.size()+35)/36),"Поставка №"+rotation);icon(50,new ItemStack(Items.WRITABLE_BOOK),"Заказы",SupplyOrders.title(owner));icon(52,new ItemStack(Items.LODESTONE),pocket?"КПК · Магазин":"Терминал","");icon(53,new ItemStack(Items.BOOK),"ЛКМ: 1 · ПКМ: максимум","Скупка по оценке предмета","Контейнеры с содержимым исключены.");
+   }
+   @Override public void clicked(int slot,int button,ClickType type,Player p){if(p!=owner||!safe(owner)||type!=ClickType.PICKUP||button<0||button>1)return;if(rotation!=account(owner).getInt("rotation")){rotation=account(owner).getInt("rotation");relist();refresh();sendAllDataToRemote();return;}
+-   if(slot>=0&&slot<Merchant.values().length){category=Merchant.values()[slot];relist();}else if(slot==6&&category==Merchant.WEAPONS){armoryFilter=(armoryFilter+1)%4;relist();}else if(slot>=9&&slot<45){int index=page*36+slot-9;if(selling)RaidRules.tell(owner,SalvageValue.sellSlot(owner,getSlot(54+slot-9).getItem(),button==0?1:Integer.MAX_VALUE));else if(index<visible.size())RaidRules.tell(owner,trade(owner,visible.get(index),false,button==0?1:Integer.MAX_VALUE));}
++   if(slot>=0&&slot<Merchant.values().length){category=Merchant.values()[slot];relist();}else if(slot==47&&category==Merchant.WEAPONS){armoryFilter=(armoryFilter+1)%4;relist();}else if(slot>=9&&slot<45){int index=page*36+slot-9;if(selling)RaidRules.tell(owner,SalvageValue.sellSlot(owner,getSlot(54+slot-9).getItem(),button==0?1:Integer.MAX_VALUE));else if(index<visible.size())RaidRules.tell(owner,trade(owner,visible.get(index),false,button==0?1:Integer.MAX_VALUE));}
+    else if(slot>=54&&slot<slots.size()&&selling){RaidRules.tell(owner,SalvageValue.sellSlot(owner,getSlot(slot).getItem(),button==0?1:Integer.MAX_VALUE));}
+    else if(slot==45)page=Math.max(0,page-1);else if(slot==46)page=Math.min(Math.max(0,(visible.size()-1)/36),page+1);else if(slot==48){selling=!selling;relist();}else if(slot==50){if(pocket)SupplyOrders.openPocket(owner);else SupplyOrders.open(owner);return;}else if(slot==51){BaseUpgrades.locker(owner,pocket,true,category);return;}else if(slot==52){if(pocket)PocketDevice.open(owner,PocketDevice.Page.SHOP);else BunkerRelay.openTerminal(owner);return;}refresh();sendAllDataToRemote();
+   }
+diff --git a/mod/src/main/java/dev/bunkerrelay/SiteCrate.java b/mod/src/main/java/dev/bunkerrelay/SiteCrate.java
+index 10edb92..5b2e5e9 100644
+--- a/mod/src/main/java/dev/bunkerrelay/SiteCrate.java
++++ b/mod/src/main/java/dev/bunkerrelay/SiteCrate.java
+@@ -67,6 +67,7 @@ enum SiteCrate {
+             if(pattern==0)chest.setItem(21,new ItemStack(Medicine.TRAUMA.get()));
+             if(pattern==1)chest.setItem(21,new ItemStack(Items.HONEY_BOTTLE));
+         }else if(pattern==0)chest.setItem(21,new ItemStack(second));
++        if((this==MINE||this==ARMORER||this==LAB)&&random.nextInt(12)==0)chest.setItem(23,new ItemStack(ForgeRoom.GEM.get()));
+         PersonalLoot.convert(level,at,chest);
+         if(level.getBlockEntity(at) instanceof BaseContainerBlockEntity personal){
+             var tag=personal.saveWithoutMetadata(level.registryAccess()); tag.putString("CustomName",Component.Serializer.toJson(Component.literal(title),level.registryAccess())); personal.loadWithComponents(tag,level.registryAccess());
+diff --git a/mod/src/main/java/dev/bunkerrelay/TerminalMenu.java b/mod/src/main/java/dev/bunkerrelay/TerminalMenu.java
+index b9ac340..ceaf72a 100644
+--- a/mod/src/main/java/dev/bunkerrelay/TerminalMenu.java
++++ b/mod/src/main/java/dev/bunkerrelay/TerminalMenu.java
+@@ -22,7 +22,7 @@ public final class TerminalMenu extends ChestMenu {
+  public TerminalMenu(int id,Inventory inv,ServerPlayer p){this(id,inv,p,new SimpleContainer(54));}
+  private TerminalMenu(int id,Inventory inv,ServerPlayer p,SimpleContainer c){super(RelayMenus.TERMINAL.get(),id,inv,c,6);owner=p;buttons=c;refresh();}
+  private void icon(int slot,Item item,String name,String hint){var stack=new ItemStack(item);stack.set(DataComponents.CUSTOM_NAME,Component.literal(name));stack.set(DataComponents.LORE,new ItemLore(List.of(Component.literal(hint))));buttons.setItem(slot,stack);}
+- private void refresh(){buttons.clearContent();for(var m:RelayEconomy.Merchant.values())icon(36+m.ordinal(),m.icon,m.title,"ЛКМ — 1 шт. · ПКМ — максимум");icon(42,Items.HOPPER,"Скупщик","Продать вещи по оценке");icon(44,Items.WRITABLE_BOOK,"Заказы снабжения",SupplyOrders.title(owner));icon(46,Items.CHEST,"Забрать награды","Почта наград");icon(48,Items.COMPASS,"Компас в углу экрана","Включить или выключить навигацию");icon(50,Items.GOLD_NUGGET,"Счёт: "+RelayEconomy.balance(owner)+" кр.","Бюджет скупщика: "+RelayEconomy.account(owner).getInt("budget"));var s=RelayState.get(owner.server);
++ private void refresh(){buttons.clearContent();for(var m:RelayEconomy.Merchant.values())icon(m==RelayEconomy.Merchant.JEWELER?49:36+m.ordinal(),m.icon,m.title,"ЛКМ — 1 шт. · ПКМ — максимум");icon(42,Items.HOPPER,"Скупщик","Продать вещи по оценке");icon(44,Items.WRITABLE_BOOK,"Заказы снабжения",SupplyOrders.title(owner));icon(46,Items.CHEST,"Забрать награды","Почта наград");icon(48,Items.COMPASS,"Компас в углу экрана","Включить или выключить навигацию");icon(50,Items.GOLD_NUGGET,"Счёт: "+RelayEconomy.balance(owner)+" кр.","Бюджет скупщика: "+RelayEconomy.account(owner).getInt("budget"));var s=RelayState.get(owner.server);
+   icon(0,Items.IRON_DOOR,"Бункер","Вернуться домой");icon(2,Items.CHEST_MINECART,"Гараж","Перейти в гараж");
+   icon(4,Items.COMPASS,s.ready?"Зона открыта":"Зона закрыта",s.generating?"Подготовка входа…":s.ready?"Эвакуация: "+s.centerX+", "+s.spawnY+", "+s.centerZ:"Выберите настройки и запустите цикл");
+   icon(6,Items.PAPER,"Сюжетные объекты","Выбрать цель для компаса");icon(8,Items.NOTE_BLOCK,"Скримеры: "+(owner.getPersistentData().getBoolean("relay_quiet")?"выкл.":"вкл."),"Переключить резкие звуки, надписи и темноту");
+@@ -38,7 +38,7 @@ public final class TerminalMenu extends ChestMenu {
+   icon(43,Items.REDSTONE,"Установить деталь","Деталь в основной руке");
+   icon(33,Items.REDSTONE_TORCH,BasePower.label(s),"Нажмите для координат аккумулятора и заправки");
+   icon(27,Items.COMPASS,"Задача вылазки",s.ready?RaidMission.label(s):"Зона ещё не готова");
+-  for(var upgrade:BaseUpgrades.Upgrade.values())icon(28+upgrade.ordinal(),Items.EMERALD,upgrade.title,
++  for(var upgrade:BaseUpgrades.Upgrade.values())icon(upgrade==BaseUpgrades.Upgrade.FORGE?45:28+upgrade.ordinal(),Items.EMERALD,upgrade.title,
+       BaseUpgrades.has(owner,upgrade)?"Открыто · нажмите для использования":upgrade.price+" кр. · купить для команды");
+   for(var request:BunkerRequests.Request.values())
+    icon(15+request.ordinal(),request.item().getItem(),request.title,request.status(s)+" · "+request.reward);
+@@ -49,8 +49,8 @@ public final class TerminalMenu extends ChestMenu {
+ 
+   icon(24,Items.ENDER_PEARL,"Начать вылазку","Снаряжение сохраняется перед выходом");
+   int[] visible=switch(page){
+-   case 1->new int[]{28,36,37,38,39,40,41,42,44,50};
+-   case 2->new int[]{0,2,8,15,16,17,25,28,29,30,31,32,33,34,35,43,48,51,52,53};
++   case 1->new int[]{28,36,37,38,39,40,41,42,44,49,50};
++   case 2->new int[]{0,2,8,15,16,17,25,28,29,30,31,32,33,34,35,43,45,48,51,52,53};
+    case 3,4->new int[]{};
+    default->new int[]{4,6,22,24,27,18,46,47,52};
+   };
+@@ -118,7 +118,7 @@ public final class TerminalMenu extends ChestMenu {
+    }
+    refresh();sendAllDataToRemote();return;
+   }
+-  if(slot>=36&&slot<36+RelayEconomy.Merchant.values().length){RelayEconomy.open(owner,false,RelayEconomy.Merchant.values()[slot-36]);return;}
++  if(slot>=36&&slot<42){RelayEconomy.open(owner,false,RelayEconomy.Merchant.values()[slot-36]);return;}
+   switch(slot){
+    case 6 -> ReconChart.targets(owner);
+    case 8 -> RaidDirector.toggleScares(owner);
+@@ -135,6 +135,8 @@ public final class TerminalMenu extends ChestMenu {
+    case 33 -> BasePower.report(owner);
+    case 34 -> BasePower.fuel(owner);
+    case 35 -> TrophyResearch.dismantle(owner);
++   case 49 -> RelayEconomy.open(owner,false,RelayEconomy.Merchant.JEWELER);
++   case 45 -> {if(!BaseUpgrades.has(owner,BaseUpgrades.Upgrade.FORGE))BaseUpgrades.buy(owner,BaseUpgrades.Upgrade.FORGE);else RaidRules.tell(owner,"Стол перековки · "+net.minecraft.core.BlockPos.of(RelayState.get(owner.server).structureLayouts.getLong("forgeBench")).toShortString());}
+    case 42 -> RelayEconomy.open(owner,true);
+    case 43 -> TrophyResearch.install(owner);
+    case 44 -> SupplyOrders.open(owner);
+diff --git a/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java b/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java
+index 0847b01..2f10be6 100644
+--- a/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java
++++ b/mod/src/main/java/dev/bunkerrelay/ZoneLandmarks.java
+@@ -252,6 +252,7 @@ final class ZoneLandmarks {
+         var director=RaidDirector.get(level.getServer());
+         InteriorSites.prepare(level,state,room,site.origin(),site.approach());
+         FieldJobs.assign(room,plan,state);
++        if(state.generating)FieldTransport.park(level,state,site.origin());
+         director.rooms.add(room);
+         director.setDirty();
+         int sx=ExpeditionGrid.cell(state,cache.getX()-state.centerX);
+diff --git a/mod/src/main/java/dev/bunkerrelay/client/RelayScreen.java b/mod/src/main/java/dev/bunkerrelay/client/RelayScreen.java
+index ce3c523..7bb97a1 100644
+--- a/mod/src/main/java/dev/bunkerrelay/client/RelayScreen.java
++++ b/mod/src/main/java/dev/bunkerrelay/client/RelayScreen.java
+@@ -102,7 +102,7 @@ public final class RelayScreen<T extends ChestMenu> extends AbstractContainerScr
+         if (market) {
+             int sideWidth = Math.min(126, contentWidth / 3);
+             int y = bodyTop;
+-            for (int slot : new int[]{8,0,1,2,3,4,5,6,7,48,50,51,52}) if (present(slot)) {
++            for (int slot : new int[]{8,0,1,2,3,4,5,6,47,7,48,50,51,52}) if (present(slot)) {
+                 int row = Math.min(18, (imageHeight - HEADER - 14) / 13);
+                 buttons.add(new Button(slot, bodyLeft, y, sideWidth - 5, row - 2, true));
+                 y += row;
+@@ -200,8 +200,11 @@ public final class RelayScreen<T extends ChestMenu> extends AbstractContainerScr
+         int x=leftPos+imageWidth-8-previewWidth;
+         int h=Math.min(previewWidth*2/3,imageHeight-HEADER-88);
+         if(h<16)return;
+-        if(region==5){g.fill(x,bodyTop,x+previewWidth,bodyTop+h,0xff411d22);g.renderItem(new net.minecraft.world.item.ItemStack(Items.MAGMA_BLOCK),x+previewWidth/2-8,bodyTop+h/2-8);}
+-        else g.blit(EXPEDITION_ART,x,bodyTop,previewWidth,h,night?543:0,362*Math.min(3,region),543,362,1086,1448);
++        if(region==3||region==5){
++            var art=ResourceLocation.parse("bunkerrelay:textures/gui/expedition_"+(region==3?"winter":"hell")+".png");
++            g.blit(art,x,bodyTop,previewWidth,h,0,0,240,160,240,160);
++            if(night)g.fill(x,bodyTop,x+previewWidth,bodyTop+h,0x48142042);
++        }else g.blit(EXPEDITION_ART,x,bodyTop,previewWidth,h,night?543:0,362*Math.min(3,region),543,362,1086,1448);
+         g.fill(x,bodyTop+h,x+previewWidth,bodyTop+h+20,SURFACE);
+         g.drawString(font,caption,x+6,bodyTop+h+6,TEXT,false);
+     }
+diff --git a/mod/src/main/resources/META-INF/neoforge.mods.toml b/mod/src/main/resources/META-INF/neoforge.mods.toml
+index beb8c4e..8691bf3 100644
+--- a/mod/src/main/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/main/resources/META-INF/neoforge.mods.toml
+@@ -3,7 +3,7 @@ loaderVersion="[4,)"
+ license="MIT"
+ [[mods]]
+ modId="bunkerrelay"
+-version="0.65.0"
++version="0.66.0"
+ displayName="Bunker Relay"
+ description="Cooperative bunker, garage and procedural expeditions. Early prototype."
+ [[dependencies.bunkerrelay]]
+@@ -56,7 +56,7 @@ side="BOTH"
+ [[dependencies.bunkerrelay]]
+ modId="relaylights"
+ type="required"
+-versionRange="[0.65.0]"
++versionRange="[0.66.0]"
+ ordering="AFTER"
+ side="BOTH"
+ 
+@@ -66,13 +66,13 @@ config="bunkerrelay.mixins.json"
+ [[dependencies.bunkerrelay]]
+ modId="relayfactories"
+ type="required"
+-versionRange="[0.65.0]"
++versionRange="[0.66.0]"
+ ordering="AFTER"
+ side="BOTH"
+ 
+ [[dependencies.bunkerrelay]]
+ modId="relayarsenal"
+ type="required"
+-versionRange="[0.65.0]"
++versionRange="[0.66.0]"
+ ordering="AFTER"
+ side="BOTH"
+diff --git a/mod/src/main/resources/assets/bunkerrelay/lang/en_us.json b/mod/src/main/resources/assets/bunkerrelay/lang/en_us.json
+index 8036792..e87db16 100644
+--- a/mod/src/main/resources/assets/bunkerrelay/lang/en_us.json
++++ b/mod/src/main/resources/assets/bunkerrelay/lang/en_us.json
+@@ -1,4 +1,5 @@
+ {
++  "item.bunkerrelay.cargo_bike":"Cargo bike","item.bunkerrelay.forge_crystal":"Forge crystal",
+   "item.bunkerrelay.trauma_kit": "Trauma kit",
+   "item.bunkerrelay.quarantine_core": "Quarantine Core",
+   "item.bunkerrelay.echo_sample": "Echo Sample",
+diff --git a/mod/src/main/resources/assets/bunkerrelay/lang/ru_ru.json b/mod/src/main/resources/assets/bunkerrelay/lang/ru_ru.json
+index 89c36be..704b703 100644
+--- a/mod/src/main/resources/assets/bunkerrelay/lang/ru_ru.json
++++ b/mod/src/main/resources/assets/bunkerrelay/lang/ru_ru.json
+@@ -1,4 +1,5 @@
+ {
++  "item.bunkerrelay.cargo_bike":"Грузовой велосипед","item.bunkerrelay.forge_crystal":"Кузнечный кристалл",
+   "item.bunkerrelay.trauma_kit": "Травматологический набор",
+   "item.bunkerrelay.quarantine_core": "Ядро Стража карантина",
+   "item.bunkerrelay.echo_sample": "Образец Носителя Эхо",
+diff --git a/mod/src/main/resources/assets/bunkerrelay/models/item/cargo_bike.json b/mod/src/main/resources/assets/bunkerrelay/models/item/cargo_bike.json
+new file mode 100644
+index 0000000..1a30412
+--- /dev/null
++++ b/mod/src/main/resources/assets/bunkerrelay/models/item/cargo_bike.json
+@@ -0,0 +1 @@
++{"parent": "simplebikes:item/basic_bike_item"}
+diff --git a/mod/src/main/resources/assets/bunkerrelay/models/item/forge_crystal.json b/mod/src/main/resources/assets/bunkerrelay/models/item/forge_crystal.json
+new file mode 100644
+index 0000000..f306a4e
+--- /dev/null
++++ b/mod/src/main/resources/assets/bunkerrelay/models/item/forge_crystal.json
+@@ -0,0 +1 @@
++{"parent": "minecraft:item/amethyst_shard"}
+diff --git a/mod/src/main/resources/data/bunkerrelay/dimension/hell_raid.json b/mod/src/main/resources/data/bunkerrelay/dimension/hell_raid.json
+index b260de7..19b9280 100644
+--- a/mod/src/main/resources/data/bunkerrelay/dimension/hell_raid.json
++++ b/mod/src/main/resources/data/bunkerrelay/dimension/hell_raid.json
+@@ -9,8 +9,8 @@
+         {
+           "biome": "minecraft:soul_sand_valley",
+           "parameters": {
+-            "temperature": -0.38,
+-            "humidity": -0.27,
++            "temperature": -0.6,
++            "humidity": -0.52,
+             "continentalness": [
+               -2,
+               2
+@@ -125,6 +125,102 @@
+             ],
+             "offset": 0
+           }
++        },
++        {
++          "biome": "minecraft:nether_wastes",
++          "parameters": {
++            "temperature": -0.46,
++            "humidity": -0.52,
++            "continentalness": [
++              -2,
++              2
++            ],
++            "erosion": [
++              -2,
++              2
++            ],
++            "weirdness": [
++              -2,
++              2
++            ],
++            "depth": [
++              -2,
++              2
++            ],
++            "offset": 0
++          }
++        },
++        {
++          "biome": "minecraft:nether_wastes",
++          "parameters": {
++            "temperature": -0.6,
++            "humidity": -0.35,
++            "continentalness": [
++              -2,
++              2
++            ],
++            "erosion": [
++              -2,
++              2
++            ],
++            "weirdness": [
++              -2,
++              2
++            ],
++            "depth": [
++              -2,
++              2
++            ],
++            "offset": 0
++          }
++        },
++        {
++          "biome": "minecraft:nether_wastes",
++          "parameters": {
++            "temperature": -0.76,
++            "humidity": -0.52,
++            "continentalness": [
++              -2,
++              2
++            ],
++            "erosion": [
++              -2,
++              2
++            ],
++            "weirdness": [
++              -2,
++              2
++            ],
++            "depth": [
++              -2,
++              2
++            ],
++            "offset": 0
++          }
++        },
++        {
++          "biome": "minecraft:nether_wastes",
++          "parameters": {
++            "temperature": -0.6,
++            "humidity": -0.69,
++            "continentalness": [
++              -2,
++              2
++            ],
++            "erosion": [
++              -2,
++              2
++            ],
++            "weirdness": [
++              -2,
++              2
++            ],
++            "depth": [
++              -2,
++              2
++            ],
++            "offset": 0
++          }
+         }
+       ]
+     }
+diff --git a/mod/src/relayArsenal/resources/META-INF/neoforge.mods.toml b/mod/src/relayArsenal/resources/META-INF/neoforge.mods.toml
+index cc8cff2..336052a 100644
+--- a/mod/src/relayArsenal/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/relayArsenal/resources/META-INF/neoforge.mods.toml
+@@ -4,7 +4,7 @@ license="MIT"
+ 
+ [[mods]]
+ modId="relayarsenal"
+-version="0.65.0"
++version="0.66.0"
+ displayName="Relay Arsenal"
+ description="Historical TaCZ arsenal for Bunker Relay."
+ 
+diff --git a/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml b/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml
+index 73a46f1..a49f2c7 100644
+--- a/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/relayFactories/resources/META-INF/neoforge.mods.toml
+@@ -4,7 +4,7 @@ license="MIT"
+ 
+ [[mods]]
+ modId="relayfactories"
+-version="0.65.0"
++version="0.66.0"
+ displayName="Relay Factories"
+ description="Factory structures for industrial expeditions."
+ 
+diff --git a/mod/src/relayLights/resources/META-INF/neoforge.mods.toml b/mod/src/relayLights/resources/META-INF/neoforge.mods.toml
+index 5a8a60e..5134aab 100644
+--- a/mod/src/relayLights/resources/META-INF/neoforge.mods.toml
++++ b/mod/src/relayLights/resources/META-INF/neoforge.mods.toml
+@@ -4,7 +4,7 @@ license="MIT"
+ 
+ [[mods]]
+ modId="relaylights"
+-version="0.65.0"
++version="0.66.0"
+ displayName="Relay Lights"
+ description="Directional lights with personal and multiplayer modes."
+ 
+diff --git a/modrinth.index.json b/modrinth.index.json
+index a8b7e52..1a7018c 100644
+--- a/modrinth.index.json
++++ b/modrinth.index.json
+@@ -1,7 +1,7 @@
+ {
+   "formatVersion": 1,
+   "game": "minecraft",
+-  "versionId": "0.65.0",
++  "versionId": "0.66.0",
+   "name": "Bunker Relay",
+   "summary": "Cooperative expeditions, ECHO encounters, threats, extraction and persistent bunker.",
+   "files": [
+@@ -844,6 +844,51 @@
+         "https://cdn.modrinth.com/data/eE2Db4YU/versions/B2YtQYCh/immersive_armors-1.7.6%2B1.21.1-neoforge.jar"
+       ],
+       "fileSize": 1274167
++    },
++    {
++      "path": "mods/superbwarfare-0.8.9.2-hotfix-mc1.21.1-e0c2b27f.jar",
++      "hashes": {
++        "sha1": "e62188c36582bf17c968593061bec7de2e3a9649",
++        "sha512": "1a61ed2d6ed6c7e91334469650fe8649d9f115183818eed011cb1e93b0e3e0d8cf0a21ba71063219a9c939815b9b74506b4ab45e0aa96d52ecf97b9bb0c9f637"
++      },
++      "env": {
++        "client": "required",
++        "server": "required"
++      },
++      "downloads": [
++        "https://cdn.modrinth.com/data/Cd3DYqzn/versions/izD7dnxq/superbwarfare-0.8.9.2-hotfix-mc1.21.1-e0c2b27f.jar"
++      ],
++      "fileSize": 41638430
++    },
++    {
++      "path": "mods/kotlinforforge-5.13.0-all.jar",
++      "hashes": {
++        "sha512": "64a26f73e3299ad09b350d3421e3f97a5ccd158d1936fb50fc57f3c88bf6fd33814568bf43a0886f79ada4be65d65d232d9e20a901833150ec5b89a01c46d459",
++        "sha1": "b1d5563f4e3db9ec4a4a2b371560aa171d6de237"
++      },
++      "env": {
++        "client": "optional",
++        "server": "optional"
++      },
++      "downloads": [
++        "https://cdn.modrinth.com/data/ordsPcFz/versions/9ZlVvei8/kotlinforforge-5.13.0-all.jar"
++      ],
++      "fileSize": 7364729
++    },
++    {
++      "path": "mods/simplebikes-1.0-neoforge-1.21.1.jar",
++      "hashes": {
++        "sha512": "7fa881fba6fb17d8525b4630a005b49ca0d742292e17ee07d692e8116374af2efb6b92d5b397e50cc81d962f6b2b17020204040cd0972b55fff0883b2f7d512e",
++        "sha1": "73f38b74031c244a3759a26e9fc2b84f5a4d2cc1"
++      },
++      "env": {
++        "client": "required",
++        "server": "required"
++      },
++      "downloads": [
++        "https://cdn.modrinth.com/data/KVUeWeA8/versions/zCV6RL5z/simplebikes-1.0-neoforge-1.21.1.jar"
++      ],
++      "fileSize": 229344
+     }
+   ],
+   "dependencies": {
+diff --git a/pack.lock.json b/pack.lock.json
+index d43f6aa..94cf91c 100644
+--- a/pack.lock.json
++++ b/pack.lock.json
+@@ -1990,6 +1990,103 @@
+         ],
+         "fileSize": 1274167
+       }
++    },
++    {
++      "slug": "superb-warfare",
++      "title": "Superb Warfare",
++      "version": "0.8.9.2-hotfix",
++      "version_id": "izD7dnxq",
++      "project_id": "Cd3DYqzn",
++      "dependencies": [
++        {
++          "version_id": null,
++          "project_id": "TbriQCWD",
++          "file_name": null,
++          "dependency_type": "incompatible"
++        },
++        {
++          "version_id": null,
++          "project_id": "ordsPcFz",
++          "file_name": null,
++          "dependency_type": "required"
++        }
++      ],
++      "env": {
++        "client": "required",
++        "server": "required"
++      },
++      "url": "https://modrinth.com/mod/superb-warfare",
++      "file": {
++        "path": "mods/superbwarfare-0.8.9.2-hotfix-mc1.21.1-e0c2b27f.jar",
++        "hashes": {
++          "sha1": "e62188c36582bf17c968593061bec7de2e3a9649",
++          "sha512": "1a61ed2d6ed6c7e91334469650fe8649d9f115183818eed011cb1e93b0e3e0d8cf0a21ba71063219a9c939815b9b74506b4ab45e0aa96d52ecf97b9bb0c9f637"
++        },
++        "env": {
++          "client": "required",
++          "server": "required"
++        },
++        "downloads": [
++          "https://cdn.modrinth.com/data/Cd3DYqzn/versions/izD7dnxq/superbwarfare-0.8.9.2-hotfix-mc1.21.1-e0c2b27f.jar"
++        ],
++        "fileSize": 41638430
++      }
++    },
++    {
++      "slug": "kotlin-for-forge",
++      "title": "Kotlin for Forge",
++      "version": "5.13.0",
++      "version_id": "9ZlVvei8",
++      "project_id": "ordsPcFz",
++      "dependencies": [],
++      "env": {
++        "client": "optional",
++        "server": "optional"
++      },
++      "url": "https://modrinth.com/mod/kotlin-for-forge",
++      "file": {
++        "path": "mods/kotlinforforge-5.13.0-all.jar",
++        "hashes": {
++          "sha512": "64a26f73e3299ad09b350d3421e3f97a5ccd158d1936fb50fc57f3c88bf6fd33814568bf43a0886f79ada4be65d65d232d9e20a901833150ec5b89a01c46d459",
++          "sha1": "b1d5563f4e3db9ec4a4a2b371560aa171d6de237"
++        },
++        "env": {
++          "client": "optional",
++          "server": "optional"
++        },
++        "downloads": [
++          "https://cdn.modrinth.com/data/ordsPcFz/versions/9ZlVvei8/kotlinforforge-5.13.0-all.jar"
++        ],
++        "fileSize": 7364729
++      }
++    },
++    {
++      "slug": "simple-bikes",
++      "title": "Simple Bikes",
++      "version": "1.0",
++      "version_id": "zCV6RL5z",
++      "project_id": "KVUeWeA8",
++      "dependencies": [],
++      "env": {
++        "client": "required",
++        "server": "required"
++      },
++      "url": "https://modrinth.com/mod/simple-bikes",
++      "file": {
++        "path": "mods/simplebikes-1.0-neoforge-1.21.1.jar",
++        "hashes": {
++          "sha512": "7fa881fba6fb17d8525b4630a005b49ca0d742292e17ee07d692e8116374af2efb6b92d5b397e50cc81d962f6b2b17020204040cd0972b55fff0883b2f7d512e",
++          "sha1": "73f38b74031c244a3759a26e9fc2b84f5a4d2cc1"
++        },
++        "env": {
++          "client": "required",
++          "server": "required"
++        },
++        "downloads": [
++          "https://cdn.modrinth.com/data/KVUeWeA8/versions/zCV6RL5z/simplebikes-1.0-neoforge-1.21.1.jar"
++        ],
++        "fileSize": 229344
++      }
+     }
+   ]
+ }
+diff --git a/tools/__pycache__/expand_lock.cpython-312.pyc b/tools/__pycache__/expand_lock.cpython-312.pyc
+new file mode 100644
+index 0000000..4c63195
+Binary files /dev/null and b/tools/__pycache__/expand_lock.cpython-312.pyc differ
+diff --git a/tools/__pycache__/resolve_pack.cpython-312.pyc b/tools/__pycache__/resolve_pack.cpython-312.pyc
+new file mode 100644
+index 0000000..c4293d4
+Binary files /dev/null and b/tools/__pycache__/resolve_pack.cpython-312.pyc differ
+diff --git a/tools/hell_preview.b64 b/tools/hell_preview.b64
+new file mode 100644
+index 0000000..9646ed9
+--- /dev/null
++++ b/tools/hell_preview.b64
+@@ -0,0 +1,361 @@
++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
+diff --git a/tools/package_release.py b/tools/package_release.py
+index b3902a2..73bfca9 100644
+--- a/tools/package_release.py
++++ b/tools/package_release.py
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env python3
+ import hashlib,pathlib,shutil,zipfile,sys
+ ROOT=pathlib.Path(__file__).resolve().parents[1];dist=ROOT/'dist';dist.mkdir(exist_ok=True)
+-VERSION='0.65.0';source='--source' in sys.argv;jar=ROOT/f'mod/build/libs/bunkerrelay-{VERSION}.jar'
++VERSION='0.66.0';source='--source' in sys.argv;jar=ROOT/f'mod/build/libs/bunkerrelay-{VERSION}.jar'
+ lights=ROOT/f'mod/build/libs/relaylights-{VERSION}.jar'
+ factories=ROOT/f'mod/build/libs/relayfactories-{VERSION}.jar'
+ if not source:
+@@ -73,6 +73,7 @@ if not source:
+   z.write(ROOT/'WORK_0.63.md','overrides/WORK_0.63.md')
+   z.write(ROOT/'WORK_0.64.md','overrides/WORK_0.64.md')
+   z.write(ROOT/'WORK_0.65.md','overrides/WORK_0.65.md')
++  z.write(ROOT/'WORK_0.66.md','overrides/WORK_0.66.md')
+   z.write(arsenal,'overrides/mods/'+arsenal.name)
+   z.write(factories,'overrides/mods/'+factories.name)
+   z.write(lights,'overrides/mods/'+lights.name)
+diff --git a/tools/winter_preview.b64 b/tools/winter_preview.b64
+new file mode 100644
+index 0000000..be27e78
+--- /dev/null
++++ b/tools/winter_preview.b64
+@@ -0,0 +1,383 @@
++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
