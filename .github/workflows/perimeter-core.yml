@@ -59,3 +59,20 @@ jobs:
         with:
           name: Perimeter-Arsenal-0.7
           path: perimeter_td/Perimeter-Arsenal-0.7.zip
+      - name: Verify operator terminal on the Minecraft client
+        run: |
+          cp perimeter_td/qa/ClientCheck.java perimeter_td/siege/src/main/java/perimeter/
+          mkdir -p perimeter_td/siege/clientTest/saves
+          cp -r perimeter_td/siege/runTest/world perimeter_td/siege/clientTest/saves/TerminalTest
+          echo 'skipMultiplayerWarning:true' > perimeter_td/siege/clientTest/options.txt
+          cat >> perimeter_td/siege/build.gradle <<'GRADLE'
+          minecraft.runs {
+              client {
+                  workingDirectory project.file('clientTest')
+                  args '--quickPlaySingleplayer','TerminalTest','--width','960','--height','600'
+                  mods { perimeter_siege { source sourceSets.main } }
+              }
+          }
+          GRADLE
+          timeout 8m xvfb-run -a gradle -p perimeter_td/siege runClient --no-daemon | tee client-test.log
+          grep -q PERIMETER_CORE_CLIENT_PASS client-test.log
