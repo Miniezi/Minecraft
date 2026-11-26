@@ -1,0 +1,20 @@
+name: Inspect campaign content
+on:
+  push:
+    branches: [perimeter-calamities-0.6]
+    paths: ['.github/workflows/inspect-calamities.yml']
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          curl -fsSL --retry 3 https://mediafilez.forgecdn.net/files/7829/406/inf.zip -o inf.zip
+          unzip -p inf.zip manifest.json > manifest.json
+          fid=$(jq -r '.files[] | select(.projectID==678295) | .fileID' manifest.json)
+          echo "Spore file $fid"
+          curl -fsSL --retry 2 "https://www.cursemaven.com/curse/maven/spore-678295/$fid/spore-678295-$fid.jar" -o spore.jar
+          jar tf spore.jar | grep -Ei 'Sentities/(Calamities|Hyper)/[^/$]+.class|Sentities/[^/]+Corpse|corps(e|e_piece).json' | head -120
+          javap -classpath spore.jar com.Harbinger.Spore.Sentities.BaseEntities.Infected | grep -Ei 'kill|evo|age|life|starv|despawn'
+          unzip -p spore.jar META-INF/mods.toml | tail -70
