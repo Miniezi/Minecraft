@@ -1,0 +1,20 @@
+{
+  "name": "RAM и хранение",
+  "category": "datacenter:hardware",
+  "icon": "datacenter:kingsley_ddr2_8",
+  "sortnum": 5,
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "datacenter:kingsley_ddr2_8",
+      "title": "RAM",
+      "text": "Должно быть, это соответствует поколению правления. DDR2 в a DDR2 Каждый столб снижает вероятность крушения горячего сервера, как это делается в реальном памяти."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "datacenter:seacrest_barracuda_80gb",
+      "title": "Сохранение",
+      "text": "Драйвы делают две вещи. $(l:machines/hosting_rack)Стойка для хостинга$() Каждый гигабайт зарабатывает на аренду. $(l:machines/mining_rig)Майнинг-ферма$() установленный Chia, графическая емкость - это хешрат - Chia Фермы - диски, а не чипы."
+    }
+  ]
+}

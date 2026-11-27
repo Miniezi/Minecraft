@@ -1,0 +1,17 @@
+{
+  "name": "Севоводство растений",
+  "icon": "industrialforegoing:plant_sower",
+  "category": "industrialforegoing:agriculture_husbandry",
+  "sortnum": 4,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Машина, которая использовалась для $(6)растение$() урожаи и насаждения. $(br2)9 внутренних слотов инвентаризации $(6)цвет$() Рабочая площадь над машиной разделена на 9 сегментов, и в каждом разделе будут посажены только семена из соответствующего запаса."
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:plant_sower"
+    }
+  ]
+}

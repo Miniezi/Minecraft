@@ -1,0 +1,17 @@
+{
+  "name": "Детлектор толпы",
+  "icon": "industrialforegoing:mob_detector",
+  "category": "industrialforegoing:misc",
+  "sortnum": 6,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Эта машина обнаружит, сколько существ находится перед ней, и она выпустит сигнал красного камня в спине с такой же прочностью, как количество обнаруженных существ."
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:mob_detector"
+    }
+  ]
+}

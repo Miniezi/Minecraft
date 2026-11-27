@@ -1,0 +1,17 @@
+{
+  "name": "Пивоварка",
+  "icon": "industrialforegoing:potion_brewer",
+  "category": "industrialforegoing:resource_production",
+  "sortnum": 9,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Автоматический ваниловый пивовар.$(br2)При поставке с $(6)Сила$() Он создаст напиток из поставленных ингредиентов.$(br)Пустые бутылки заполняются, если внутренний $(6)вода$() Контейнер заполнен и не будет потребляться. $(br2)Настраивание должно быть настроено в зеленом фильтре, чтобы вывести любые напитки."
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:potion_brewer"
+    }
+  ]
+}

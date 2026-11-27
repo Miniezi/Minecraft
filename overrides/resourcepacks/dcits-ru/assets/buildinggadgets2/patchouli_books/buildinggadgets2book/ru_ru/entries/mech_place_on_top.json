@@ -1,0 +1,22 @@
+{
+  "name": "Место на вершине",
+  "sortnum": 1,
+  "category": "buildinggadgets2:mechanics",
+  "icon": "buildinggadgets2:textures/book/icons/place_on_top.png",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Место на вершине работает немного по-разному для каждого режима, и для некоторых режимов это не будет иметь никакого влияния вообще.$(br2)В общем, вместо того, чтобы размещать его вокруг блока, он будет размещаться на его вершине.$(br2)Посмотрите на две фотографии справа, как пример."
+    },
+    {
+      "type": "patchouli:image",
+      "title": "Место на вершине",
+      "images": [
+        "buildinggadgets2:textures/book/images/placeontop1.png",
+        "buildinggadgets2:textures/book/images/placeontop2.png"
+      ],
+      "border": true,
+      "text": "Переменьте изображения выше , чтобы увидеть различные варианты"
+    }
+  ]
+}

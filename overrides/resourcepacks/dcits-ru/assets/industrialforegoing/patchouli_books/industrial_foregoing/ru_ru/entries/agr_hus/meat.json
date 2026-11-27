@@ -1,0 +1,13 @@
+{
+  "name": "Мясо (ковшин)",
+  "icon": "industrialforegoing:meat_bucket",
+  "category": "industrialforegoing:agriculture_husbandry",
+  "sortnum": 10,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Жидкость, произведенная $(l:agr_hus/mob_slaughter_factory)Фабрика массового убийства$()."
+    }
+  ]
+}

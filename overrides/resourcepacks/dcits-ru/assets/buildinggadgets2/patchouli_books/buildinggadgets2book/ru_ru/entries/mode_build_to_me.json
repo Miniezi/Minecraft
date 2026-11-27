@@ -1,0 +1,21 @@
+{
+  "name": "Постройте для меня",
+  "sortnum": 1,
+  "category": "buildinggadgets2:modes",
+  "icon": "buildinggadgets2:textures/book/mode/build_to_me.png",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Мод \"Сделать для меня\" создаст ряд блоков от блока, который вы смотрите на игрока. Это может быть горизонтальным или вертикальным, в зависимости от блока.$(br2)Установка диапазона игнорируется в этом режиме.$(br2)Тоггирование \"места на вершине\" будет строиться на голове игрока, а не на ногах."
+    },
+    {
+      "type": "patchouli:image",
+      "title": "Постройте для меня",
+      "images": [
+        "buildinggadgets2:textures/book/images/ghost_render.png"
+      ],
+      "border": true,
+      "text": "Создание для игрока"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "Конденсатор воды",
+  "icon": "industrialforegoing:water_condensator",
+  "category": "industrialforegoing:resource_production",
+  "sortnum": 11,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Машина, которая генерирует $(6)вода$() из окружающих источников.$(br2)При соседстве с по крайней мере $(6)2 блока источника воды$(), это начнет работать.$(br)Добавление дополнительных источниковых блоков и снабжение $(6)1000() РФ на операцию, сделает машину значительно быстрее."
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:water_condensator"
+    }
+  ]
+}

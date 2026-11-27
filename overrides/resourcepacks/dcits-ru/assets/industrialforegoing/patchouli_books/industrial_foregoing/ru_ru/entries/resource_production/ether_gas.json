@@ -1,0 +1,13 @@
+{
+  "name": "Газ эфирный (кубок)",
+  "icon": "industrialforegoing:ether_gas_bucket",
+  "category": "industrialforegoing:resource_production",
+  "sortnum": 13,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Жидкость, произведенная $(l:resource_production/fluid_laser_base)Лазерная база жидкости$() Когда он будет поставлен прямо на вершину сверху."
+    }
+  ]
+}

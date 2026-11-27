@@ -1,0 +1,17 @@
+{
+  "name": "Инструмент для тюремного заключения толпы",
+  "icon": "industrialforegoing:mob_imprisonment_tool",
+  "category": "industrialforegoing:tools",
+  "sortnum": 0,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Когда ты $(6)Правый клик$() организация, в которой МИБ находится в вашей руке, эта организация будет храниться в МИБ. $(br2)Вы можете освободить сущность $(6)Правый клик$() с ним в земле"
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:mob_imprisonment_tool"
+    }
+  ]
+}

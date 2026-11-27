@@ -1,0 +1,12 @@
+{
+  "name": "Анимации по строительству",
+  "sortnum": 1,
+  "category": "buildinggadgets2:mechanics",
+  "icon": "buildinggadgets2:textures/book/icons/raytrace_fluid.png",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Каждому устройству можно присвоить анимацию, которая по умолчанию \"ростет\".$(br2)Изменение анимации НЕ влияет на функциональность гаджетов, это только делает анимации блока здания выглядеть иначе."
+    }
+  ]
+}

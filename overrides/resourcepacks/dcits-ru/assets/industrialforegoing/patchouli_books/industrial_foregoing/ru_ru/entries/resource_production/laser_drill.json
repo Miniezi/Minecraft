@@ -1,0 +1,17 @@
+{
+  "name": "Лазерная бура",
+  "icon": "industrialforegoing:laser_drill",
+  "category": "industrialforegoing:resource_production",
+  "sortnum": 13,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Эта машина, когда она снабжена мощностью, заряжает первую $(l:resource_production/ore_laser_base)Лазерная база руды$() и $(l:resource_production/fluid_laser_base)Лазерная база жидкости$() В том числе и в области работы."
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:laser_drill"
+    }
+  ]
+}

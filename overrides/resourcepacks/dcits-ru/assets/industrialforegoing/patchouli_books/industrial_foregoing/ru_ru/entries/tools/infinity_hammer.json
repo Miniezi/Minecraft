@@ -1,0 +1,21 @@
+{
+  "name": "Бесконечное молоток",
+  "icon": "industrialforegoing:infinity_hammer",
+  "category": "industrialforegoing:tools",
+  "sortnum": 3,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Бесконечное молоток - это инструмент, который позволяет вам нанести ущерб врагам в определенной области. $(6)Уголовка$(), что позволяет легко получить главы мафии."
+    },
+    {
+      "type": "text",
+      "text": "Когда правой клик в землю он будет делать $(6)разрыв$() воздействие на землю в форме конуса перед пользователем."
+    },
+    {
+      "type": "industrialforegoing:dissolution",
+      "recipe": "industrialforegoing:dissolution_chamber/infinity_hammer"
+    }
+  ]
+}

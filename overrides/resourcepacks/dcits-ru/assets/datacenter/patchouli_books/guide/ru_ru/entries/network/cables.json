@@ -1,0 +1,40 @@
+{
+  "name": "Кабелы",
+  "category": "datacenter:network",
+  "icon": "datacenter:cable_lwl",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Каждый кабель имеет реальную полосу пропускания, и сеть не дает больше, чем может нести его самый узкий ссылок.",
+      "title": "Кабелы"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "datacenter:cable_ysty",
+      "title": "Y(ST)Y и CAT",
+      "text": "Первый полный пол современных графических процессоров ударит кату в течение часа.",
+      "recipe2": "datacenter:cable_cat"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "datacenter:cable_lwl",
+      "title": "Волокно",
+      "text": "Одноволокно, затем сделанное в бундели: 8, 16 и 64 нитей.",
+      "recipe2": "datacenter:cable_lwl_8"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "datacenter:cable_lwl_16",
+      "title": "Смешанные волокна",
+      "text": "",
+      "recipe2": "datacenter:cable_lwl_64"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "datacenter:cable_superconductor",
+      "title": "Сверхпроводниковый",
+      "text": "Ничто в каталоге не может насытить его."
+    }
+  ]
+}

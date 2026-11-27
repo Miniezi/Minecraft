@@ -1,0 +1,17 @@
+{
+  "name": "Сборник жидкости",
+  "icon": "industrialforegoing:fluid_collector",
+  "category": "industrialforegoing:resource_production",
+  "sortnum": 7,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Он выводит перед собой источник жидкости.$(br2)Он поместит жидкость из внутреннего контейнера и использует $(6)1000$()- РФ."
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:fluid_collector"
+    }
+  ]
+}

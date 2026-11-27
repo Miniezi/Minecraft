@@ -1,0 +1,17 @@
+{
+  "name": "Зачаровательный экстрактор",
+  "icon": "industrialforegoing:enchantment_extractor",
+  "category": "industrialforegoing:misc",
+  "sortnum": 4,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Эта машина может извлекать заклинания из предметов, когда она предоставляется с книгой. $(br2)Он может работать двумя способами, извлекать заклинания в книгу или он может извлечь заклинание и превратить его в $(l:agr_husb/essence)Суть$()."
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:enchantment_extractor"
+    }
+  ]
+}

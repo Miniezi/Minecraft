@@ -1,0 +1,34 @@
+{
+  "name": "Основы",
+  "sortnum": 0,
+  "category": "buildinggadgets2:modes",
+  "icon": "buildinggadgets2:template",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "В каждом режиме есть несколько разные взгляды на это, но в целом это представляет собой область.$(br2)Например, в режиме горизонтальный ряд диапазон 3 будет составить 3 блока в общей сложности, 1 на каждой стороне блока, который вы смотрите."
+    },
+    {
+      "type": "patchouli:image",
+      "title": "Диапазон 3",
+      "images": [
+        "buildinggadgets2:textures/book/images/horzrow4.png"
+      ],
+      "border": true,
+      "text": "Диапазон 3"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Для стен диапазон 3 будет строить стену 3x3. $(br2) Экспериментируйте с предварительным просмотром, чтобы получить результат, который вы ищете!"
+    },
+    {
+      "type": "patchouli:image",
+      "title": "Диапазон 3",
+      "images": [
+        "buildinggadgets2:textures/book/images/vertwall1.png"
+      ],
+      "border": true,
+      "text": "Диапазон 3"
+    }
+  ]
+}

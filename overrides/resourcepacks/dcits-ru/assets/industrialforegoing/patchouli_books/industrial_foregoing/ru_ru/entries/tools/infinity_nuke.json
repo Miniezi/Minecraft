@@ -1,0 +1,17 @@
+{
+  "name": "Бесконечное ядро",
+  "icon": "industrialforegoing:infinity_nuke",
+  "category": "industrialforegoing:tools",
+  "sortnum": 3,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Ядро бесконечности - это инструмент массового уничтожения, где радиус взрыва увеличивается в зависимости от уровня и количества биотоплива в нем. $(br2)Чтобы взрывать, нужно поставить его на землю, нажмите правой кнопкой, чтобы поднять его, а нажмите правую кнопкой с помощью шлифов и стали, чтобы взрывать."
+    },
+    {
+      "type": "industrialforegoing:dissolution",
+      "recipe": "industrialforegoing:dissolution_chamber/infinity_nuke"
+    }
+  ]
+}

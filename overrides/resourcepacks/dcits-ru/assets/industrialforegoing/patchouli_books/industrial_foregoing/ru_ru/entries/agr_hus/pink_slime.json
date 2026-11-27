@@ -1,0 +1,13 @@
+{
+  "name": "Розовый слим (ковшин)",
+  "icon": "industrialforegoing:pink_slime_bucket",
+  "category": "industrialforegoing:agriculture_husbandry",
+  "sortnum": 11,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Жидкость, произведенная $(l:agr_hus/mob_slaughter_factory)Фабрика массового убийства$()."
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "name": "Управление жидкостью",
+  "sortnum": 1,
+  "category": "buildinggadgets2:mechanics",
+  "icon": "minecraft:water_bucket",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Гаджеты могут взаимодействовать с жидкостью! $(l:buildinggadgets2:mech_raytrace_fluids)Прозрачные жидкости$(/l) задействован для выбора жидкости с помощью смены правого клика. $(br2)Чтобы поместить жидкости в мир, вам понадобится ведро с соответствующей жидкостью в нем. $(br2)В качестве альтернативы, моды, которые добавляют резервуары (например, Mekanism) могут быть использованы, и жидкости будут удалены/вставлены в резервуары."
+    },
+    {
+      "type": "patchouli:image",
+      "title": "Управление жидкостью",
+      "images": [
+        "buildinggadgets2:textures/book/images/fluidhandling1.png",
+        "buildinggadgets2:textures/book/images/fluidhandling2.png"
+      ],
+      "border": true,
+      "text": "Переменьте изображения выше , чтобы увидеть различные варианты"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Копи-пест-гаджет, конечно, может обрабатывать жидкости!$(br2)При разборке или обмене жидкости гаджет будет пытаться найти место, где можно поместить жидкость (например, пустую ведро или резервуар), но пустеет жидкость, если ее не найдут."
+    },
+    {
+      "type": "patchouli:image",
+      "title": "Управление жидкостью",
+      "images": [
+        "buildinggadgets2:textures/book/images/fluidhandling3.png"
+      ],
+      "border": true,
+      "text": "Копируйте и вставьте жидкости"
+    }
+  ]
+}

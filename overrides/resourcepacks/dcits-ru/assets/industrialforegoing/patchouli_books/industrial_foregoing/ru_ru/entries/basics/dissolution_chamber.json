@@ -1,0 +1,17 @@
+{
+  "name": "Палата распада",
+  "icon": "industrialforegoing:dissolution_chamber",
+  "category": "industrialforegoing:basics",
+  "sortnum": 6,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Мощная машина, используемая для изготовления материалов с использованием до $(6)8$() предметы и/или $(6)1$() Эта машина может производить предметы и/или жидкости. $(br2)Все рецепты бесформенны, что означает, что ингредиенты могут быть в любом слоте. $(br2)Когда рецепт присутствует, машина закроет все слоты, чтобы не вставить больше предметов."
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:dissolution_chamber"
+    }
+  ]
+}

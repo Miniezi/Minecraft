@@ -1,0 +1,17 @@
+{
+  "name": "Пыфливый генератор",
+  "icon": "industrialforegoing:pitiful_generator",
+  "category": "industrialforegoing:generators",
+  "sortnum": 0,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Очень неэффективный генератор, который потребляет горючее топливо, например уголь. $(br2)Он настолько неэффективен, что когда буфер энергии машины будет наполнен, он будет продолжать потреблять топливо."
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:pitiful_generator"
+    }
+  ]
+}

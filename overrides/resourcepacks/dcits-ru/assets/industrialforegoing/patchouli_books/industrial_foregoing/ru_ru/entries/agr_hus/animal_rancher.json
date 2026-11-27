@@ -1,0 +1,17 @@
+{
+  "name": "Животное животноводство",
+  "icon": "industrialforegoing:animal_rancher",
+  "category": "industrialforegoing:agriculture_husbandry",
+  "sortnum": 0,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Машина, которая использовалась для $(6)резение$() овцы и $(6)молоко$() Коров."
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:animal_rancher"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "Кормоводельный",
+  "icon": "industrialforegoing:meat_feeder",
+  "category": "industrialforegoing:tools",
+  "sortnum": 1,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Когда в вашем инвентаре, мясокормитель будет кормить вас жидким мясом, хранящимся внутри инструмента."
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:meat_feeder"
+    }
+  ]
+}

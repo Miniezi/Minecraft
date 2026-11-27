@@ -1,0 +1,23 @@
+{
+  "name": "Горизонтальная стена",
+  "sortnum": 1,
+  "category": "buildinggadgets2:modes",
+  "icon": "buildinggadgets2:textures/book/mode/horizontal_wall.png",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Горизонтальная стена работает по-разному. При включении места на вершине, она создаст область над блоком, на который вы смотрите, или простирается к вам, если вы смотрите в сторону. $(br2)С помещением на вершине инвалидов, он будет строиться вокруг квартала, который вы смотрите.$(br2)Смотрите фотографии справа для различных вариантов."
+    },
+    {
+      "type": "patchouli:image",
+      "title": "Горизонтальная стена",
+      "images": [
+        "buildinggadgets2:textures/book/images/horzwall1.png",
+        "buildinggadgets2:textures/book/images/horzwall3.png",
+        "buildinggadgets2:textures/book/images/horzwall2.png"
+      ],
+      "border": true,
+      "text": "Переменьте изображения выше , чтобы увидеть различные варианты"
+    }
+  ]
+}

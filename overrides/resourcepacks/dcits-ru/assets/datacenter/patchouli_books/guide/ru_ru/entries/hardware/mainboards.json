@@ -1,0 +1,18 @@
+{
+  "name": "Главные панели",
+  "category": "datacenter:hardware",
+  "icon": "datacenter:vertex_core",
+  "sortnum": 2,
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "datacenter:vertex_core",
+      "title": "Главная панель",
+      "text": "The board decides everything else: how many CPUs, GPUs, RAM подъемные палки, приводы и вентиляторы, которые CPU замок, который он требует, и который RAM На настоле Socket 939 требуется Socket 9 39 процессоров и DDR1 - Ничего другого."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Три семьи:$(br)$(bold)Vertex Core$() - потребительские доски. CPUСборник стартера имеет такие панели.$(br)$(bold)Vertex Dual$() - двойные серверные панели, два процессора, до 24 DIMM, до 7 PCIe slots, дорогостоящие и единственный способ запуска серверных процессоров.$(br)$(bold)Биофорг$() - специальные доски для майнинга, 10 из них, 6-20 слотов подряд."
+    }
+  ]
+}

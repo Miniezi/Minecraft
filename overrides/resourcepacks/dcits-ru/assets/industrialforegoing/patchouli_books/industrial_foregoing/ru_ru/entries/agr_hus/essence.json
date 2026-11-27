@@ -1,0 +1,13 @@
+{
+  "name": "Суть (кубок)",
+  "icon": "industrialforegoing:essence_bucket",
+  "category": "industrialforegoing:agriculture_husbandry",
+  "sortnum": 7,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Восплавленная форма опыта, полученная в $(l:agr_hus/mob_crusher)Мафийский раздавляющий$()."
+    }
+  ]
+}

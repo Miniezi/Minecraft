@@ -1,0 +1,17 @@
+{
+  "name": "Проводка канализации",
+  "icon": "industrialforegoing:sewer",
+  "category": "industrialforegoing:agriculture_husbandry",
+  "sortnum": 12,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Машина, используемая для сбора $(l:agr_hus/sewage)Проливной$() из животных и опыта, чтобы превратить его в сущность."
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:sewer"
+    }
+  ]
+}

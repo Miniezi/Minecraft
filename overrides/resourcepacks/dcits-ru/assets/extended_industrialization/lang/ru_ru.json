@@ -1,0 +1,12 @@
+{
+  "block.extended_industrialization.electric_beacon": "Электрический маячок",
+  "itemGroup.extended_industrialization.extended_industrialization": "Расширенная индустриализация",
+  "key.categories.extended_industrialization.extended_industrialization": "Расширенная индустриализация",
+  "text.extended_industrialization.electric_beacon_beam_obstructed": "Стержень препятствовал",
+  "text.extended_industrialization.electric_beacon_eu_cost_tooltip": "Потребление: %s",
+  "text.extended_industrialization.electric_beacon_help": "Использует напитки и обеспечивает эффекты для всех близлежащих игроков в течение половины времени с использованием %s на эффект.",
+  "text.extended_industrialization.electric_beacon_remaining_time_tooltip": "Время действия: %s",
+  "text.extended_industrialization.key_alt": "Внешний вид",
+  "text.extended_industrialization.tool_mining_area_1_by_1": "1x1",
+  "text.extended_industrialization.tool_mining_area_3_by_3": "3x3"
+}

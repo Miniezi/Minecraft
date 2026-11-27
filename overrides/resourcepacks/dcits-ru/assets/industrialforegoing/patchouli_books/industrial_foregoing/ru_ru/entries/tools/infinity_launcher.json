@@ -1,0 +1,17 @@
+{
+  "name": "Запускник бесконечности",
+  "icon": "industrialforegoing:infinity_launcher",
+  "category": "industrialforegoing:tools",
+  "sortnum": 3,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Infinity Launcher - это инструмент, который позволяет захватывать или освобождать объекты из инструмента задержания мафий в диапазоне."
+    },
+    {
+      "type": "industrialforegoing:dissolution",
+      "recipe": "industrialforegoing:dissolution_chamber/infinity_launcher"
+    }
+  ]
+}

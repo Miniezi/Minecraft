@@ -1,0 +1,9 @@
+{
+  "ftblibrary.select_item.list_mode.rei": "РЕИ",
+  "ftblibrary.select_item.list_mode.emi": "EMI",
+  "ftblibrary.select_entity.all_entities": "Все живые существа",
+  "ftblibrary.read_only": "только для чтения",
+  "ftblibrary.client_settings.tooltips.entity_modname": "Показать имя модуля в лице объекта Выберите GUI",
+  "ftblibrary.server_settings": "Конфигурация сервера",
+  "itemGroup.ftbsuite.creative_tab": "ПТВ-суит"
+}

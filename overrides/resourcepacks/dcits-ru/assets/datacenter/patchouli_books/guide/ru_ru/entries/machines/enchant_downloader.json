@@ -1,0 +1,14 @@
+{
+  "name": "Загрузчик чар",
+  "category": "datacenter:machines",
+  "icon": "datacenter:enchant_downloader",
+  "sortnum": 6,
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "datacenter:enchant_downloader",
+      "title": "Загрузчик чар",
+      "text": "Вставьте инструмент, бронежиле или книгу. Выберите любое заклинание, которое оно может нести - сокровища, такие как Mending включены - и уровень, и он скачивает именно это за вычислительную цену. Нет lapis, нет уровней, нет случайной роли."
+    }
+  ]
+}

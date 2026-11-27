@@ -1,0 +1,27 @@
+{
+  "name": "Перевозчики",
+  "icon": "industrialforegoing:conveyor",
+  "category": "industrialforegoing:transport",
+  "sortnum": 0,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Конвейеры могут быть использованы для транспортировки предметов, объектов и жидкостей. $(l:conveyor_upgrades)обновления$()Предметы и объекты могут двигаться вверх и вниз на транспортерах, но жидкости могут двигаться только горизонтально. $(br2)Конвейеры можно окрасить, нажимая на них красителем."
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:conveyor"
+    },
+    {
+      "type": "spotlight",
+      "item": "minecraft:glowstone_dust",
+      "text": "Использование глоустона может заставить перевозчиков очень быстро перемещать предметы и объекты."
+    },
+    {
+      "type": "spotlight",
+      "item": "industrialforegoing:plastic",
+      "text": "Использование пластика позволит не поднимать предметы, когда они находятся на конвейере."
+    }
+  ]
+}

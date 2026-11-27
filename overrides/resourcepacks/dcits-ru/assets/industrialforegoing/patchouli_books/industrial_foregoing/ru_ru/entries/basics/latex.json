@@ -1,0 +1,13 @@
+{
+  "name": "Латекс (плавный)",
+  "icon": "industrialforegoing:latex_bucket",
+  "category": "industrialforegoing:basics",
+  "sortnum": 3,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Эта жидкость используется в $(l:basics/latex_processing_unit)Процессорная установка для латексных изделий$() для изготовления Tiny Dry Rubber"
+    }
+  ]
+}

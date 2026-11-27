@@ -1,0 +1,21 @@
+{
+  "name": "Собиратель растений",
+  "icon": "industrialforegoing:plant_gatherer",
+  "category": "industrialforegoing:agriculture_husbandry",
+  "sortnum": 1,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Машина, которая использовалась для $(6)срубь$() деревья и $(6)урожай$() Каждая операция создает немного $(l:agr_hus/sludge)Слюд$(). $(br2)Если собиратель растений начнет собирать дерево в рабочей зоне, он продолжит собирать любые бревна или листья, связанные с базовым бревенцем."
+    },
+    {
+      "type": "text",
+      "text": "Собиратель растений будет ломать урожай при сборе, даже если растение может быть сборено с правой кликкой."
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:plant_gatherer"
+    }
+  ]
+}

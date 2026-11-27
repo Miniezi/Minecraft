@@ -1,0 +1,16 @@
+{
+  "name": "Стер Кульдер",
+  "icon": "industrialforegoing:wither_builder",
+  "category": "industrialforegoing:agriculture_husbandry",
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Машина, которая производит муки.  $(6)3 Срывающиеся черепа$() и $(6)Четыре души и песок$(), он полностью построит структуру стерва в рабочей зоне."
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:wither_builder"
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "name": "Инвентарь повязки",
+  "sortnum": 1,
+  "category": "buildinggadgets2:mechanics",
+  "icon": "buildinggadgets2:textures/book/icons/bind_inventory.png",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Привязывание к инвентару позволяет взаимодействовать с этим инвентарем для извлечения/вставки элементов. Во-первых, включите режим \"привязывание инвентара\" в меню настроек вашего гаджета. Затем переверните направо клик на ящик или другой инвентарь. $(br2)Синий ящик вокруг инвентаря отметят ваш успех."
+    },
+    {
+      "type": "patchouli:image",
+      "title": "Инвентарь повязки",
+      "images": [
+        "buildinggadgets2:textures/book/images/bindinv.png"
+      ],
+      "border": true,
+      "text": "Привязываю к коробке!"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Вы также можете связаться с системой Applied Energistics 2 путем подключения к беспроводной точке доступа этой системы.  $(br2)У гаджета будет неограниченный диапазон, так что не стоит беспокоиться о обновлении дальности!"
+    },
+    {
+      "type": "patchouli:image",
+      "title": "Инвентарь повязки",
+      "images": [
+        "buildinggadgets2:textures/book/images/bindinv_ae.png"
+      ],
+      "border": true,
+      "text": "Привязанность AE2!"
+    }
+  ]
+}

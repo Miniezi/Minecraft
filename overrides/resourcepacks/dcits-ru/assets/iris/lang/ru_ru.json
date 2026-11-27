@@ -1,0 +1,9 @@
+{
+  "iris.shaders.debug.restartNoDebug": "Дебюгирование Shader включено; Дебюгирование OpenGL не поддерживается на NeoForge.",
+  "iris.load.failure.shader": "Shaderpack не загрузился, сообщите об ошибке разработчику shader. ",
+  "iris.load.failure.generic": "Iris столкнулась с проблемой, пытаясь загрузить shader; пожалуйста, сообщите об этом разработчикам Iris. ",
+  "iris.keybind.wireframe": "Проводные панели (только в SP)",
+  "iris.keybinds": "Ирис",
+  "options.iris.colorSpace": "Цветовое пространство",
+  "options.iris.colorSpace.sodium_tooltip": "Цветовое пространство для преобразования экрана в. Работает на вершине пакетов оттенков. Используйте SRGB, если не уверены."
+}

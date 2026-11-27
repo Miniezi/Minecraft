@@ -1,0 +1,23 @@
+{
+  "name": "Поворачивать",
+  "sortnum": 1,
+  "category": "buildinggadgets2:mechanics",
+  "icon": "buildinggadgets2:textures/book/icons/rotate.png",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Переключение позволит игроку поворачивать копирую или режую пасту вокруг отправной точки.$(br2)Попробуйте, и посмотрите, что делает рендер, чтобы лучше понять, или прокрутите изображения справа."
+    },
+    {
+      "type": "patchouli:image",
+      "title": "Поворачивать",
+      "images": [
+        "buildinggadgets2:textures/book/images/rotate1.png",
+        "buildinggadgets2:textures/book/images/rotate2.png",
+        "buildinggadgets2:textures/book/images/rotate3.png"
+      ],
+      "border": true,
+      "text": "Поворачивая дом!"
+    }
+  ]
+}

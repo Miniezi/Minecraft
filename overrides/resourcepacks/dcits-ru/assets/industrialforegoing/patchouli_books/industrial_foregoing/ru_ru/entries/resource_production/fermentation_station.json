@@ -1,0 +1,17 @@
+{
+  "name": "Станция ферментации",
+  "icon": "industrialforegoing:fermentation_station",
+  "category": "industrialforegoing:resource_production",
+  "sortnum": 20,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Используя сырое рудное мясо, эта машина запечатывает его содержание, когда достигает конфигурированного уровня, и ферментирует это мясо с использованием выбранного типа производства."
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:fermentation_station"
+    }
+  ]
+}

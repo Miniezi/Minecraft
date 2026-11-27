@@ -1,0 +1,7 @@
+{
+  "_comment": "#Фазы Луны",
+  "jer.worldgen.chance": "с шансом %s",
+  "jer.worldgen.affectedByFortune": "(Влияние на судьбу)",
+  "jer.villager.poi": "Интересный момент",
+  "jer.magmaCream.text": "Маленькие и большие магматические кубики"
+}

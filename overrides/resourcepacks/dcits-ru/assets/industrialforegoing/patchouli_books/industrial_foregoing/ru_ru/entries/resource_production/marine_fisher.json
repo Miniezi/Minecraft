@@ -1,0 +1,17 @@
+{
+  "name": "Морской Фишер",
+  "icon": "industrialforegoing:marine_fisher",
+  "category": "industrialforegoing:resource_production",
+  "sortnum": 3,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Лучший друг кошек <3$(br2)Когда она размещена над $(6)бассейн$() не менее $(6)3x3$() и $(6)1$() Глубоко, он начнет. $(6)рыболовство$() и поставить рыбу (и, возможно, что-то еще?) в внутренний инвентарь, за счет $(6)5000$()РФ на операцию."
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:marine_fisher"
+    }
+  ]
+}

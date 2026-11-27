@@ -1,0 +1,17 @@
+{
+  "name": "Лазерная база жидкости",
+  "icon": "industrialforegoing:fluid_laser_base",
+  "category": "industrialforegoing:resource_production",
+  "sortnum": 15,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "При полном заряде $(l:resource_production/laser_drill)Лазерная бура$() Для этого потребуется конкретный катализатор, который не будет потребляться, и машина должна быть помещена в определенный биом и бурить на определенной глубине. $(br2)Некоторым жидкостям может понадобиться сущность под машиной для производства жидкости. $(br2)Проверка JEI для ценностей."
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:fluid_laser_base"
+    }
+  ]
+}

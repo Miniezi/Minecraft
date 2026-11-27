@@ -1,0 +1,17 @@
+{
+  "name": "Мафийский раздавляющий",
+  "icon": "industrialforegoing:mob_crusher",
+  "category": "industrialforegoing:agriculture_husbandry",
+  "sortnum": 6,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Машина, которая использовалась для $(6)Убить$() Мафии, как если бы игрок производил капкулы и Эсенс. $(br2)Эта машина имеет альтернативный режим, где вместо генерации сущности она будет генерировать капли с случайными уровнями $(6)удача$()."
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:mob_crusher"
+    }
+  ]
+}

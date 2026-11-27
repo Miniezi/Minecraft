@@ -1,0 +1,11 @@
+{
+  "achievement.ae2.Root": "Применяемые энергетики",
+  "dimension.ae2.spatial_storage": "Пространственное хранение",
+  "gui.ae2.CreativeTab": "Применяемая энергетика 2",
+  "gui.ae2.ETAFormat": "HH:mm:ss",
+  "gui.ae2.OCTunnel": "Открытые компьютеры",
+  "gui.ae2.Resume": "Резюме",
+  "gui.ae2.Suspend": "Приостанавливать",
+  "gui.ae2.units.fe": "ФЕ",
+  "key.ae2.category": "Применяемая энергетика 2"
+}

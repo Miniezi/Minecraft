@@ -1,0 +1,17 @@
+{
+  "name": "Рафинитор для слизистых сосудов",
+  "icon": "industrialforegoing:sludge_refiner",
+  "category": "industrialforegoing:resource_production",
+  "sortnum": 10,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Машина , которая преобразует $(6)Лам$() в что-то полезное.$(br2)При поставке с $(6)Слюд$(), полученный из $(l:agriculture_n_husbandry/plant_gatherer)Собиратель растений$(), это будет генерировать $(6)Что-то$().$(br)Этот процесс требует $(6)1000$()RF/t Хотя, чтобы быть уверенным, что у вас есть немного энергии."
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:sludge_refiner"
+    }
+  ]
+}

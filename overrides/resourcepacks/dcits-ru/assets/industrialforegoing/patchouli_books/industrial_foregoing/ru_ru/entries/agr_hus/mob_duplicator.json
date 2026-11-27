@@ -1,0 +1,20 @@
+{
+  "name": "Двойник мафии",
+  "icon": "industrialforegoing:mob_duplicator",
+  "category": "industrialforegoing:agriculture_husbandry",
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Машины, которые создают толпы. $(l:agr_hus/essence)Суть$() и любое предприятие в  $(l:tools/mib)Инструмент для тюремного заключения толпы$() Это будет порождать их вокруг него. $(br2)Он будет считать близлежащие существа и останавливаться, если их будет слишком много."
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:mob_duplicator"
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:mob_imprisonment_tool"
+    }
+  ]
+}

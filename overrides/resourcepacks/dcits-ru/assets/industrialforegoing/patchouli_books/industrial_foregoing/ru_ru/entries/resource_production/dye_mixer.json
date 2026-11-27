@@ -1,0 +1,17 @@
+{
+  "name": "Смешиватель красителей",
+  "icon": "industrialforegoing:dye_mixer",
+  "category": "industrialforegoing:resource_production",
+  "sortnum": 12,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Эта машина смешивает первичные цвета красителей, чтобы создать цвета радуги.$(br2)Например: если запрошенное $(6)краситель$() белый, ему понадобится 1 $(4)Красный$(0), $(2)Зеленый$(0) и $(1)Синий$(0).$(br)Он будет потреблять $(6)30$()RF/t"
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:dye_mixer"
+    }
+  ]
+}

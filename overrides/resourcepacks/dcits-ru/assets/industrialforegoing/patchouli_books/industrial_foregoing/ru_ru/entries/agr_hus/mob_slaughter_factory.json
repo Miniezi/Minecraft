@@ -1,0 +1,17 @@
+{
+  "name": "Фабрика массового убийства",
+  "icon": "industrialforegoing:mob_slaughter_factory",
+  "category": "industrialforegoing:agriculture_husbandry",
+  "sortnum": 9,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Машины, используемые для обработки толпы и животных в $(l:agr_hus/meat)Жидкое мясо$() и $(l:agr_hus/pink_slime)Розовый слиз$()Мафии, убитые этой машиной, не будут производить капель или опыта. $(br2)Пассивные толпы производят больше розового слизи, чем непассивные"
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:mob_slaughter_factory"
+    }
+  ]
+}

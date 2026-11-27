@@ -1,0 +1,17 @@
+{
+  "name": "Процессорная установка для латекс",
+  "icon": "industrialforegoing:latex_processing_unit",
+  "category": "industrialforegoing:basics",
+  "sortnum": 1,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "В латексной обработке используется $(6)750$()Мб $(l:basics/latex)Латекс$() и $(6)500$()Мб воды для производства 1 $(l:basics/plastic) Сухой резин$()"
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:latex_processing_unit"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "name": "Сеть",
+  "sortnum": 1,
+  "category": "buildinggadgets2:modes",
+  "icon": "buildinggadgets2:textures/book/mode/grid.png",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Режим сетки помещает блоки в сетку! полезен для факелов, свечей и т. Д. По мере увеличения диапазона блоки расстаются друг от друга, пока в конечном итоге площадь просто не увеличивается. $(br2)Это также режим обмена, который позволяет обмениваться блоками в сетке."
+    },
+    {
+      "type": "patchouli:image",
+      "title": "Режим сетки",
+      "images": [
+        "buildinggadgets2:textures/book/images/mode_grid.png",
+        "buildinggadgets2:textures/book/images/mode_grid2.png"
+      ],
+      "border": true,
+      "text": "Переменьте изображения выше , чтобы увидеть различные варианты"
+    }
+  ]
+}

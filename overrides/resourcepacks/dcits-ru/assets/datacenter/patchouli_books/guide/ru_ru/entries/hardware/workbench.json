@@ -1,0 +1,18 @@
+{
+  "name": "Рабочий стол",
+  "category": "datacenter:hardware",
+  "icon": "datacenter:workbench",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "datacenter:workbench",
+      "title": "Сборочный верстак",
+      "text": "Единственное место, где сервер собирается или меняется. $(l:hardware/server_case)Случайный сервер$() в верхнем слоте, рядом с ним есть главная панель, а внизу - собственная схема панели с слотом на каждом подключении."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Слотки сидят там, где соединитель сидит на доске: CPU в замку, RAM in the DIMM slots, GPUs in the PCIe slots, the PSU at the 24-pin block, drives at the SATA ports, fans at the headers.$(br2)Большие панели серверов имеют больше слотов, чем на одном экране; используйте колесо мыши.$(br2)Уведомление внизу указывает, когда ПСУ не могут покрыть нагрузку или когда GPU не имеет CPU - Я не могу с этим начать."
+    }
+  ]
+}

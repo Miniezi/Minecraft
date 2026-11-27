@@ -1,0 +1,17 @@
+{
+  "name": "Зачаровательный завод",
+  "icon": "industrialforegoing:enchantment_factory",
+  "category": "industrialforegoing:misc",
+  "sortnum": 0,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Эта машина, когда она снабжена большим количеством $(l:agr_hus/essence)Суть$() и элемент он заклинает элемент с уровнем $(6)30$()."
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:enchantment_factory"
+    }
+  ]
+}

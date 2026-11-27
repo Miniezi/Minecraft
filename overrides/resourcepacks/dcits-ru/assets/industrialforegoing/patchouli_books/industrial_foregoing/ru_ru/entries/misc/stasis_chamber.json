@@ -1,0 +1,17 @@
+{
+  "name": "Стазисная камера",
+  "icon": "industrialforegoing:stasis_chamber",
+  "category": "industrialforegoing:misc",
+  "sortnum": 5,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Когда эта машина будет обеспечена силой, $(6)замораживание$() и $(6)лечение$() любой субъект, находящийся в его рабочей зоне."
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:stasis_chamber"
+    }
+  ]
+}

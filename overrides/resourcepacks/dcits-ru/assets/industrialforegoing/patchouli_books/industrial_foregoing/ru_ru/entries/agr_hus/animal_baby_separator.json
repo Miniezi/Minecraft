@@ -1,0 +1,17 @@
+{
+  "name": "Диетический детенышный сепаратор",
+  "icon": "industrialforegoing:animal_baby_separator",
+  "category": "industrialforegoing:agriculture_husbandry",
+  "sortnum": 16,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Машина, используемая для разделения $(6)ребенок$() Мальчишки будут телепортированы на заднюю часть машины."
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:animal_baby_separator"
+    }
+  ]
+}

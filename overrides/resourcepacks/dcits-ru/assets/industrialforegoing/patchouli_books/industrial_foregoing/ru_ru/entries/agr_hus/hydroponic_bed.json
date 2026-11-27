@@ -1,0 +1,17 @@
+{
+  "name": "Гидропоническая кровать",
+  "icon": "industrialforegoing:hydroponic_bed",
+  "category": "industrialforegoing:agriculture_husbandry",
+  "sortnum": 16,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Эта машина, когда она сочетается с мощностью и $(6)вода$() (или $(6)лава$() для нижеурожайных культур) это немного ускорит рост урожая. $(br2)Предоставляя очень небольшие количества $(l:resource_production/ether_gas)Газ эфир$() Урожай будет расти намного быстрее и будет автоматически пересажен."
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:hydroponic_bed"
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "name": "Повышения конвейера",
+  "icon": "industrialforegoing:conveyor_extraction_upgrade",
+  "category": "industrialforegoing:transport",
+  "sortnum": 1,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "spotlight",
+      "item": "industrialforegoing:conveyor_extraction_upgrade",
+      "title": "Извлечение",
+      "text": "Он может извлекать предметы и жидкости из запасов. $(br2)Предметы и жидкости, которые необходимо извлечь, могут быть фильтрованы в ги."
+    },
+    {
+      "type": "spotlight",
+      "item": "industrialforegoing:conveyor_insertion_upgrade",
+      "title": "Вставка",
+      "text": "Вставляет элементы и жидкости в запасы. Он имеет 2 режима, вставляет элементов, которые касаются конвейера или вставляет предметы, которые непосредственно касаются обновления. $(br2)Предметы и жидкости, которые необходимо вставить, могут быть фильтрованы в gui."
+    },
+    {
+      "type": "spotlight",
+      "item": "industrialforegoing:conveyor_detection_upgrade",
+      "title": "Выявление",
+      "text": "Выявляет предметы и объекты, которые находятся на вершине конвейера. $(br2)Предметы и объекты, которые должны быть обнаружены, могут быть фильтрованы в gui."
+    },
+    {
+      "type": "spotlight",
+      "item": "industrialforegoing:conveyor_bouncing_upgrade",
+      "title": "Спускающийся",
+      "text": "Запускает элементы и объекты, которые находятся на вершине конвейера. Вертикальная и горизонтальная прочность могут быть изменены в графическом интерфейсе.$(br2)Предметы и объекты, которые должны быть запущены, могут быть фильтрованы в gui."
+    },
+    {
+      "type": "spotlight",
+      "item": "industrialforegoing:conveyor_dropping_upgrade",
+      "title": "Сброс",
+      "text": "Спускает предметы и объекты, которые находятся на вершине транспортера прямо под ним. $(br2)Предметы и объекты, которые должны быть выброшены, могут быть фильтрованы в gui."
+    },
+    {
+      "type": "spotlight",
+      "item": "industrialforegoing:conveyor_blinking_upgrade",
+      "title": "Мгновенье",
+      "text": "Телепорт элементов и объектов, находящихся на вершине конвейера.$(br2)Предметы и объекты, которые должны быть запущены, могут быть фильтрованы в gui."
+    },
+    {
+      "type": "spotlight",
+      "item": "industrialforegoing:conveyor_splitting_upgrade",
+      "title": "Разделение",
+      "text": "Разделяет элементы и объекты, которые находятся на вершине конвейера с соотношением, определенным в графическом интерфейсе."
+    }
+  ]
+}

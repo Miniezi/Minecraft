@@ -1,0 +1,17 @@
+{
+  "name": "Споры рекреатор",
+  "icon": "industrialforegoing:spores_recreator",
+  "category": "industrialforegoing:resource_production",
+  "sortnum": 8,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Дубликаты $(6)грибы$().$(br2)Требования $(6)40$()RF/t и $(6)вода$() ($(6)100$()Мб на операцию). $(br2)Для нижних грибов он нуждается $(6)лава$()."
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:spores_recreator"
+    }
+  ]
+}

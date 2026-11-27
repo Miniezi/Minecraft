@@ -1,0 +1,37 @@
+{
+  "name": "Поверхность",
+  "sortnum": 1,
+  "category": "buildinggadgets2:modes",
+  "icon": "buildinggadgets2:textures/book/mode/surface.png",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Мод поверхности расширит набор блоков, которые вы видите.$(br2)В режиме \"смазка\" гаджет сможет нацелиться на любые блоки или только на те же блоки, что и те, на которые вы смотрите."
+    },
+    {
+      "type": "patchouli:image",
+      "title": "Поверхность неразъемлемая",
+      "images": [
+        "buildinggadgets2:textures/book/images/surface5.png",
+        "buildinggadgets2:textures/book/images/surface1.png",
+        "buildinggadgets2:textures/book/images/surface2.png"
+      ],
+      "border": true,
+      "text": "Переменьте изображения выше , чтобы увидеть различные варианты"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Этот режим также доступен для обменника, а режим с неясным способом работает также. $(br2)Кроме того, подключенный режим будет обмениваться только блоками, которые подключены к тем, которые вы смотрите."
+    },
+    {
+      "type": "patchouli:image",
+      "title": "Связанная поверхность",
+      "images": [
+        "buildinggadgets2:textures/book/images/surface3.png",
+        "buildinggadgets2:textures/book/images/surface4.png"
+      ],
+      "border": true,
+      "text": "Переменьте изображения выше , чтобы увидеть различные варианты"
+    }
+  ]
+}

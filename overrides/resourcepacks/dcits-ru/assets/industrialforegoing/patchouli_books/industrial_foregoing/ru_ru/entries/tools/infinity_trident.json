@@ -1,0 +1,17 @@
+{
+  "name": "Бесконечное тридцать",
+  "icon": "industrialforegoing:infinity_trident",
+  "category": "industrialforegoing:tools",
+  "sortnum": 3,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Бесконечное тридцать - это инструмент, который позволяет вам освободить истинную силу тридцати. $(6)Верность$(), $(6)Рыбный$() и $(6)Прокладка$(). $(br2)В этом случае будут применены канализация и повреждения."
+    },
+    {
+      "type": "industrialforegoing:dissolution",
+      "recipe": "industrialforegoing:dissolution_chamber/infinity_trident"
+    }
+  ]
+}

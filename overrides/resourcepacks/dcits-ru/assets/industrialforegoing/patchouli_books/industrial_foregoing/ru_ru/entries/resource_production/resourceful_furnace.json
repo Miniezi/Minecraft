@@ -1,0 +1,17 @@
+{
+  "name": "Умный печь",
+  "icon": "industrialforegoing:resourceful_furnace",
+  "category": "industrialforegoing:resource_production",
+  "sortnum": 6,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "3 печи в 1.$(br2)Возврат $(6)2$()Мб Эссенции на сливную статью. $(6)40$()RF/t."
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:resourceful_furnace"
+    }
+  ]
+}

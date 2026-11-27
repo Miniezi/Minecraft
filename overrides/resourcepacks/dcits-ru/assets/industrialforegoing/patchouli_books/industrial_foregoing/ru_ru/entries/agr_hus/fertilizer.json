@@ -1,0 +1,13 @@
+{
+  "name": "Удобрение",
+  "icon": "industrialforegoing:fertilizer",
+  "category": "industrialforegoing:agriculture_husbandry",
+  "sortnum": 15,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Материал, изготовленный $(l:agr_hus/sewage_composter)Композитор для канализации$() и может быть использована как костная мука."
+    }
+  ]
+}

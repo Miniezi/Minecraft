@@ -1,0 +1,3 @@
+version:3955
+lang:ru_ru
+resourcePacks:["vanilla","mod_resources","file/dcits-ru"]

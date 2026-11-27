@@ -1,0 +1,17 @@
+{
+  "name": "Кормовода для животных",
+  "icon": "industrialforegoing:animal_feeder",
+  "category": "industrialforegoing:agriculture_husbandry",
+  "sortnum": 8,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Машина, которая использовалась для $(6)корм$() животных, чтобы они могли производить младенцев, когда машина снабжается продуктом кормления животных."
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:animal_feeder"
+    }
+  ]
+}

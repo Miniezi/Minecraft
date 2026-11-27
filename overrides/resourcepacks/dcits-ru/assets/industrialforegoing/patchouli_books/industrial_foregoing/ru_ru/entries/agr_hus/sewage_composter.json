@@ -1,0 +1,17 @@
+{
+  "name": "Композитор для канализации",
+  "icon": "industrialforegoing:sewage_composter",
+  "category": "industrialforegoing:agriculture_husbandry",
+  "sortnum": 14,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "При предоставлении $(l:agr_hus/sewage)Проливной$() Эта машина создаст $(l:agr_hus/fertilizer)Удобрение$() от этого."
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:sewage_composter"
+    }
+  ]
+}

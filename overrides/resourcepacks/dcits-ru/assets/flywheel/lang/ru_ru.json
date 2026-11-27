@@ -1,0 +1,14 @@
+{
+  "argument.flywheel_backend.id.unknown": "Неизвестный запасной код %s",
+  "command.flywheel.backend.get": "Текущий Flywheel дальний конец %s",
+  "command.flywheel.backend.set": "Задняя часть флайвса теперь %s",
+  "command.flywheel.backend.set.unavailable": "Запрошенный запасной код %s отсутствует",
+  "command.flywheel.limit_updates.get.off": "В настоящее время не работает ограничение обновления",
+  "command.flywheel.limit_updates.get.on": "В настоящее время допускается ограничение обновления",
+  "command.flywheel.limit_updates.set.off": "Обновить ограничения теперь отключено",
+  "command.flywheel.limit_updates.set.on": "В настоящее время допускается ограничение обновления",
+  "command.flywheel.use_light_directions.get.off": "Не использовать световые направления",
+  "command.flywheel.use_light_directions.get.on": "Использование световых направлений",
+  "command.flywheel.use_light_directions.set.off": "Указать световые направления",
+  "command.flywheel.use_light_directions.set.on": "Установить направление движения света"
+}

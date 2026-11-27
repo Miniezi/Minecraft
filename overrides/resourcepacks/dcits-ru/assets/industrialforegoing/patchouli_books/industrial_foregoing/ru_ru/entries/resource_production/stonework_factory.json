@@ -1,0 +1,17 @@
+{
+  "name": "Материал Фабрика каменной работы",
+  "icon": "industrialforegoing:material_stonework_factory",
+  "category": "industrialforegoing:resource_production",
+  "sortnum": 0,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Следующее поколение $(6)камень$() генератор.$(br2)При поставке с $(6)60$()RF/t и оба $(6)вода$() и $(6)лава$(), он может быть поручен создать определенные материалы.$(br)Эти материалы могут быть дополнительно обработаны действиями:$(br)$(li)Сплавление$(br)$(li)Скручивание$(br)$(li)Производство"
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:material_stonework_factory"
+    }
+  ]
+}

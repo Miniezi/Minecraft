@@ -1,0 +1,17 @@
+{
+  "name": "Заклинатель",
+  "icon": "industrialforegoing:enchantment_applicator",
+  "category": "industrialforegoing:misc",
+  "sortnum": 3,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Эта машина работает так же , как и молот , но вместо опыта она использует $(l:agr_husb/essence)Суть$()Он может вытащить сущность из резервуара, а цена слишком высока."
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:enchantment_applicator"
+    }
+  ]
+}

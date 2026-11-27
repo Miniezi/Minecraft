@@ -1,0 +1,21 @@
+{
+  "name": "Анкер",
+  "sortnum": 1,
+  "category": "buildinggadgets2:mechanics",
+  "icon": "buildinggadgets2:textures/book/icons/anchor.png",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Anchor позволяет \"заключить\" блок, который вы смотрите, чтобы вы могли свободно двигаться или смотреть вокруг. $(br2)Вы можете в любое время нажать правой кнопкой, чтобы построить конструкцию, когда она закреплена.$(br2)Примечание: изменение диапазона может не вступить в силу, пока вы не удалите и не замените якорь."
+    },
+    {
+      "type": "patchouli:image",
+      "title": "Анкер",
+      "images": [
+        "buildinggadgets2:textures/book/images/anchor1.png"
+      ],
+      "border": true,
+      "text": "Закрепи свой рентген!"
+    }
+  ]
+}

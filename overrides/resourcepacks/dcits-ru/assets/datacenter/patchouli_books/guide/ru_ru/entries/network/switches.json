@@ -1,0 +1,33 @@
+{
+  "name": "Переменные",
+  "category": "datacenter:network",
+  "icon": "datacenter:switch_core",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Сключатель - это соединение с задней плоскостью: общее количество, которое он может пройти через себя на тик, независимо от того, что подключено.",
+      "title": "Переменные"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "datacenter:switch",
+      "title": "Основные и стандартные",
+      "text": "",
+      "recipe2": "datacenter:switch_standard"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "datacenter:switch_advanced",
+      "title": "Продвинутые и основные",
+      "text": "",
+      "recipe2": "datacenter:switch_core"
+    },
+    {
+      "type": "patchouli:crafting",
+      "recipe": "datacenter:switch_backbone",
+      "title": "Черепная кость",
+      "text": "Для комнаты, где встречается сверхпроводник."
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "name": "Проливной (кубок)",
+  "icon": "industrialforegoing:sewage_bucket",
+  "category": "industrialforegoing:agriculture_husbandry",
+  "sortnum": 13,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Жидкость, произведенная $(l:agr_hus/sewer)Проводка канализации$()Ты не хочешь знать об этом."
+    }
+  ]
+}

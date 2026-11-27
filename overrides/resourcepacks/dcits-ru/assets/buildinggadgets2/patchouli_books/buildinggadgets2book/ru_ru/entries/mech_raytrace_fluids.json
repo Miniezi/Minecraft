@@ -1,0 +1,21 @@
+{
+  "name": "Жидкости для отслеживания лучей",
+  "sortnum": 1,
+  "category": "buildinggadgets2:mechanics",
+  "icon": "buildinggadgets2:textures/book/icons/raytrace_fluid.png",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Raytrace Fluids позволяет гаджету взаимодействовать с жидкостями. $(br2)Когда они выключены, эти гаджеты игнорируют жидкости и строят на блоках за ними.$(br2)См. главу $(l:buildinggadgets2:mech_fluid_handling)Управление жидкостью$(/l) - Для подробности."
+    },
+    {
+      "type": "patchouli:image",
+      "title": "Жидкости для отслеживания лучей",
+      "images": [
+        "buildinggadgets2:textures/book/images/raytracefluids.png"
+      ],
+      "border": true,
+      "text": "Влияние на жидкости!"
+    }
+  ]
+}

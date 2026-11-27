@@ -1,0 +1,17 @@
+{
+  "name": "Промывальная фабрика",
+  "icon": "industrialforegoing:washing_factory",
+  "category": "industrialforegoing:resource_production",
+  "sortnum": 19,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Используя жидкое мясо и руду эта машина превратит это мясо в сырое мясо руды этой руды."
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:washing_factory"
+    }
+  ]
+}

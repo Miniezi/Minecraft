@@ -1,0 +1,17 @@
+{
+  "name": "Лазерная база руды",
+  "icon": "industrialforegoing:ore_laser_base",
+  "category": "industrialforegoing:resource_production",
+  "sortnum": 14,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "При полном заряде $(l:resource_production/laser_drill)Лазерная бура$() Каждая руда, которую можно производить, имеет вес, основанный на биоме, в котором помещена машина, и глубине, в которой она настроена для добычи. $(br2)Лазерные линзы увеличивают вес добываемой руды. $(br2)Проверка JEI для ценностей."
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:ore_laser_base"
+    }
+  ]
+}

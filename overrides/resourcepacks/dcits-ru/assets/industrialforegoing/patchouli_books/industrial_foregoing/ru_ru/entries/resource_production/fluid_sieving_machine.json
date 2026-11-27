@@ -1,0 +1,17 @@
+{
+  "name": "Машины для вышивания жидкости",
+  "icon": "industrialforegoing:fluid_sieving_machine",
+  "category": "industrialforegoing:resource_production",
+  "sortnum": 21,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Используя ферментированное рудное мясо и песок эта машина превратит это мясо в пыль из руды, которую она впервые создала."
+    },
+    {
+      "type": "crafting",
+      "recipe": "industrialforegoing:fluid_sieving_machine"
+    }
+  ]
+}

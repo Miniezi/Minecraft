@@ -1,0 +1,13 @@
+{
+  "name": "Биотопливо (планированное)",
+  "icon": "industrialforegoing:biofuel_bucket",
+  "category": "industrialforegoing:generators",
+  "sortnum": 1,
+  "read_by_default": true,
+  "pages": [
+    {
+      "type": "text",
+      "text": "Фиолетовая жидкость из растений, красителей и некоторых сомнительных вещей, таких как черепа в $(l:generators/bioreactor)Биореактор$(). $(br2)Используется в $(l:generators/biofuel_generator)Генератор биотоплива$() или в $(l:tools/infinity_tools)Инфинти инструменты$()."
+    }
+  ]
+}
