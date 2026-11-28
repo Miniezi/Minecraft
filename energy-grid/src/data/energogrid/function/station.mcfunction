@@ -1,2 +1,2 @@
-tellraw @s [{"text":"Станция","color":"green","bold":true},{"text":" | Уголь загружается из инвентаря. Один цикл — 20 секунд при целой линии."}]
-tellraw @s [{"text":"[Запустить цикл]","color":"green","underlined":true,"clickEvent":{"action":"run_command","value":"/trigger eg set 2"}},{"text":"  "},{"text":"[Главное меню]","color":"aqua","underlined":true,"clickEvent":{"action":"run_command","value":"/trigger eg set 1"}}]
+tellraw @s [{"text":"Станция","color":"green","bold":true},{"text":" | Поставьте углегенератор (начальный) на золотую метку, соедините тремя кабелями Powah! с магнетитом и загрузите в генератор уголь."}]
+tellraw @s [{"text":"[Проверить счёт]","color":"aqua","clickEvent":{"action":"run_command","value":"/trigger eg set 8"}}]

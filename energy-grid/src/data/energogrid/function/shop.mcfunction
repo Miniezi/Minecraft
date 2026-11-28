@@ -1,2 +1,2 @@
-tellraw @s [{"text":"Магазин","color":"gold","bold":true},{"text":" | 1 уголь за 3 монеты. Доставка в инвентарь."}]
+tellraw @s [{"text":"Магазин","color":"gold","bold":true},{"text":" | 1 уголь за $3 со счёта Money. Доставка в инвентарь."}]
 tellraw @s [{"text":"[Купить уголь]","color":"yellow","underlined":true,"clickEvent":{"action":"run_command","value":"/trigger eg set 3"}},{"text":"  "},{"text":"[Главное меню]","color":"aqua","underlined":true,"clickEvent":{"action":"run_command","value":"/trigger eg set 1"}}]

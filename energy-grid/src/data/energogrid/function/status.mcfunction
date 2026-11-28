@@ -1,3 +1,4 @@
-tellraw @s [{"translate":"energogrid.terminal","fallback":"Терминал энергосети","color":"gold"},{"text":" | Баланс: "},{"score":{"name":"@s","objective":"eg_bank"}},{"text":" мон. | Уголь: 3 мон. | Тариф: 1 мон. / 4 000 ед."}]
-tellraw @s [{"text":"Продаж: "},{"score":{"name":"@s","objective":"eg_sales"}},{"text":" | Общая выручка: "},{"score":{"name":"@s","objective":"eg_last"}},{"text":" мон. | Расходы на уголь: "},{"score":{"name":"@s","objective":"eg_spend"}},{"text":" мон."}]
-tellraw @s [{"text":"[Главное меню]","color":"aqua","underlined":true,"clickEvent":{"action":"run_command","value":"/trigger eg set 1"}}]
+energogrid_internal balance
+tellraw @s [{"text":"Тариф: $1 за 4 000 FE | Лимит: 200 FE/тик | Уголь: $3"}]
+tellraw @s [{"text":"Выручка счётчика: $"},{"score":{"name":"@s","objective":"eg_last"}},{"text":" | Закупки угля: $"},{"score":{"name":"@s","objective":"eg_spend"}}]
+tellraw @s [{"text":"[Главное меню]","color":"aqua","clickEvent":{"action":"run_command","value":"/trigger eg"}}]

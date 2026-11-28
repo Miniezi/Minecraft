@@ -1,4 +1,4 @@
-"""Build the Prism prototype in Modrinth and native formats."""
+"""Build the Prism prototype and its standalone resource pack."""
 import gzip
 import io
 import json
@@ -9,7 +9,10 @@ from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
 SOURCE = Path(__file__).resolve().parent / "src"
 OUTPUT = Path(__file__).resolve().parent.parent / "dist"
 MINECRAFT = "1.21.1"
-NEOFORGE = "21.1.172"
+NEOFORGE = "21.1.268"
+ADDON_NAME = "energy-grid-export-0.3.0.jar"
+ADDON = SOURCE.parent / "addon" / "build" / "libs" / ADDON_NAME
+LOCK_FILE = SOURCE.parent / "mods.lock.json"
 PACK_NAME = "Энергосеть — Небесный контракт"
 
 
@@ -49,9 +52,7 @@ def level_dat():
                     "biome": (string, "minecraft:the_void"),
                     "features": (1, 0),
                     "lakes": (1, 0),
-                    "layers": (9, (compound, [{
-                        "block": (string, "minecraft:air"), "height": (integer, 1)
-                    }])),
+                    "layers": (9, (compound, [])),
                     "structure_overrides": (9, (string, [])),
                 }),
             }),
@@ -113,21 +114,13 @@ def main():
     for path in SOURCE.joinpath("assets").rglob("*.json"):
         resources[path.relative_to(SOURCE).as_posix()] = path.read_bytes()
     resource_pack = archive(resources)
-    pack = {"formatVersion": 1, "components": [
-        {"uid": "net.minecraft", "version": MINECRAFT, "important": True},
-        {"uid": "net.neoforged", "version": NEOFORGE},
-    ]}
-    world = ".minecraft/saves/Energy-Grid"
+    world = "saves/Energy-Grid"
     datapack = world + "/datapacks/energy-grid"
     files = {
-        "mmc-pack.json": json_bytes(pack),
-        "instance.cfg": (
-            "InstanceType=OneSix\nname=Энергосеть — Небесный контракт (прототип)\n"
-        ).encode(),
-        ".minecraft/options.txt": (
+        "options.txt": (
             'lang:ru_ru\nresourcePacks:["vanilla","file/Energy-Grid-RU.zip"]\n'
         ).encode(),
-        f".minecraft/resourcepacks/{resource_name}": resource_pack,
+        f"resourcepacks/{resource_name}": resource_pack,
         f"{world}/level.dat": level_dat(),
         f"{datapack}/pack.mcmeta": json_bytes({"pack": {
             "pack_format": 48, "description": "Первый платёж"
@@ -140,22 +133,22 @@ def main():
     for path in SOURCE.joinpath("data").rglob("*"):
         if path.is_file():
             files[f"{datapack}/{path.relative_to(SOURCE).as_posix()}"] = path.read_bytes()
-    (OUTPUT / resource_name).write_bytes(resource_pack)
-    (OUTPUT / "Energy-Grid-Skyblock-RU-Prototype.zip").write_bytes(archive(files))
+    locked = json.loads(LOCK_FILE.read_text(encoding="utf-8"))
     index = {
         "formatVersion": 1,
         "game": "minecraft",
-        "versionId": "0.2.0",
+        "versionId": "0.3.0",
         "name": PACK_NAME,
-        "summary": "Первый платёж и терминал энергосети",
-        "files": [],
+        "summary": "SkyBlock, Forge Energy, промышленность и дата-центр",
+        "files": [mod["file"] for mod in locked if mod["source"] != "Local"],
         "dependencies": {"minecraft": MINECRAFT, "neoforge": NEOFORGE},
     }
-    modrinth_files = {
-        "overrides/" + path.removeprefix(".minecraft/"): contents
-        for path, contents in files.items()
-        if path.startswith(".minecraft/")
-    }
+    modrinth_files = {f"overrides/{path}": contents for path, contents in files.items()}
+    for path in SOURCE.joinpath("config").rglob("*"):
+        if path.is_file():
+            modrinth_files[f"overrides/{path.relative_to(SOURCE).as_posix()}"] = path.read_bytes()
+    modrinth_files[f"overrides/mods/{ADDON_NAME}"] = ADDON.read_bytes()
+    (OUTPUT / resource_name).write_bytes(resource_pack)
     modrinth_files["modrinth.index.json"] = json_bytes(index)
     (OUTPUT / "Energy-Grid-Skyblock-RU.mrpack").write_bytes(archive(modrinth_files))
 

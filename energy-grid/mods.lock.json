@@ -1,0 +1,1367 @@
+[
+  {
+    "project": "ae2",
+    "source": "Modrinth",
+    "projectId": "XxWD5pD3",
+    "versionId": "7Ac6mXbf",
+    "version": "19.2.20",
+    "releaseType": "release",
+    "required": [
+      {
+        "project_id": "Ck4E7v7R",
+        "version_id": null
+      }
+    ],
+    "file": {
+      "path": "mods/appliedenergistics2-19.2.20.jar",
+      "downloads": [
+        "https://cdn.modrinth.com/data/XxWD5pD3/versions/7Ac6mXbf/appliedenergistics2-19.2.20.jar"
+      ],
+      "hashes": {
+        "sha512": "5caab83d4f4134d0161f22307aaf642c6ba89756490a2170986b236efca9ce2b2aa95a1ba82d483227702369bc3cac7aaa4e45fec885059f8b5da4f0d30205b9",
+        "sha1": "6ea9ea3e1c036a1f036173f3f38d4f7badaf1d28"
+      },
+      "fileSize": 8242323,
+      "env": {
+        "client": "required",
+        "server": "required"
+      }
+    },
+    "modIds": [
+      "ae2"
+    ],
+    "jarRequires": [
+      {
+        "modId": "neoforge",
+        "type": "REQUIRED",
+        "versionRange": "[21.1.169,)",
+        "ordering": "NONE",
+        "side": "BOTH"
+      },
+      {
+        "modId": "minecraft",
+        "type": "REQUIRED",
+        "versionRange": "[1.21.1]",
+        "ordering": "NONE",
+        "side": "BOTH"
+      },
+      {
+        "modId": "guideme",
+        "type": "REQUIRED",
+        "versionRange": "[21.1.1,)",
+        "side": "BOTH"
+      }
+    ],
+    "sourcePage": "https://modrinth.com/mod/ae2/version/7Ac6mXbf",
+    "role": "Цифровое хранение и автокрафт",
+    "installation": "download",
+    "sha256": "219cbf2b3e677567d843ddeea568eda75db35dea545b04b7b904c8587c264077"
+  },
+  {
+    "project": "architectury-api",
+    "source": "Modrinth",
+    "projectId": "lhGA9TYQ",
+    "versionId": "1IiqEQGl",
+    "version": "13.0.11+neoforge",
+    "releaseType": "release",
+    "required": [],
+    "file": {
+      "path": "mods/architectury-13.0.11-neoforge.jar",
+      "downloads": [
+        "https://cdn.modrinth.com/data/lhGA9TYQ/versions/1IiqEQGl/architectury-13.0.11-neoforge.jar"
+      ],
+      "hashes": {
+        "sha1": "008656a0702801174b8ec245ed7aad1921d6e9f1",
+        "sha512": "d9f7c3bb8162577dfb461ffdf04bd6a3563c7586934a0e2a744c14421beffb8286f0d88d4c758317003f20f99fe8072a39b9d675af061e036970d36db36027f0"
+      },
+      "fileSize": 584734,
+      "env": {
+        "client": "required",
+        "server": "required"
+      }
+    },
+    "modIds": [
+      "architectury"
+    ],
+    "jarRequires": [
+      {
+        "modId": "minecraft",
+        "type": "required",
+        "versionRange": "[1.21,)",
+        "ordering": "NONE",
+        "side": "BOTH"
+      },
+      {
+        "modId": "neoforge",
+        "type": "required",
+        "versionRange": "[21.0.110-beta,)",
+        "ordering": "NONE",
+        "side": "BOTH"
+      }
+    ],
+    "sourcePage": "https://modrinth.com/mod/architectury-api/version/1IiqEQGl",
+    "role": "Библиотека FTB",
+    "installation": "download",
+    "sha256": "9cc92f2c09533fc5482c60f993bd891c655a0e32b637037cdcb7c2b23adedeeb"
+  },
+  {
+    "project": "better-advanced-tooltips",
+    "source": "Modrinth",
+    "projectId": "iHLDc0eo",
+    "versionId": "uPFbnD32",
+    "version": "2101.1.0-build.5",
+    "releaseType": "release",
+    "required": [],
+    "file": {
+      "path": "mods/better-advanced-tooltips-2101.1.0-build.5.jar",
+      "downloads": [
+        "https://cdn.modrinth.com/data/iHLDc0eo/versions/uPFbnD32/better-advanced-tooltips-2101.1.0-build.5.jar"
+      ],
+      "hashes": {
+        "sha512": "05b5cdad948d1735eab7a67a16aaf32814678c392014ec2ada61b8341c0ed1c1ac181cab1de9da3f2c4632592f4a1a5db254bd0543e6778897c8ccd260894142",
+        "sha1": "5b73537b908764f2d3fd593a0f56a8b1b034bc50"
+      },
+      "fileSize": 37653,
+      "env": {
+        "client": "required",
+        "server": "required"
+      }
+    },
+    "modIds": [
+      "betteradvancedtooltips"
+    ],
+    "jarRequires": [
+      {
+        "modId": "neoforge",
+        "type": "required",
+        "versionRange": "[21.1.199,)",
+        "ordering": "NONE",
+        "side": "CLIENT"
+      }
+    ],
+    "sourcePage": "https://modrinth.com/mod/better-advanced-tooltips/version/uPFbnD32",
+    "role": "Зависимость KubeJS",
+    "installation": "download",
+    "sha256": "0f76d46f2f18eb67e67c7974170d7b27deb66473396461c8dc50d6949de1449b"
+  },
+  {
+    "project": "cloth-config",
+    "source": "Modrinth",
+    "projectId": "9s6osm5g",
+    "versionId": "izKINKFg",
+    "version": "15.0.140+neoforge",
+    "releaseType": "release",
+    "required": [],
+    "file": {
+      "path": "mods/cloth-config-15.0.140-neoforge.jar",
+      "downloads": [
+        "https://cdn.modrinth.com/data/9s6osm5g/versions/izKINKFg/cloth-config-15.0.140-neoforge.jar"
+      ],
+      "hashes": {
+        "sha512": "aaf9b010955b8cd294e5a92f069985b18729fd5e2cf22d351f1dff9680f15488688803ec41e77e941cbde130ceb535014ca4c868047d80ab69c2d508e216654d",
+        "sha1": "c3e5733ba4503b102589a026000fd5ce0212f6f2"
+      },
+      "fileSize": 1163890,
+      "env": {
+        "client": "required",
+        "server": "required"
+      }
+    },
+    "modIds": [
+      "cloth_config"
+    ],
+    "jarRequires": [
+      {
+        "modId": "neoforge",
+        "type": "required",
+        "versionRange": "[21.0.110-beta,)",
+        "ordering": "NONE",
+        "side": "BOTH"
+      }
+    ],
+    "sourcePage": "https://modrinth.com/mod/cloth-config/version/izKINKFg",
+    "role": "Библиотека конфигурации Powah!",
+    "installation": "download",
+    "sha256": "65e722e0d98431a07c45f8bdd8d529a217cc8c175fde1740248bd5c1b4f3c0d4"
+  },
+  {
+    "project": "data-center",
+    "source": "CurseForge",
+    "projectId": "1683174",
+    "versionId": "9248861",
+    "version": "2.1.3",
+    "releaseType": "release",
+    "required": [],
+    "file": {
+      "path": "mods/datacenter2.1.3.jar",
+      "downloads": [
+        "https://edge.forgecdn.net/files/9248/861/datacenter2.1.3.jar"
+      ],
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "fileSize": 5044118,
+      "hashes": {
+        "sha1": "924cabdf984f5acd61a933fa1345db8cb4ad453b",
+        "sha512": "40580148cee59fc0cc7fc1e6f2668d84b51141ad104493fba7650f330ecef256fa1990648b410b20ce45b4a7fe2d85ff860dee83d43ca84dbab37edae00fb4f7"
+      }
+    },
+    "modIds": [
+      "datacenter"
+    ],
+    "jarRequires": [
+      {
+        "modId": "neoforge",
+        "type": "required",
+        "versionRange": "[21.1.235,)",
+        "ordering": "NONE",
+        "side": "BOTH"
+      },
+      {
+        "modId": "minecraft",
+        "type": "required",
+        "versionRange": "[1.21.1]",
+        "ordering": "NONE",
+        "side": "BOTH"
+      }
+    ],
+    "sourcePage": "https://www.curseforge.com/minecraft/mc-mods/data-center/files/9248861",
+    "role": "Стойки, серверы, охлаждение и сеть",
+    "installation": "download",
+    "sha256": "47c3e804dc08bd12e0775111c7c670c200e4ac1f048f5aa48bb4a4e97774c9c3"
+  },
+  {
+    "project": "ftb-chunks-forge",
+    "source": "CurseForge",
+    "projectId": "314906",
+    "versionId": "9594476",
+    "version": "2101.1.24",
+    "releaseType": "release",
+    "required": [],
+    "file": {
+      "path": "mods/ftb-chunks-neoforge-2101.1.24.jar",
+      "downloads": [
+        "https://edge.forgecdn.net/files/9594/476/ftb-chunks-neoforge-2101.1.24.jar"
+      ],
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "fileSize": 671431,
+      "hashes": {
+        "sha1": "f0d48143cc80918cf632a4c14c3ca3e974ed0457",
+        "sha512": "32863489f1cfc3d2e34a440e35cbf304e94cefa97b3575936439324f97f17a927115595c168b0343dc1f5db105c0717091a089a6c018dc25440e76494bbee2f0"
+      }
+    },
+    "modIds": [
+      "ftbchunks"
+    ],
+    "jarRequires": [
+      {
+        "modId": "neoforge",
+        "type": "required",
+        "versionRange": "[21.1.0,)",
+        "ordering": "NONE",
+        "side": "BOTH"
+      },
+      {
+        "modId": "minecraft",
+        "type": "required",
+        "versionRange": "[1.21.1,)",
+        "ordering": "NONE",
+        "side": "BOTH"
+      },
+      {
+        "modId": "architectury",
+        "type": "required",
+        "versionRange": "[13.0.11,)",
+        "ordering": "AFTER",
+        "side": "BOTH"
+      },
+      {
+        "modId": "ftblibrary",
+        "type": "required",
+        "versionRange": "[2101.1.39,)",
+        "ordering": "AFTER",
+        "side": "BOTH"
+      },
+      {
+        "modId": "ftbteams",
+        "type": "required",
+        "versionRange": "[2101.1.9,)",
+        "ordering": "AFTER",
+        "side": "BOTH"
+      }
+    ],
+    "sourcePage": "https://www.curseforge.com/minecraft/mc-mods/ftb-chunks-forge/files/9594476",
+    "role": "Карта и загрузка чанков",
+    "installation": "download",
+    "sha256": "4fd569936a0dc966e114d92d98277baec6c9b8337b215a30648b63f9cb860a1f"
+  },
+  {
+    "project": "ftb-library-forge",
+    "source": "CurseForge",
+    "projectId": "404465",
+    "versionId": "9350706",
+    "version": "2101.1.39",
+    "releaseType": "release",
+    "required": [],
+    "file": {
+      "path": "mods/ftb-library-neoforge-2101.1.39.jar",
+      "downloads": [
+        "https://edge.forgecdn.net/files/9350/706/ftb-library-neoforge-2101.1.39.jar"
+      ],
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "fileSize": 1477833,
+      "hashes": {
+        "sha1": "ff852d99ade215fb892369687d0634ecf0bca6ae",
+        "sha512": "e28a5c032395b96ce696800ca7689315074110e572186d8ba08bdf326e0ff43f6fcce942c35a3fe60637dc2bf2077f04b3e222892e60016fe545339dcc7529aa"
+      }
+    },
+    "modIds": [
+      "ftblibrary"
+    ],
+    "jarRequires": [
+      {
+        "modId": "neoforge",
+        "type": "required",
+        "versionRange": "[21.1.0,)",
+        "ordering": "NONE",
+        "side": "BOTH"
+      },
+      {
+        "modId": "minecraft",
+        "type": "required",
+        "versionRange": "[1.21.1,)",
+        "ordering": "NONE",
+        "side": "BOTH"
+      },
+      {
+        "modId": "architectury",
+        "type": "required",
+        "versionRange": "[13.0.11,)",
+        "ordering": "AFTER",
+        "side": "BOTH"
+      }
+    ],
+    "sourcePage": "https://www.curseforge.com/minecraft/mc-mods/ftb-library-forge/files/9350706",
+    "role": "Интерфейс и общая библиотека FTB",
+    "installation": "download",
+    "sha256": "ca64bd1b5f335406900f74eeafacea5a3580a3933d61de6b6600a64eb12a9a95"
+  },
+  {
+    "project": "ftb-quests-forge",
+    "source": "CurseForge",
+    "projectId": "289412",
+    "versionId": "9405148",
+    "version": "2101.1.38",
+    "releaseType": "release",
+    "required": [],
+    "file": {
+      "path": "mods/ftb-quests-neoforge-2101.1.38.jar",
+      "downloads": [
+        "https://edge.forgecdn.net/files/9405/148/ftb-quests-neoforge-2101.1.38.jar"
+      ],
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "fileSize": 1635517,
+      "hashes": {
+        "sha1": "389fb269d338ed4c7f14f945a07759b6d444af40",
+        "sha512": "fc97e8f2848b72ca04eba930a5382a9839faf860c1f943eeb698b4859cd5fa9a9533b900f06855b878cf8b7f1c2c10a9c3db37194e5dcb3ed3e2df342538009d"
+      }
+    },
+    "modIds": [
+      "ftbquests"
+    ],
+    "jarRequires": [
+      {
+        "modId": "neoforge",
+        "type": "required",
+        "versionRange": "[21.1.0,)",
+        "ordering": "NONE",
+        "side": "BOTH"
+      },
+      {
+        "modId": "minecraft",
+        "type": "required",
+        "versionRange": "[1.21.1,)",
+        "ordering": "NONE",
+        "side": "BOTH"
+      },
+      {
+        "modId": "architectury",
+        "type": "required",
+        "versionRange": "[13.0.11,)",
+        "ordering": "NONE",
+        "side": "BOTH"
+      },
+      {
+        "modId": "ftblibrary",
+        "type": "required",
+        "versionRange": "[2101.1.39,)",
+        "ordering": "AFTER",
+        "side": "BOTH"
+      },
+      {
+        "modId": "ftbteams",
+        "type": "required",
+        "versionRange": "[2101.1.9,)",
+        "ordering": "AFTER",
+        "side": "BOTH"
+      }
+    ],
+    "sourcePage": "https://www.curseforge.com/minecraft/mc-mods/ftb-quests-forge/files/9405148",
+    "role": "Книга квестов и проверка первой продажи",
+    "installation": "download",
+    "sha256": "3752657a82c69b0a80c034700df86f1a3d7c5f3e3aad814b5af748b9082a834b"
+  },
+  {
+    "project": "ftb-teams-forge",
+    "source": "CurseForge",
+    "projectId": "404468",
+    "versionId": "9434081",
+    "version": "2101.1.12",
+    "releaseType": "release",
+    "required": [],
+    "file": {
+      "path": "mods/ftb-teams-neoforge-2101.1.12.jar",
+      "downloads": [
+        "https://edge.forgecdn.net/files/9434/081/ftb-teams-neoforge-2101.1.12.jar"
+      ],
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "fileSize": 308430,
+      "hashes": {
+        "sha1": "9c831fbbbccf2178827c3ccf278b2f2a0ce57306",
+        "sha512": "c2c8853615c1ec97e0ace07c320db8f0ad4a18c59746e1d30c86f7af0e6ad36d9bbfe0ca6a365aa63d29244e1690323296fb29d99a38bab97e2c19181a57e376"
+      }
+    },
+    "modIds": [
+      "ftbteams"
+    ],
+    "jarRequires": [
+      {
+        "modId": "neoforge",
+        "type": "required",
+        "versionRange": "[21.1.0,)",
+        "ordering": "NONE",
+        "side": "BOTH"
+      },
+      {
+        "modId": "minecraft",
+        "type": "required",
+        "versionRange": "[1.21.1,)",
+        "ordering": "NONE",
+        "side": "BOTH"
+      },
+      {
+        "modId": "architectury",
+        "type": "required",
+        "versionRange": "[13.0.8,)",
+        "ordering": "AFTER",
+        "side": "BOTH"
+      },
+      {
+        "modId": "ftblibrary",
+        "type": "required",
+        "versionRange": "[2101.1.37,)",
+        "ordering": "AFTER",
+        "side": "BOTH"
+      }
+    ],
+    "sourcePage": "https://www.curseforge.com/minecraft/mc-mods/ftb-teams-forge/files/9434081",
+    "role": "Хранение командного прогресса FTB",
+    "installation": "download",
+    "sha256": "b3f33436070b7ae4a706280561f1d2f1d1eb1a089cb13ec9851e99646165aed2"
+  },
+  {
+    "project": "guideme",
+    "source": "Modrinth",
+    "projectId": "Ck4E7v7R",
+    "versionId": "QeYKsstN",
+    "version": "21.1.22",
+    "releaseType": "release",
+    "required": [],
+    "file": {
+      "path": "mods/guideme-21.1.22.jar",
+      "downloads": [
+        "https://cdn.modrinth.com/data/Ck4E7v7R/versions/QeYKsstN/guideme-21.1.22.jar"
+      ],
+      "hashes": {
+        "sha512": "2a7b29143c1bef18375f221c337c6e744d04b79bc3cc10cadac46b7d6bb217ad78c51a3c33cd802b221cc7b38ff04a3f7064bd63d292e53bf9f3e09047eeda24",
+        "sha1": "eb2f531c91566a0f119b4b3a3acd927b48b6b27e"
+      },
+      "fileSize": 9332340,
+      "env": {
+        "client": "required",
+        "server": "required"
+      }
+    },
+    "modIds": [
+      "guideme"
+    ],
+    "jarRequires": [
+      {
+        "modId": "neoforge",
+        "type": "REQUIRED",
+        "versionRange": "[21.1.1,)",
+        "ordering": "NONE",
+        "side": "BOTH"
+      },
+      {
+        "modId": "minecraft",
+        "type": "REQUIRED",
+        "versionRange": "[1.21.1]",
+        "ordering": "NONE",
+        "side": "BOTH"
+      }
+    ],
+    "sourcePage": "https://modrinth.com/mod/guideme/version/QeYKsstN",
+    "role": "Руководства Powah! и AE2",
+    "installation": "download",
+    "sha256": "108337ff98c706b18ed2fbec077b3337ba72c08f8b46a273534886280e89ef0d"
+  },
+  {
+    "project": "immersiveengineering",
+    "source": "Modrinth",
+    "projectId": "tIm2nV03",
+    "versionId": "uNRARSH2",
+    "version": "12.4.2-194",
+    "releaseType": "release",
+    "required": [],
+    "file": {
+      "path": "mods/ImmersiveEngineering-1.21.1-12.4.2-194.jar",
+      "downloads": [
+        "https://cdn.modrinth.com/data/tIm2nV03/versions/uNRARSH2/ImmersiveEngineering-1.21.1-12.4.2-194.jar"
+      ],
+      "hashes": {
+        "sha1": "a4e90c2df8009040f6d022433c5d76635944dd59",
+        "sha512": "862523e84747a8b7eaa65f9b3c337fa832ef9efd0545c27f68e350e01f482c7a1242d0e4bdc2caff3d7eb033508b43a353fcd7150c9b544d0c05765ca2a551b3"
+      },
+      "fileSize": 14232121,
+      "env": {
+        "client": "required",
+        "server": "required"
+      }
+    },
+    "modIds": [
+      "immersiveengineering"
+    ],
+    "jarRequires": [
+      {
+        "modId": "neoforge",
+        "type": "required",
+        "versionRange": "[21.1.164,)",
+        "ordering": "NONE",
+        "side": "BOTH"
+      },
+      {
+        "modId": "minecraft",
+        "type": "required",
+        "versionRange": "[1.21.1]",
+        "ordering": "NONE",
+        "side": "BOTH"
+      }
+    ],
+    "sourcePage": "https://modrinth.com/mod/immersiveengineering/version/uNRARSH2",
+    "role": "Вода, ветер, дизель, линии и переработка",
+    "installation": "download",
+    "sha256": "45942985a4a4aebf265b8e22a0c54a96208637471f36f2532ff5d4911322debc"
+  },
+  {
+    "project": "jade",
+    "source": "Modrinth",
+    "projectId": "nvQzSEkH",
+    "versionId": "eYz2YBGT",
+    "version": "15.10.6+neoforge",
+    "releaseType": "release",
+    "required": [],
+    "file": {
+      "path": "mods/Jade-1.21.1-NeoForge-15.10.6.jar",
+      "downloads": [
+        "https://cdn.modrinth.com/data/nvQzSEkH/versions/eYz2YBGT/Jade-1.21.1-NeoForge-15.10.6.jar"
+      ],
+      "hashes": {
+        "sha1": "88ee316e68900080b017f60c12162e2731924cf8",
+        "sha512": "dad9755dce8d85d914fc4df2baa0211f13e5839a71c1925fdd01f69081a95e30a2934e6273f8b01f0169adebe7a9dae57a8d904de0c4cb36dc17369bb474f0f2"
+      },
+      "fileSize": 726853,
+      "env": {
+        "client": "required",
+        "server": "required"
+      }
+    },
+    "modIds": [
+      "jade"
+    ],
+    "jarRequires": [
+      {
+        "modId": "neoforge",
+        "type": "required",
+        "versionRange": "[21.0.143, )",
+        "ordering": "NONE",
+        "side": "BOTH"
+      }
+    ],
+    "sourcePage": "https://modrinth.com/mod/jade/version/eYz2YBGT",
+    "role": "Показ состояния машин",
+    "installation": "download",
+    "sha256": "276f1f65a20d04f536989c4f311949d770b52c440c23c2b904a08860f3c93810"
+  },
+  {
+    "project": "jei",
+    "source": "Modrinth",
+    "projectId": "u6dRKJwZ",
+    "versionId": "iv3KiVkE",
+    "version": "19.64.0.455",
+    "releaseType": "release",
+    "required": [
+      {
+        "project_id": "7tEfOcA7",
+        "version_id": null
+      }
+    ],
+    "file": {
+      "path": "mods/jei-1.21.1-neoforge-19.64.0.455.jar",
+      "downloads": [
+        "https://cdn.modrinth.com/data/u6dRKJwZ/versions/iv3KiVkE/jei-1.21.1-neoforge-19.64.0.455.jar"
+      ],
+      "hashes": {
+        "sha512": "fdd02e57ce4dcf20b69860a5ace1b97d9a771486241179cf9edfe71e30c69bb4003b046d0cce8d8c4913b9689f1d8b04cf0542b0b04a6cf0b3b0465f3bb11702",
+        "sha1": "f6d6fc08d54c40752926b570a2220471e8c45c1a"
+      },
+      "fileSize": 2375741,
+      "env": {
+        "client": "required",
+        "server": "required"
+      }
+    },
+    "modIds": [
+      "jei"
+    ],
+    "jarRequires": [
+      {
+        "modId": "mezz_config",
+        "type": "required",
+        "versionRange": "[0.6.3,1.0.0)",
+        "ordering": "AFTER",
+        "side": "BOTH"
+      },
+      {
+        "modId": "neoforge",
+        "type": "required",
+        "versionRange": "[21.1.238,)",
+        "ordering": "NONE",
+        "side": "BOTH"
+      },
+      {
+        "modId": "minecraft",
+        "type": "required",
+        "versionRange": "[1.21, 1.21.1)",
+        "ordering": "NONE",
+        "side": "BOTH"
+      }
+    ],
+    "sourcePage": "https://modrinth.com/mod/jei/version/iv3KiVkE",
+    "role": "Рецепты и применения предметов",
+    "installation": "download",
+    "sha256": "f7a9de3d7ee07eed8d293a1a1a0f6afaac556eb43c103523457bd07ebb551e7b"
+  },
+  {
+    "project": "kubejs",
+    "source": "Modrinth",
+    "projectId": "umyGl7zF",
+    "versionId": "GDXCpKlp",
+    "version": "2101.7.2-build.381",
+    "releaseType": "release",
+    "required": [
+      {
+        "project_id": "iHLDc0eo",
+        "version_id": null
+      },
+      {
+        "project_id": "sk9knFPE",
+        "version_id": null
+      }
+    ],
+    "file": {
+      "path": "mods/kubejs-neoforge-2101.7.2-build.381.jar",
+      "downloads": [
+        "https://cdn.modrinth.com/data/umyGl7zF/versions/GDXCpKlp/kubejs-neoforge-2101.7.2-build.381.jar"
+      ],
+      "hashes": {
+        "sha1": "b282ba250cdd247f319c016df02ff9e600caadb1",
+        "sha512": "f8286f9f371d0c1fb2b37e56b1dbb359dcfc5a9064a7384cbf6722450f5b5a77f05f55688d7a338b500a6f49590d51e3d3541664dfc0296e50fe573a34e5a529"
+      },
+      "fileSize": 2295092,
+      "env": {
+        "client": "required",
+        "server": "required"
+      }
+    },
+    "modIds": [
+      "kubejs"
+    ],
+    "jarRequires": [
+      {
+        "modId": "neoforge",
+        "type": "required",
+        "versionRange": "[21.1.199,)",
+        "ordering": "AFTER",
+        "side": "BOTH"
+      },
+      {
+        "modId": "rhino",
+        "type": "required",
+        "versionRange": "[2101.2.7-build.81,)",
+        "ordering": "AFTER",
+        "side": "BOTH"
+      }
+    ],
+    "sourcePage": "https://modrinth.com/mod/kubejs/version/GDXCpKlp",
+    "role": "Изменение рецептов и интеграции",
+    "installation": "download",
+    "sha256": "07d8cb7ac1f7ef81f17ae00bfd84c92c18ac0398e83e64a27d91717969316bc0"
+  },
+  {
+    "project": "mekanism",
+    "source": "Modrinth",
+    "projectId": "Ce6I4WUE",
+    "versionId": "5KzzycBT",
+    "version": "10.7.19.85",
+    "releaseType": "release",
+    "required": [],
+    "file": {
+      "path": "mods/Mekanism-1.21.1-10.7.19.85.jar",
+      "downloads": [
+        "https://cdn.modrinth.com/data/Ce6I4WUE/versions/5KzzycBT/Mekanism-1.21.1-10.7.19.85.jar"
+      ],
+      "hashes": {
+        "sha512": "66745825330a98f3e4a5ea3a44aff8b00870f715c144edc38dd2f61b4240589600b58ae89efac3b54dbb5aa430b1059dac1a28fd71cac5cc9002bbeb5ba3f22b",
+        "sha1": "b78945c40cfe7640408f3fd1e44da385a8c8b805"
+      },
+      "fileSize": 11976009,
+      "env": {
+        "client": "required",
+        "server": "required"
+      }
+    },
+    "modIds": [
+      "mekanism"
+    ],
+    "jarRequires": [
+      {
+        "modId": "minecraft",
+        "type": "required",
+        "versionRange": "[1.21.1]",
+        "side": "BOTH"
+      },
+      {
+        "modId": "neoforge",
+        "type": "required",
+        "versionRange": "[21.1.194,)",
+        "side": "BOTH"
+      }
+    ],
+    "sourcePage": "https://modrinth.com/mod/mekanism/version/5KzzycBT",
+    "role": "Переработка сырья, подготовка топлива и транспорт",
+    "installation": "download",
+    "sha256": "004dbc9f3106f4d192aeaa1ee1190dd16ec9ca8059ed3d093b80034f4c574f43"
+  },
+  {
+    "project": "mekanism-generators",
+    "source": "Modrinth",
+    "projectId": "OFVYKsAk",
+    "versionId": "a6gl7srE",
+    "version": "10.7.19.85",
+    "releaseType": "release",
+    "required": [
+      {
+        "project_id": "Ce6I4WUE",
+        "version_id": "5KzzycBT"
+      }
+    ],
+    "file": {
+      "path": "mods/MekanismGenerators-1.21.1-10.7.19.85.jar",
+      "downloads": [
+        "https://cdn.modrinth.com/data/OFVYKsAk/versions/a6gl7srE/MekanismGenerators-1.21.1-10.7.19.85.jar"
+      ],
+      "hashes": {
+        "sha1": "44c4d8006597580ff7e4101b5a22f7b426cdcaf6",
+        "sha512": "6c3d5b7ea2f67f43c3d169c97de2855a7085f38019cf426e015ccc8ca9bc4f66e96b1cdf4a9afdc92bef7b2e236f16c81415ed5e48736805d5961d29525316d6"
+      },
+      "fileSize": 1114598,
+      "env": {
+        "client": "required",
+        "server": "required"
+      }
+    },
+    "modIds": [
+      "mekanismgenerators"
+    ],
+    "jarRequires": [
+      {
+        "modId": "mekanism",
+        "type": "required",
+        "versionRange": "[10.7.19]",
+        "ordering": "AFTER",
+        "side": "BOTH"
+      }
+    ],
+    "sourcePage": "https://modrinth.com/mod/mekanism-generators/version/a6gl7srE",
+    "role": "Деление, турбина и термояд",
+    "installation": "download",
+    "sha256": "0e5783b111e756f27b48c62b2f0e02fff750c77f7985ff809bfadc5f444ba4ac"
+  },
+  {
+    "project": "mezzconfig",
+    "source": "Modrinth",
+    "projectId": "7tEfOcA7",
+    "versionId": "V6oWFnxW",
+    "version": "0.7.1",
+    "releaseType": "beta",
+    "required": [],
+    "file": {
+      "path": "mods/mezz_config-1.21.1-neoforge-0.7.1-standalone.jar",
+      "downloads": [
+        "https://cdn.modrinth.com/data/7tEfOcA7/versions/V6oWFnxW/mezz_config-1.21.1-neoforge-0.7.1-standalone.jar"
+      ],
+      "hashes": {
+        "sha512": "e3576344d96b4734d35c7ceb969020ef728a666b771fb6da0465d08d940daff3c48352f6f3ca989edbe7fff57737d2fea4621f6422e858f95efe9fa70b46dfb2",
+        "sha1": "2382e29c9a0f44d4f4b9baa4cb3f6a356e048e60"
+      },
+      "fileSize": 347249,
+      "env": {
+        "client": "required",
+        "server": "required"
+      }
+    },
+    "modIds": [],
+    "jarRequires": [],
+    "sourcePage": "https://modrinth.com/mod/mezzconfig/version/V6oWFnxW",
+    "role": "Конфигурация JEI",
+    "installation": "download",
+    "sha256": "c42510938584eda0aae134003e367d745fd32ceac1836221cecac4cbc7bfa3a1"
+  },
+  {
+    "project": "money-cash-atm-accounts",
+    "source": "CurseForge",
+    "projectId": "1691499",
+    "versionId": "9383442",
+    "version": "0.4.1",
+    "releaseType": "release",
+    "required": [],
+    "file": {
+      "path": "mods/money0.4.1.jar",
+      "downloads": [
+        "https://edge.forgecdn.net/files/9383/442/money0.4.1.jar"
+      ],
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "fileSize": 220243,
+      "hashes": {
+        "sha1": "13494f7b29fae9108484236f288900bae8ae1509",
+        "sha512": "37a4552cb49eec6b1a07943068909d079facd5728f9b524ef6ff0a4fd18927f9556be587ee74d2889b9358b575f43c22e30a0c5d74bfd589c9b2fa2570d24e49"
+      }
+    },
+    "modIds": [
+      "money"
+    ],
+    "jarRequires": [
+      {
+        "modId": "neoforge",
+        "type": "required",
+        "versionRange": "[21.1.235,)",
+        "ordering": "NONE",
+        "side": "BOTH"
+      },
+      {
+        "modId": "minecraft",
+        "type": "required",
+        "versionRange": "[1.21.1]",
+        "ordering": "NONE",
+        "side": "BOTH"
+      }
+    ],
+    "sourcePage": "https://www.curseforge.com/minecraft/mc-mods/money-cash-atm-accounts/files/9383442",
+    "role": "Общий денежный счёт и журнал операций",
+    "installation": "download",
+    "sha256": "11aaa3cf7fbd342ee91a38cd466b1d306c0ea6496a55ec501fce2fd40eaee552"
+  },
+  {
+    "project": "mouse-tweaks",
+    "source": "Modrinth",
+    "projectId": "aC3cM3Vq",
+    "versionId": "9I21YYxf",
+    "version": "1.21-2.26.1-neoforge",
+    "releaseType": "release",
+    "required": [],
+    "file": {
+      "path": "mods/MouseTweaks-neoforge-mc1.21-2.26.1.jar",
+      "downloads": [
+        "https://cdn.modrinth.com/data/aC3cM3Vq/versions/9I21YYxf/MouseTweaks-neoforge-mc1.21-2.26.1.jar"
+      ],
+      "hashes": {
+        "sha1": "6dae57f4f50f7808d2ed9a18f6cd1c0d4640c6bc",
+        "sha512": "f95c0cc881211ee0442434976775e07aae40b4a2ba4e3a85455bc57ca9d3c991e239cd98374a8abd442dc9c378dcd9001e2caa1bf69991d424b5652dd7f3483b"
+      },
+      "fileSize": 73938,
+      "env": {
+        "client": "required",
+        "server": "unsupported"
+      }
+    },
+    "modIds": [
+      "mousetweaks"
+    ],
+    "jarRequires": [],
+    "sourcePage": "https://modrinth.com/mod/mouse-tweaks/version/9I21YYxf",
+    "role": "Перенос предметов мышью",
+    "installation": "download",
+    "sha256": "68e6f4201c5de97b77929a7215c9552495696ca6a3bf3ae4eacc34e135f6cc8b"
+  },
+  {
+    "project": "pipez",
+    "source": "Modrinth",
+    "projectId": "iRmWy6ga",
+    "versionId": "BPGKb8pi",
+    "version": "neoforge-1.21.1-1.2.31",
+    "releaseType": "beta",
+    "required": [],
+    "file": {
+      "path": "mods/pipez-neoforge-1.21.1-1.2.31.jar",
+      "downloads": [
+        "https://cdn.modrinth.com/data/iRmWy6ga/versions/BPGKb8pi/pipez-neoforge-1.21.1-1.2.31.jar"
+      ],
+      "hashes": {
+        "sha512": "7291230b62104b73b04564d6d39ba18d11134a5713ee79242c7ae8885d07c4efb5f5d0ab75b8ff9aba3119ed8163d0c5488ad603a2db21b92dc35715b723ce5e",
+        "sha1": "a5671f7e8d38dfc092ace4091250e8f9e1245e1e"
+      },
+      "fileSize": 456599,
+      "env": {
+        "client": "required",
+        "server": "required"
+      }
+    },
+    "modIds": [
+      "pipez"
+    ],
+    "jarRequires": [
+      {
+        "modId": "neoforge",
+        "type": "required",
+        "versionRange": "[21.0.8-beta,)",
+        "ordering": "NONE",
+        "side": "BOTH"
+      },
+      {
+        "modId": "minecraft",
+        "type": "required",
+        "versionRange": "[1.21,1.21.1]",
+        "ordering": "NONE",
+        "side": "BOTH"
+      }
+    ],
+    "sourcePage": "https://modrinth.com/mod/pipez/version/BPGKb8pi",
+    "role": "Ранний транспорт предметов, жидкостей и FE",
+    "installation": "download",
+    "sha256": "9b37e922443ea3452daeacbfba4bcf69de07692183c4ee09f1d1e82c9fc5cc5f"
+  },
+  {
+    "project": "powah",
+    "source": "Modrinth",
+    "projectId": "KZO4S4DO",
+    "versionId": "1prWLuga",
+    "version": "6.2.10-neoforge",
+    "releaseType": "release",
+    "required": [
+      {
+        "project_id": "9s6osm5g",
+        "version_id": null
+      },
+      {
+        "project_id": "Ck4E7v7R",
+        "version_id": null
+      }
+    ],
+    "file": {
+      "path": "mods/Powah-6.2.10.jar",
+      "downloads": [
+        "https://cdn.modrinth.com/data/KZO4S4DO/versions/1prWLuga/Powah-6.2.10.jar"
+      ],
+      "hashes": {
+        "sha512": "41d616d3d944faaee2cde4d15b3fc35cdd154690169f43d8436e6432df50db90355ca5fef78bd0f7864d97d9a14039280c8fb78d8c3e1d407618c7ccff47d97f",
+        "sha1": "f134ab3e0ace3793abf93129e318eb817898a4e1"
+      },
+      "fileSize": 2737991,
+      "env": {
+        "client": "required",
+        "server": "required"
+      }
+    },
+    "modIds": [
+      "powah"
+    ],
+    "jarRequires": [
+      {
+        "modId": "neoforge",
+        "type": "REQUIRED",
+        "versionRange": "[21.1.1,)",
+        "ordering": "NONE",
+        "side": "BOTH"
+      },
+      {
+        "modId": "cloth_config",
+        "type": "REQUIRED",
+        "versionRange": "*",
+        "ordering": "NONE",
+        "side": "BOTH"
+      },
+      {
+        "modId": "guideme",
+        "type": "REQUIRED",
+        "versionRange": "[21.1.7,)",
+        "ordering": "NONE",
+        "side": "BOTH"
+      }
+    ],
+    "sourcePage": "https://modrinth.com/mod/powah/version/1prWLuga",
+    "role": "Стартовый углегенератор, солнечная энергия, накопители и кабели",
+    "installation": "download",
+    "sha256": "0e604a7356111c1dd44a00ea42fc1aa960d9faeb978261349df1138fcee4d0b4"
+  },
+  {
+    "project": "rhino",
+    "source": "Modrinth",
+    "projectId": "sk9knFPE",
+    "versionId": "cQ4POTah",
+    "version": "2101.2.7-build.85+Rhino-1.21",
+    "releaseType": "release",
+    "required": [],
+    "file": {
+      "path": "mods/rhino-2101.2.7-build.85.jar",
+      "downloads": [
+        "https://cdn.modrinth.com/data/sk9knFPE/versions/cQ4POTah/rhino-2101.2.7-build.85.jar"
+      ],
+      "hashes": {
+        "sha512": "0a6c7f4410281aeb03b815ec03487a8e80a4d3dae013d81282e447bf9c08144ef57318af614ea6d40b7d9a8c25031c557890ec792a5895a82467c1643116f693",
+        "sha1": "3c8d34c7efe9e42fc90506acbf9fc842d36f9a42"
+      },
+      "fileSize": 882075,
+      "env": {
+        "client": "required",
+        "server": "required"
+      }
+    },
+    "modIds": [
+      "rhino"
+    ],
+    "jarRequires": [],
+    "sourcePage": "https://modrinth.com/mod/rhino/version/cQ4POTah",
+    "role": "Выполнение JavaScript в KubeJS",
+    "installation": "download",
+    "sha256": "e0e9b0e78edd380440266c0f4ea8d489dac851ef075a4566a66a6dae2f7bbb66"
+  },
+  {
+    "project": "simple-backups",
+    "source": "Modrinth",
+    "projectId": "fzSKSXVK",
+    "versionId": "tHyCDNNH",
+    "version": "1.21-4.0.30",
+    "releaseType": "beta",
+    "required": [],
+    "file": {
+      "path": "mods/SimpleBackups-1.21-4.0.30.jar",
+      "downloads": [
+        "https://cdn.modrinth.com/data/fzSKSXVK/versions/tHyCDNNH/SimpleBackups-1.21-4.0.30.jar"
+      ],
+      "hashes": {
+        "sha1": "fd9c1374463d2802b119fb5865e43f280573cb4c",
+        "sha512": "a1a9953182cc6fd9e9c6047b75fdac673802a66a88c11644d7953705270ba299aa7db8b9ebec7086b655dbb15fbf69bf9b77ad47be251ed356ecb184fbd56dc9"
+      },
+      "fileSize": 70269,
+      "env": {
+        "client": "required",
+        "server": "required"
+      }
+    },
+    "modIds": [
+      "simplebackups"
+    ],
+    "jarRequires": [
+      {
+        "modId": "neoforge",
+        "type": "required",
+        "versionRange": "[21.1.115,)",
+        "ordering": "NONE",
+        "side": "BOTH"
+      },
+      {
+        "modId": "minecraft",
+        "type": "required",
+        "versionRange": "[1.21.1,)",
+        "ordering": "NONE",
+        "side": "BOTH"
+      }
+    ],
+    "sourcePage": "https://modrinth.com/mod/simple-backups/version/tHyCDNNH",
+    "role": "Резервное копирование миров",
+    "installation": "download",
+    "sha256": "0c322781b3c559f7d2c62ac87eb9d7ce459f3f3b5ab771a8794d009b42c729ec"
+  },
+  {
+    "project": "sky-worlds",
+    "source": "CurseForge",
+    "projectId": "1707484",
+    "versionId": "9001179",
+    "version": "0.2.1",
+    "releaseType": "release",
+    "required": [],
+    "file": {
+      "path": "mods/skyworlds0.2.1.jar",
+      "downloads": [
+        "https://edge.forgecdn.net/files/9001/179/skyworlds0.2.1.jar"
+      ],
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "fileSize": 414996,
+      "hashes": {
+        "sha1": "eb9022e881ba17263a389985c143c9473f2d145b",
+        "sha512": "66d0cbedc4116227c3858e27573eaf7f4c9d41714af623e1cef78810a1cb099897bb88c50a4632396538c227d974835c6001b0be76f04d13a980dd7d631b9433"
+      }
+    },
+    "modIds": [
+      "skyworlds"
+    ],
+    "jarRequires": [
+      {
+        "modId": "neoforge",
+        "type": "required",
+        "versionRange": "[21.1.235,)",
+        "ordering": "NONE",
+        "side": "BOTH"
+      },
+      {
+        "modId": "minecraft",
+        "type": "required",
+        "versionRange": "[1.21.1]",
+        "ordering": "NONE",
+        "side": "BOTH"
+      }
+    ],
+    "sourcePage": "https://www.curseforge.com/minecraft/mc-mods/sky-worlds/files/9001179",
+    "role": "Пустой тип мира и инструменты островов",
+    "installation": "download",
+    "sha256": "ce0f87abc6cb7887565c934b1336f044c8e49872521287394d41cfa265dc32b1"
+  },
+  {
+    "project": "storagedrawers",
+    "source": "Modrinth",
+    "projectId": "guitPqEi",
+    "versionId": "Z1qzOoMw",
+    "version": "1.21.1-13.10.0",
+    "releaseType": "beta",
+    "required": [],
+    "file": {
+      "path": "mods/StorageDrawers-neoforge-1.21.1-13.10.0.jar",
+      "downloads": [
+        "https://cdn.modrinth.com/data/guitPqEi/versions/Z1qzOoMw/StorageDrawers-neoforge-1.21.1-13.10.0.jar"
+      ],
+      "hashes": {
+        "sha512": "83194f5039a8f2fa36ebeff38738e4e60b195ca3252132318b3e426bcaf5ba20655d3b408461ac5ba64611ebbf77f77e23dd6f33c0525cfaba32a6e569c295ca",
+        "sha1": "d38d2708cb9abe751c82898c5f982047df506c31"
+      },
+      "fileSize": 1080475,
+      "env": {
+        "client": "required",
+        "server": "required"
+      }
+    },
+    "modIds": [
+      "storagedrawers"
+    ],
+    "jarRequires": [
+      {
+        "modId": "minecraft",
+        "type": "required",
+        "versionRange": "[1.21,1.21.1]",
+        "ordering": "NONE",
+        "side": "BOTH"
+      },
+      {
+        "modId": "neoforge",
+        "type": "required",
+        "versionRange": "[21.0.0,)",
+        "ordering": "NONE",
+        "side": "BOTH"
+      }
+    ],
+    "sourcePage": "https://modrinth.com/mod/storagedrawers/version/Z1qzOoMw",
+    "role": "Ранние склады для массовых ресурсов",
+    "installation": "download",
+    "sha256": "67a1e721f7ff925a92372cf31486c34c7ddd11b6772351d229bffd041e1512ec"
+  },
+  {
+    "project": "tycoon-calendar",
+    "source": "CurseForge",
+    "projectId": "1716429",
+    "versionId": "9119117",
+    "version": "0.1.3",
+    "releaseType": "release",
+    "required": [],
+    "file": {
+      "path": "mods/tycooncalendar0.1.3.jar",
+      "downloads": [
+        "https://edge.forgecdn.net/files/9119/117/tycooncalendar0.1.3.jar"
+      ],
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "fileSize": 73732,
+      "hashes": {
+        "sha1": "b2db48612949addd9a1c4693423fa1f928b03d4b",
+        "sha512": "99f7b43552b254103605c492308349a3027c9da00d5bf505276997d7f1299772bd568e6a2db4de7ded0fb16796f66fe5145852ccffff679c242333e382a5b0aa"
+      }
+    },
+    "modIds": [
+      "tycooncalendar"
+    ],
+    "jarRequires": [
+      {
+        "modId": "neoforge",
+        "type": "required",
+        "versionRange": "[21.1.235,)",
+        "ordering": "NONE",
+        "side": "BOTH"
+      },
+      {
+        "modId": "minecraft",
+        "type": "required",
+        "versionRange": "[1.21.1]",
+        "ordering": "NONE",
+        "side": "BOTH"
+      }
+    ],
+    "sourcePage": "https://www.curseforge.com/minecraft/mc-mods/tycoon-calendar/files/9119117",
+    "role": "Единая игровая дата для рынка",
+    "installation": "download",
+    "sha256": "7f20be1253757b86b28b88695c6eced65f0507db93f8b1c59b67fc01baab235f"
+  },
+  {
+    "project": "tycoon-exchange",
+    "source": "CurseForge",
+    "projectId": "1756361",
+    "versionId": "9270242",
+    "version": "0.2.0",
+    "releaseType": "beta",
+    "required": [],
+    "file": {
+      "path": "mods/tycoonexchange0.2.0.jar",
+      "downloads": [
+        "https://edge.forgecdn.net/files/9270/242/tycoonexchange0.2.0.jar"
+      ],
+      "env": {
+        "client": "required",
+        "server": "required"
+      },
+      "fileSize": 2872246,
+      "hashes": {
+        "sha1": "4cda27d78356eae9689825a46fb3e68753f99b56",
+        "sha512": "17bccdcc85468fb8643e72866b736157d91db823cf8dc92c555351d59dd0a1d42b09c77aef7fcbd803b1b741fc8aee88b4a857eac1f2c7f58d1af7957d670ad4"
+      }
+    },
+    "modIds": [
+      "tycoonexchange"
+    ],
+    "jarRequires": [
+      {
+        "modId": "neoforge",
+        "type": "required",
+        "versionRange": "[21.1.235,)",
+        "ordering": "NONE",
+        "side": "BOTH"
+      },
+      {
+        "modId": "minecraft",
+        "type": "required",
+        "versionRange": "[1.21.1]",
+        "ordering": "NONE",
+        "side": "BOTH"
+      },
+      {
+        "modId": "money",
+        "type": "required",
+        "versionRange": "[0.4.0,)",
+        "ordering": "AFTER",
+        "side": "BOTH"
+      },
+      {
+        "modId": "tycooncalendar",
+        "type": "required",
+        "versionRange": "[0.1.2,)",
+        "ordering": "AFTER",
+        "side": "BOTH"
+      }
+    ],
+    "sourcePage": "https://www.curseforge.com/minecraft/mc-mods/tycoon-exchange/files/9270242",
+    "role": "Grid Connection и переменные тарифы",
+    "installation": "download",
+    "sha256": "ff3e9310066ddd8a9d5af7b6cf62ba385bfed3b95998bf69f2901523908adcb9"
+  },
+  {
+    "project": "energy-grid-export",
+    "source": "Local",
+    "projectId": "energogrid_export",
+    "versionId": "0.3.0",
+    "version": "0.3.0",
+    "releaseType": "release",
+    "modIds": [
+      "energogrid_export"
+    ],
+    "required": [],
+    "jarRequires": [
+      {
+        "modId": "money",
+        "versionRange": "[0.4.1]"
+      },
+      {
+        "modId": "neoforge",
+        "versionRange": "[21.1.268,21.2)"
+      },
+      {
+        "modId": "minecraft",
+        "versionRange": "[1.21.1]"
+      }
+    ],
+    "file": {
+      "path": "mods/energy-grid-export-0.3.0.jar",
+      "fileSize": 7945,
+      "downloads": [],
+      "hashes": {
+        "sha1": "bcf3632bc40c51cfed077746c104f96bcaa42a89",
+        "sha512": "8a00ff2538893bbd984e41dd8f5edc32a2ef07d486c28b7bccfe1a9aa8883e91b110817cfa48778b941da34a15239a642c1387a6c8b992d26b82bc78999e1586"
+      },
+      "env": {
+        "client": "required",
+        "server": "required"
+      }
+    },
+    "sourcePage": "./addon",
+    "role": "Продажа FE с островного счётчика, закупка угля и общий баланс Money",
+    "installation": "embedded",
+    "sha256": "51e00fc0068e7e9449594b7ac4830e241269666b6282192700f4c1ef59a51d11"
+  }
+]

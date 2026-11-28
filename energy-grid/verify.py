@@ -1,67 +1,67 @@
-"""Validate the built prototype against its fixed starter economy."""
+"""Verify a built installer, its exact dependency lock and optional staged JARs."""
+import argparse
 import gzip
+import hashlib
+import io
 import json
 import re
+from pathlib import Path
 from zipfile import ZipFile
 
-from build import OUTPUT, SOURCE, level_dat, main
+from build import ADDON_NAME, LOCK_FILE, MINECRAFT, NEOFORGE, OUTPUT, SOURCE, level_dat, main
 
 
-def verify():
+def verify(staged_mods=None):
     main()
-    archive_path = OUTPUT / "Energy-Grid-Skyblock-RU-Prototype.zip"
-    modrinth_path = OUTPUT / "Energy-Grid-Skyblock-RU.mrpack"
-    baseline = archive_path.read_bytes()
-    modrinth_baseline = modrinth_path.read_bytes()
+    pack_path = OUTPUT / "Energy-Grid-Skyblock-RU.mrpack"
+    baseline = pack_path.read_bytes()
     main()
-    assert archive_path.read_bytes() == baseline
-    assert modrinth_path.read_bytes() == modrinth_baseline
-    with ZipFile(archive_path) as archive, ZipFile(modrinth_path) as modrinth:
-        assert archive.testzip() is None
-        assert modrinth.testzip() is None
-        manifest = json.loads(modrinth.read("modrinth.index.json"))
+    assert pack_path.read_bytes() == baseline
+    locked = json.loads(LOCK_FILE.read_text(encoding="utf-8"))
+    with ZipFile(pack_path) as pack:
+        assert pack.testzip() is None
+        manifest = json.loads(pack.read("modrinth.index.json"))
         assert (manifest["formatVersion"], manifest["game"]) == (1, "minecraft")
-        assert manifest["dependencies"] == {"minecraft": "1.21.1", "neoforge": "21.1.172"}
-        assert manifest["files"] == []
-        expected_overrides = {
-            "overrides/" + path.removeprefix(".minecraft/"): archive.read(path)
-            for path in archive.namelist()
-            if path.startswith(".minecraft/")
-        }
-        assert set(modrinth.namelist()) == {"modrinth.index.json", *expected_overrides}
-        for path, data in expected_overrides.items():
-            assert modrinth.read(path) == data
-        assert [item["version"] for item in json.loads(
-            archive.read("mmc-pack.json")
-        )["components"]] == ["1.21.1", "21.1.172"]
-        assert archive.read(".minecraft/saves/Energy-Grid/level.dat") == level_dat()
-        raw = gzip.decompress(level_dat())
-        assert raw.startswith(b"\x0a\x00\x00\x0a\x00\x04Data")
-        assert b"minecraft:the_void" in raw and b"file/energy-grid" in raw
-        assert b"lang:ru_ru" in archive.read(".minecraft/options.txt")
-        assert archive.read(".minecraft/resourcepacks/Energy-Grid-RU.zip") == (
+        assert manifest["dependencies"] == {"minecraft": MINECRAFT, "neoforge": NEOFORGE}
+        assert manifest["files"] == [mod["file"] for mod in locked if mod["source"] != "Local"]
+        paths = [f["path"] for f in manifest["files"]]
+        assert len(paths) == len(set(paths)) and len(paths) > 0
+        for file in manifest["files"]:
+            assert file["path"].startswith("mods/") and ".." not in Path(file["path"]).parts
+            assert all(url.startswith("https://") for url in file["downloads"])
+            assert re.fullmatch(r"[0-9a-f]{40}", file["hashes"]["sha1"])
+            assert re.fullmatch(r"[0-9a-f]{128}", file["hashes"]["sha512"])
+            if staged_mods:
+                local = (staged_mods / Path(file["path"]).name).read_bytes()
+                assert len(local) == file["fileSize"]
+                assert all(hashlib.new(name, local).hexdigest() == value
+                           for name, value in file["hashes"].items()), file["path"]
+        assert pack.read("overrides/saves/Energy-Grid/level.dat") == level_dat()
+        assert b"minecraft:the_void" in gzip.decompress(level_dat())
+        assert b"lang:ru_ru" in pack.read("overrides/options.txt")
+        assert pack.read("overrides/resourcepacks/Energy-Grid-RU.zip") == (
             OUTPUT / "Energy-Grid-RU.zip"
         ).read_bytes()
-    functions = {
-        path.stem: path.read_text()
-        for path in SOURCE.joinpath("data/energogrid/function").glob("*.mcfunction")
-    }
-    for function in functions.values():
-        for target in re.findall(r"\bfunction energogrid:(\w+)", function):
+        addon_bytes = pack.read("overrides/mods/" + ADDON_NAME)
+        with ZipFile(io.BytesIO(addon_bytes)) as addon:
+            assert addon.testzip() is None
+            assert "dev/energogrid/EnergyGridExport.class" in addon.namelist()
+            assert b'modId="energogrid_export"' in addon.read("META-INF/neoforge.mods.toml")
+        assert "overrides/config/ftbquests/quests/chapters/first_sale.snbt" in pack.namelist()
+
+    functions = {path.stem: path.read_text(encoding="utf-8") for path in
+                 SOURCE.joinpath("data/energogrid/function").glob("*.mcfunction")}
+    for text in functions.values():
+        for target in re.findall(r"\bfunction energogrid:(\w+)", text):
             assert target in functions, target
-    book = SOURCE.joinpath("data/energogrid/loot_table/terminal_book.json").read_text()
-    assert "written_book_content" in book and "loot energogrid:terminal_book" in functions["give_menu"]
+    book = SOURCE.joinpath("data/energogrid/loot_table/terminal_book.json").read_text(encoding="utf-8")
     routes = set(re.findall(r"eg matches (\d+) run function", functions["terminal"]))
     choices = set(re.findall(r"/trigger eg set (\d+)", "".join(functions.values()) + book))
     assert choices <= (routes | {"1"})
-    ticks = int(re.search(r"eg_run (\d+)$", functions["start"], re.M)[1])
-    rate = int(re.search(r"#rate eg_state (\d+)$", functions["load"], re.M)[1])
-    payout = int(re.search(r"add @s eg_bank (\d+)", functions["pay"])[1])
-    cost = int(re.search(r"remove @s eg_bank (\d+)", functions["buy"])[1])
-    assert ticks * rate == payout * 4000 == 20000
-    assert payout - cost == 2 and 2 * payout - cost == 7
-    print("OK: reproducible ZIP and MRPACK, overrides, menu routes, 5 → 2 → 7")
+    print(f"OK: reproducible MRPACK, {len(paths)} downloads, custom NeoForge JAR and first-sale quest")
 
 
 if __name__ == "__main__":
-    verify()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--staged-mods", type=Path)
+    verify(parser.parse_args().staged_mods)

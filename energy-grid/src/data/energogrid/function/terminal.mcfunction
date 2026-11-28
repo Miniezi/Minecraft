@@ -1,5 +1,4 @@
 execute in minecraft:overworld positioned 0 81 0 unless entity @s[distance=..24] run return run tellraw @s {"text":"Подойдите ближе к стартовой площадке, чтобы открыть этот раздел.","color":"yellow"}
-execute in minecraft:overworld positioned 0 81 0 if score @s eg matches 2 run function energogrid:start
 execute in minecraft:overworld positioned 0 81 0 if score @s eg matches 3 run function energogrid:buy
 execute in minecraft:overworld positioned 0 81 0 if score @s eg matches 4 run function energogrid:recover
 execute in minecraft:overworld positioned 0 81 0 if score @s eg matches 5 run function energogrid:help

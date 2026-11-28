@@ -1,0 +1,11 @@
+[startup]
+placeSkyblockIsland = false
+defaultToSkyWorldType = false
+
+[skyblock]
+islandCommands = false
+zoneProtection = "NEVER"
+leaderboards = false
+seasonCountdown = false
+discordInvite = ""
+autoReset = false
