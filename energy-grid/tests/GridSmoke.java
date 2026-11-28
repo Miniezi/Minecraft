@@ -34,6 +34,15 @@ public class GridSmoke {
                         UUID.fromString("afb8fe0f-88af-4702-8e57-86e630739906"), "GridProbe"));
                 tester.setPos(0.5, 81, 0.5);
                 world.addNewPlayer(tester);
+                if (java.nio.file.Files.exists(java.nio.file.Path.of("first-pass"))) {
+                    double bal = MoneyAPI.balance(tester);
+                    var box=(net.minecraft.world.level.block.entity.ChestBlockEntity)world.getBlockEntity(new BlockPos(-2,81,2));
+                    if (bal!=MoneyAPI.dollars(7) || box.countItem(Items.ICE)!=3 || box.countItem(Items.COAL)!=8)
+                        throw new IllegalStateException("restart: "+bal+" ice "+box.countItem(Items.ICE)+" coal "+box.countItem(Items.COAL));
+                    System.out.println("RESTART PASS: balance $7, coal 8, ice 3");
+                    tester.discard(); server.halt(false);return;
+                }
+
                 server.getCommands().performPrefixedCommand(source, "function energogrid:island");
                 server.getCommands().performPrefixedCommand(tester.createCommandSourceStack().withPermission(2),
                         "function energogrid:player");
@@ -81,6 +90,25 @@ public class GridSmoke {
                 server.getCommands().performPrefixedCommand(src,"energogrid_internal sell_surplus");
                 if (MoneyAPI.balance(tester)!=MoneyAPI.dollars(8)) throw new IllegalStateException("Protected stock");
                 System.out.println("CAMPAIGN PASS: two FE cycles 12+12, manual fuel 3, auto delivery 5 for 15, reserve 6, surplus 8 for 2, ending balance 8");
+
+                // Isolate warehouse edge cases from generation.
+                server.getCommands().performPrefixedCommand(source,"setblock 2 81 0 air");
+                MoneyAPI.pay(tester,MoneyAPI.dollars(32),"fixture");
+                server.getCommands().performPrefixedCommand(src,"scoreboard players set @s eg_cap 2");
+                server.getCommands().performPrefixedCommand(src,"energogrid_internal deliver");
+                if (MoneyAPI.balance(tester)!=MoneyAPI.dollars(40)) throw new IllegalStateException("Price cap");
+                for(int i=0;i<chest.getContainerSize();i++) chest.setItem(i,new ItemStack(Items.COBBLESTONE,64));
+                server.getCommands().performPrefixedCommand(src,"scoreboard players set @s eg_cap 5");
+                server.getCommands().performPrefixedCommand(src,"energogrid_internal deliver");
+                if (MoneyAPI.balance(tester)!=MoneyAPI.dollars(40)) throw new IllegalStateException("Full stock");
+                chest.setItem(0,new ItemStack(Items.COAL,2));
+                chest.setItem(1,ItemStack.EMPTY);
+                server.getCommands().performPrefixedCommand(src,"scoreboard players set @s eg_ice 1");
+                server.getCommands().performPrefixedCommand(src,"energogrid_internal deliver");
+                // 6 coal for $18, then 3 ice for $15, leaving $7.
+                if (chest.countItem(Items.COAL)!=8 || chest.countItem(Items.ICE)!=3 || MoneyAPI.balance(tester)!=MoneyAPI.dollars(7)) throw new IllegalStateException("Two rules");
+                System.out.println("WAREHOUSE PASS: price cap, full chest, priority and reserve: 6 coal then 3 ice, $7 remaining");
+                try {java.nio.file.Files.createFile(java.nio.file.Path.of("first-pass"));} catch(java.io.IOException ex){throw new RuntimeException(ex);}
                 tester.discard();server.halt(false);
             }
         } catch (RuntimeException ex) {
