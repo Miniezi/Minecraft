@@ -10,7 +10,7 @@ SOURCE = Path(__file__).resolve().parent / "src"
 OUTPUT = Path(__file__).resolve().parent.parent / "dist"
 MINECRAFT = "1.21.1"
 NEOFORGE = "21.1.268"
-ADDON_NAME = "energy-grid-export-0.3.0.jar"
+ADDON_NAME = "energy-grid-export-0.4.0.jar"
 ADDON = SOURCE.parent / "addon" / "build" / "libs" / ADDON_NAME
 LOCK_FILE = SOURCE.parent / "mods.lock.json"
 PACK_NAME = "Энергосеть — Небесный контракт"
@@ -137,7 +137,7 @@ def main():
     index = {
         "formatVersion": 1,
         "game": "minecraft",
-        "versionId": "0.3.0",
+        "versionId": "0.4.0",
         "name": PACK_NAME,
         "summary": "SkyBlock, Forge Energy, промышленность и дата-центр",
         "files": [mod["file"] for mod in locked if mod["source"] != "Local"],
@@ -148,6 +148,12 @@ def main():
         if path.is_file():
             modrinth_files[f"overrides/{path.relative_to(SOURCE).as_posix()}"] = path.read_bytes()
     modrinth_files[f"overrides/mods/{ADDON_NAME}"] = ADDON.read_bytes()
+    quest_prefix = "overrides/config/ftbquests/"
+    quest_files = {path.removeprefix("overrides/"): data for path, data in modrinth_files.items()
+                   if path.startswith(quest_prefix)}
+    (OUTPUT / "Energy-Grid-Quests-RU.zip").write_bytes(archive(quest_files))
+    for doc in ("MODLIST.md", "mods.lock.json", "README.md", "BALANCE.md"):
+        modrinth_files["overrides/energy-grid/" + doc] = (SOURCE.parent / doc).read_bytes()
     (OUTPUT / resource_name).write_bytes(resource_pack)
     modrinth_files["modrinth.index.json"] = json_bytes(index)
     (OUTPUT / "Energy-Grid-Skyblock-RU.mrpack").write_bytes(archive(modrinth_files))

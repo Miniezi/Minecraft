@@ -3,7 +3,7 @@ plugins {
     id 'net.neoforged.moddev' version '2.0.107'
 }
 
-version = '0.3.0'
+version = '0.4.0'
 group = 'dev.energogrid'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
@@ -34,4 +34,40 @@ repositories {
 
 dependencies {
     compileOnly 'curseforge:money0.4.1:0.4.1'
+}
+
+repositories {
+    ivy {
+        url = 'https://cdn.modrinth.com/data'
+        patternLayout { artifact '[organisation]/versions/[revision]/[artifact].[ext]' }
+        metadataSources { artifact() }
+        content { includeGroup 'Ce6I4WUE'; includeGroup 'OFVYKsAk' }
+    }
+}
+
+dependencies {
+    def staged = providers.environmentVariable('ENERGY_GRID_MODS')
+    if (staged.isPresent()) {
+        compileOnly files("${staged.get()}/Mekanism-1.21.1-10.7.19.85.jar",
+                          "${staged.get()}/MekanismGenerators-1.21.1-10.7.19.85.jar")
+    } else {
+        compileOnly 'Ce6I4WUE:Mekanism-1.21.1-10.7.19.85:5KzzycBT'
+        compileOnly 'OFVYKsAk:MekanismGenerators-1.21.1-10.7.19.85:a6gl7srE'
+    }
+}
+
+repositories {
+    ivy {
+        url = 'https://edge.forgecdn.net'
+        patternLayout { artifact 'files/9248/861/[artifact].[ext]' }
+        metadataSources { artifact() }
+        content { includeModule('datacenter', 'datacenter2.1.3') }
+    }
+}
+dependencies {
+    if (providers.environmentVariable('ENERGY_GRID_MODS').isPresent()) {
+        compileOnly files("${System.getenv('ENERGY_GRID_MODS')}/datacenter2.1.3.jar")
+    } else {
+        compileOnly 'datacenter:datacenter2.1.3:2.1.3'
+    }
 }

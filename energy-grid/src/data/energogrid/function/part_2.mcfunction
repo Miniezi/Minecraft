@@ -1,0 +1,1 @@
+energogrid_internal goods "datacenter:amp_piston_athlon_xp_2500plus_socket_a_barton_2003" 1 12

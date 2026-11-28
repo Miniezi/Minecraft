@@ -1,4 +1,4 @@
-# Моды «Энергосети» 0.3.0
+# Моды «Энергосети» 0.4.0
 
 Minecraft 1.21.1, NeoForge 21.1.268, Java 21. В архиве 27 записей для скачивания и собственный JAR. Prism получает файлы с официальных CDN Modrinth и CurseForge и сверяет SHA-512. Внешние JAR не вложены в архив. Для официальных ссылок CurseForge и собственного JAR Prism 11.1 может показать окно проверки источников.
 
@@ -31,7 +31,7 @@ Minecraft 1.21.1, NeoForge 21.1.268, Java 21. В архиве 27 записей 
 | Storage Drawers | Ранние склады для массовых ресурсов | 1.21.1-13.10.0 | [Modrinth](https://modrinth.com/mod/storagedrawers/version/Z1qzOoMw) | `guitPqEi` / `Z1qzOoMw` | `67a1e721f7ff925a92372cf31486c34c7ddd11b6772351d229bffd041e1512ec` | Скачивает Prism |
 | Tycoon Calendar | Единая игровая дата для рынка | 0.1.3 | [CurseForge](https://www.curseforge.com/minecraft/mc-mods/tycoon-calendar/files/9119117) | `1716429` / `9119117` | `7f20be1253757b86b28b88695c6eced65f0507db93f8b1c59b67fc01baab235f` | Скачивает Prism |
 | Tycoon Exchange | Grid Connection и переменные тарифы | 0.2.0 | [CurseForge](https://www.curseforge.com/minecraft/mc-mods/tycoon-exchange/files/9270242) | `1756361` / `9270242` | `ff3e9310066ddd8a9d5af7b6cf62ba385bfed3b95998bf69f2901523908adcb9` | Скачивает Prism |
-| Энергосеть: экспорт FE | Продажа FE с островного счётчика, закупка угля и общий баланс Money | 0.3.0 | [Исходники сборки](./addon) | `energogrid_export` / `0.3.0` | `51e00fc0068e7e9449594b7ac4830e241269666b6282192700f4c1ef59a51d11` | Из архива |
+| Энергосеть: экспорт FE | Экспорт FE, тарифы и резерв, снабжение, контракты стойки, финансовый журнал и приёмка энергетики | 0.4.0 | [Исходники сборки](./addon) | `energogrid_export` / `0.4.0` | `f511fd3567ca47d4230d6a6209394556181208bf2f5a04ca9ac36c289436b43b` | Из архива |
 
 ## Замены и отложенные кандидаты
 

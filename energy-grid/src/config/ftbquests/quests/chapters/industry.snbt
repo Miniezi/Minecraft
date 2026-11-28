@@ -1,0 +1,122 @@
+{
+  "id": "6AC0E5D001000070",
+  "filename": "industry",
+  "group": "",
+  "order_index": 6,
+  "icon": {
+    "id": "mekanismgenerators:wind_generator"
+  },
+  "quests": [
+    {
+      "id": "6AC0E60000000081",
+      "x": 0.0,
+      "y": 0.0,
+      "dependencies": [
+        "6AC0E60000000011"
+      ],
+      "tasks": [
+        {
+          "id": "6AC0E60000000082",
+          "type": "item",
+          "item": {
+            "id": "mekanismgenerators:wind_generator",
+            "count": 1
+          }
+        }
+      ],
+      "rewards": [
+        {
+          "id": "6AC0E60000000083",
+          "type": "item",
+          "item": {
+            "id": "powah:energy_cable_starter",
+            "count": 1
+          },
+          "count": 4
+        }
+      ]
+    },
+    {
+      "id": "6AC0E60000000091",
+      "x": 2.0,
+      "y": 0.0,
+      "dependencies": [
+        "6AC0E60000000071",
+        "6AC0E60000000081"
+      ],
+      "tasks": [
+        {
+          "id": "6AC0E60000000092",
+          "type": "item",
+          "item": {
+            "id": "mekanism:pressurized_reaction_chamber",
+            "count": 1
+          }
+        }
+      ],
+      "rewards": [
+        {
+          "id": "6AC0E60000000093",
+          "type": "item",
+          "item": {
+            "id": "mekanism:ingot_osmium",
+            "count": 1
+          },
+          "count": 4
+        }
+      ]
+    },
+    {
+      "id": "6AC0E69900000101",
+      "x": 0.0,
+      "y": 2.0,
+      "dependencies": [
+        "6AC0E60000000011"
+      ],
+      "tasks": [
+        {
+          "id": "6AC0E69900000102",
+          "type": "advancement",
+          "advancement": "immersiveengineering:main/place_windmill"
+        }
+      ],
+      "rewards": [
+        {
+          "id": "6AC0E69900000103",
+          "type": "item",
+          "item": {
+            "id": "minecraft:copper_ingot",
+            "count": 1
+          },
+          "count": 4
+        }
+      ]
+    },
+    {
+      "id": "6AC0E69900000201",
+      "x": 2.0,
+      "y": 2.0,
+      "dependencies": [
+        "6AC0E60000000011"
+      ],
+      "tasks": [
+        {
+          "id": "6AC0E69900000202",
+          "type": "advancement",
+          "advancement": "immersiveengineering:multiblocks/mb_dieselgen"
+        }
+      ],
+      "rewards": [
+        {
+          "id": "6AC0E69900000203",
+          "type": "item",
+          "item": {
+            "id": "minecraft:copper_ingot",
+            "count": 1
+          },
+          "count": 4
+        }
+      ]
+    }
+  ]
+}

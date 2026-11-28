@@ -43,6 +43,15 @@ def verify(staged_mods=None):
             OUTPUT / "Energy-Grid-RU.zip"
         ).read_bytes()
         addon_bytes = pack.read("overrides/mods/" + ADDON_NAME)
+        local = next(mod for mod in locked if mod["source"] == "Local")
+        assert hashlib.sha256(addon_bytes).hexdigest() == local["sha256"]
+        assert len(addon_bytes) == local["file"]["fileSize"]
+        campaign = [json.loads(pack.read(name)) for name in pack.namelist()
+                    if "/quests/chapters/" in name]
+        quests = [q for chapter in campaign for q in chapter["quests"]]
+        ids = {q["id"] for q in quests}
+        assert len(campaign) == 10 and len(quests) == len(ids) == 19
+        assert all(q["rewards"] and set(q.get("dependencies", [])) <= ids for q in quests)
         with ZipFile(io.BytesIO(addon_bytes)) as addon:
             assert addon.testzip() is None
             assert "dev/energogrid/EnergyGridExport.class" in addon.namelist()
@@ -58,7 +67,7 @@ def verify(staged_mods=None):
     routes = set(re.findall(r"eg matches (\d+) run function", functions["terminal"]))
     choices = set(re.findall(r"/trigger eg set (\d+)", "".join(functions.values()) + book))
     assert choices <= (routes | {"1"})
-    print(f"OK: reproducible MRPACK, {len(paths)} downloads, custom NeoForge JAR and first-sale quest")
+    print(f"OK: reproducible MRPACK, {len(paths)} downloads, custom NeoForge JAR and 19 campaign quests")
 
 
 if __name__ == "__main__":

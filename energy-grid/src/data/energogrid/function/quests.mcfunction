@@ -1,0 +1,1 @@
+ftbquests open_book

@@ -1,24 +1,35 @@
 {
-  id: "6AC0E5D001000010"
-  filename: "first_sale"
-  group: ""
-  order_index: 0
-  title: "Первый платёж"
-  icon: { id: "powah:furnator_starter" }
-  quests: [{
-    id: "6AC0E5D001000011"
-    x: 0.0d
-    y: 0.0d
-    title: "Первая продажа FE"
-    description: [
-      "Поставьте начальный углегенератор Powah! на золотую метку."
-      "Проложите три начальных энергокабеля по оранжевым меткам до магнетита. Добавьте уголь в топливный слот."
-      "Квест завершится после первого зачисления $1 на счёт Money за 4 000 FE."
-    ]
-    tasks: [{
-      id: "6AC0E5D001000012"
-      type: "advancement"
-      advancement: "energogrid:first_sale"
-    }]
-  }]
+  "id": "6AC0E5D001000010",
+  "filename": "first_sale",
+  "group": "",
+  "order_index": 0,
+  "icon": {
+    "id": "powah:furnator_starter"
+  },
+  "quests": [
+    {
+      "id": "6AC0E5D001000011",
+      "x": 0.0,
+      "y": 0.0,
+      "dependencies": [],
+      "tasks": [
+        {
+          "id": "6AC0E5D001000012",
+          "type": "advancement",
+          "advancement": "energogrid:first_sale"
+        }
+      ],
+      "rewards": [
+        {
+          "id": "6AC0E5D001000013",
+          "type": "item",
+          "item": {
+            "id": "minecraft:torch",
+            "count": 1
+          },
+          "count": 8
+        }
+      ]
+    }
+  ]
 }

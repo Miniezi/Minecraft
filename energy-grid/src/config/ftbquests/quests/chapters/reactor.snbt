@@ -1,0 +1,89 @@
+{
+  "id": "6AC0E5D001000080",
+  "filename": "reactor",
+  "group": "",
+  "order_index": 7,
+  "icon": {
+    "id": "mekanismgenerators:fission_reactor_casing"
+  },
+  "quests": [
+    {
+      "id": "6AC0E600000000A1",
+      "x": 0.0,
+      "y": 0.0,
+      "dependencies": [
+        "6AC0E60000000091"
+      ],
+      "tasks": [
+        {
+          "id": "6AC0E600000000A2",
+          "type": "advancement",
+          "advancement": "energogrid:fission"
+        }
+      ],
+      "rewards": [
+        {
+          "id": "6AC0E600000000A3",
+          "type": "item",
+          "item": {
+            "id": "mekanism:ingot_steel",
+            "count": 1
+          },
+          "count": 4
+        }
+      ]
+    },
+    {
+      "id": "6AC0E600000000B1",
+      "x": 2.0,
+      "y": 0.0,
+      "dependencies": [
+        "6AC0E600000000A1"
+      ],
+      "tasks": [
+        {
+          "id": "6AC0E600000000B2",
+          "type": "advancement",
+          "advancement": "energogrid:turbine"
+        }
+      ],
+      "rewards": [
+        {
+          "id": "6AC0E600000000B3",
+          "type": "item",
+          "item": {
+            "id": "mekanism:ingot_steel",
+            "count": 1
+          },
+          "count": 4
+        }
+      ]
+    },
+    {
+      "id": "6AC0E69900000001",
+      "x": 4.0,
+      "y": 0.0,
+      "dependencies": [
+        "6AC0E600000000B1"
+      ],
+      "tasks": [
+        {
+          "id": "6AC0E69900000002",
+          "type": "advancement",
+          "advancement": "energogrid:fusion"
+        }
+      ],
+      "rewards": [
+        {
+          "id": "6AC0E69900000003",
+          "type": "item",
+          "item": {
+            "id": "minecraft:diamond",
+            "count": 1
+          },
+          "count": 4
+        }
+      ]
+    }
+  ]
+}

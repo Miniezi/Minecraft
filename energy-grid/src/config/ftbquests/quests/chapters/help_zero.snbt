@@ -1,0 +1,34 @@
+{
+  "id": "6AC0E5D0010000A0",
+  "filename": "help_zero",
+  "group": "",
+  "order_index": 9,
+  "icon": {
+    "id": "minecraft:book"
+  },
+  "quests": [
+    {
+      "id": "6AC0E600000000D1",
+      "x": 0.0,
+      "y": 0.0,
+      "dependencies": [],
+      "tasks": [
+        {
+          "id": "6AC0E600000000D2",
+          "type": "checkmark"
+        }
+      ],
+      "rewards": [
+        {
+          "id": "6AC0E600000000D3",
+          "type": "item",
+          "item": {
+            "id": "minecraft:torch",
+            "count": 1
+          },
+          "count": 2
+        }
+      ]
+    }
+  ]
+}

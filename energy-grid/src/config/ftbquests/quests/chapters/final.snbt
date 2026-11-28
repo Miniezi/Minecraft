@@ -1,0 +1,40 @@
+{
+  "id": "6AC0E5D001000090",
+  "filename": "final",
+  "group": "",
+  "order_index": 8,
+  "icon": {
+    "id": "minecraft:nether_star"
+  },
+  "quests": [
+    {
+      "id": "6AC0E600000000C1",
+      "x": 0.0,
+      "y": 0.0,
+      "dependencies": [
+        "6AC0E60000000021",
+        "6AC0E60000000041",
+        "6AC0E60000000061",
+        "6AC0E600000000B1"
+      ],
+      "tasks": [
+        {
+          "id": "6AC0E600000000C2",
+          "type": "advancement",
+          "advancement": "energogrid:company"
+        }
+      ],
+      "rewards": [
+        {
+          "id": "6AC0E600000000C3",
+          "type": "item",
+          "item": {
+            "id": "minecraft:nether_star",
+            "count": 1
+          },
+          "count": 1
+        }
+      ]
+    }
+  ]
+}

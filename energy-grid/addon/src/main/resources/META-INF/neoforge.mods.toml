@@ -4,7 +4,7 @@ license="All Rights Reserved"
 
 [[mods]]
 modId="energogrid_export"
-version="0.3.0"
+version="0.4.0"
 displayName="Энергосеть: экспорт FE"
 description="Принимает Forge Energy на счётчике стартового острова и начисляет монеты."
 
@@ -26,5 +26,26 @@ side="BOTH"
 modId="money"
 type="required"
 versionRange="[0.4.1]"
+ordering="AFTER"
+side="BOTH"
+
+[[dependencies.energogrid_export]]
+modId="mekanism"
+type="required"
+versionRange="[10.7.19,10.8)"
+ordering="AFTER"
+side="BOTH"
+
+[[dependencies.energogrid_export]]
+modId="mekanismgenerators"
+type="required"
+versionRange="[10.7.19,10.8)"
+ordering="AFTER"
+side="BOTH"
+
+[[dependencies.energogrid_export]]
+modId="datacenter"
+type="required"
+versionRange="[2.1.3]"
 ordering="AFTER"
 side="BOTH"

@@ -1,0 +1,118 @@
+{
+  "id": "6AC0E5D001000050",
+  "filename": "server",
+  "group": "",
+  "order_index": 4,
+  "icon": {
+    "id": "datacenter:hosting_rack"
+  },
+  "quests": [
+    {
+      "id": "6AC0E60000000051",
+      "x": 0.0,
+      "y": 0.0,
+      "dependencies": [
+        "6AC0E60000000011"
+      ],
+      "tasks": [
+        {
+          "id": "6AC0E60000000052",
+          "type": "item",
+          "item": {
+            "id": "datacenter:hosting_rack",
+            "count": 1
+          }
+        }
+      ],
+      "rewards": [
+        {
+          "id": "6AC0E60000000053",
+          "type": "item",
+          "item": {
+            "id": "datacenter:switch",
+            "count": 1
+          },
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "6AC0E60000000061",
+      "x": 2.0,
+      "y": 0.0,
+      "dependencies": [
+        "6AC0E60000000051"
+      ],
+      "tasks": [
+        {
+          "id": "6AC0E60000000062",
+          "type": "advancement",
+          "advancement": "energogrid:hosting"
+        }
+      ],
+      "rewards": [
+        {
+          "id": "6AC0E60000000063",
+          "type": "item",
+          "item": {
+            "id": "minecraft:gold_ingot",
+            "count": 1
+          },
+          "count": 2
+        }
+      ]
+    },
+    {
+      "id": "6AC0EF9900000021",
+      "x": 4.0,
+      "y": 0.0,
+      "dependencies": [
+        "6AC0E60000000051"
+      ],
+      "tasks": [
+        {
+          "id": "6AC0EF9900000022",
+          "type": "advancement",
+          "advancement": "energogrid:storage"
+        }
+      ],
+      "rewards": [
+        {
+          "id": "6AC0EF9900000023",
+          "type": "item",
+          "item": {
+            "id": "minecraft:iron_ingot",
+            "count": 1
+          },
+          "count": 4
+        }
+      ]
+    },
+    {
+      "id": "6AC0EF9900000031",
+      "x": 4.0,
+      "y": 2.0,
+      "dependencies": [
+        "6AC0E60000000051"
+      ],
+      "tasks": [
+        {
+          "id": "6AC0EF9900000032",
+          "type": "advancement",
+          "advancement": "energogrid:compute"
+        }
+      ],
+      "rewards": [
+        {
+          "id": "6AC0EF9900000033",
+          "type": "item",
+          "item": {
+            "id": "minecraft:iron_ingot",
+            "count": 1
+          },
+          "count": 4
+        }
+      ]
+    }
+  ]
+}

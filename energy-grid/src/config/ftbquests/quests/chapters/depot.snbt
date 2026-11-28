@@ -1,0 +1,37 @@
+{
+  "id": "6AC0E5D001000030",
+  "filename": "depot",
+  "group": "",
+  "order_index": 2,
+  "icon": {
+    "id": "pipez:item_pipe"
+  },
+  "quests": [
+    {
+      "id": "6AC0E60000000021",
+      "x": 0.0,
+      "y": 0.0,
+      "dependencies": [
+        "6AC0E60000000011"
+      ],
+      "tasks": [
+        {
+          "id": "6AC0E60000000022",
+          "type": "advancement",
+          "advancement": "energogrid:delivery"
+        }
+      ],
+      "rewards": [
+        {
+          "id": "6AC0E60000000023",
+          "type": "item",
+          "item": {
+            "id": "pipez:item_pipe",
+            "count": 1
+          },
+          "count": 2
+        }
+      ]
+    }
+  ]
+}

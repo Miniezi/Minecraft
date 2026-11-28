@@ -1,0 +1,66 @@
+{
+  "id": "6AC0E5D001000040",
+  "filename": "tariff",
+  "group": "",
+  "order_index": 3,
+  "icon": {
+    "id": "powah:energy_cell_starter"
+  },
+  "quests": [
+    {
+      "id": "6AC0E60000000031",
+      "x": 0.0,
+      "y": 0.0,
+      "dependencies": [
+        "6AC0E60000000011"
+      ],
+      "tasks": [
+        {
+          "id": "6AC0E60000000032",
+          "type": "item",
+          "item": {
+            "id": "powah:energy_cell_starter",
+            "count": 1
+          }
+        }
+      ],
+      "rewards": [
+        {
+          "id": "6AC0E60000000033",
+          "type": "item",
+          "item": {
+            "id": "minecraft:redstone",
+            "count": 1
+          },
+          "count": 4
+        }
+      ]
+    },
+    {
+      "id": "6AC0E60000000041",
+      "x": 2.0,
+      "y": 0.0,
+      "dependencies": [
+        "6AC0E60000000031"
+      ],
+      "tasks": [
+        {
+          "id": "6AC0E60000000042",
+          "type": "advancement",
+          "advancement": "energogrid:peak"
+        }
+      ],
+      "rewards": [
+        {
+          "id": "6AC0E60000000043",
+          "type": "item",
+          "item": {
+            "id": "minecraft:copper_ingot",
+            "count": 1
+          },
+          "count": 4
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "id": "6AC0E5D001000060",
+  "filename": "fuel",
+  "group": "",
+  "order_index": 5,
+  "icon": {
+    "id": "mekanism:crusher"
+  },
+  "quests": [
+    {
+      "id": "6AC0E60000000071",
+      "x": 0.0,
+      "y": 0.0,
+      "dependencies": [
+        "6AC0E60000000011"
+      ],
+      "tasks": [
+        {
+          "id": "6AC0E60000000072",
+          "type": "item",
+          "item": {
+            "id": "mekanism:bio_fuel",
+            "count": 1
+          }
+        }
+      ],
+      "rewards": [
+        {
+          "id": "6AC0E60000000073",
+          "type": "item",
+          "item": {
+            "id": "minecraft:wheat_seeds",
+            "count": 1
+          },
+          "count": 8
+        }
+      ]
+    }
+  ]
+}

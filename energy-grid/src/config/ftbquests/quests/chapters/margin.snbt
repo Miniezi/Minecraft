@@ -1,0 +1,37 @@
+{
+  "id": "6AC0E5D001000020",
+  "filename": "margin",
+  "group": "",
+  "order_index": 1,
+  "icon": {
+    "id": "minecraft:coal"
+  },
+  "quests": [
+    {
+      "id": "6AC0E60000000011",
+      "x": 0.0,
+      "y": 0.0,
+      "dependencies": [
+        "6AC0E5D001000011"
+      ],
+      "tasks": [
+        {
+          "id": "6AC0E60000000012",
+          "type": "advancement",
+          "advancement": "energogrid:purchase"
+        }
+      ],
+      "rewards": [
+        {
+          "id": "6AC0E60000000013",
+          "type": "item",
+          "item": {
+            "id": "minecraft:iron_ingot",
+            "count": 1
+          },
+          "count": 3
+        }
+      ]
+    }
+  ]
+}
