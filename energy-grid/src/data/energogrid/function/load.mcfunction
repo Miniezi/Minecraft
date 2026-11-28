@@ -9,3 +9,4 @@ scoreboard objectives add eg_last dummy
 scoreboard objectives add eg_state dummy
 scoreboard objectives add eg_kit dummy
 scoreboard players set #rate eg_state 50
+scoreboard objectives add eg_menu dummy

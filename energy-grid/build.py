@@ -1,4 +1,4 @@
-"""Build the Prism prototype and its optional standalone resource pack."""
+"""Build the Prism prototype in Modrinth and native formats."""
 import gzip
 import io
 import json
@@ -8,6 +8,9 @@ from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
 
 SOURCE = Path(__file__).resolve().parent / "src"
 OUTPUT = Path(__file__).resolve().parent.parent / "dist"
+MINECRAFT = "1.21.1"
+NEOFORGE = "21.1.172"
+PACK_NAME = "Энергосеть — Небесный контракт"
 
 
 def json_bytes(value):
@@ -111,8 +114,8 @@ def main():
         resources[path.relative_to(SOURCE).as_posix()] = path.read_bytes()
     resource_pack = archive(resources)
     pack = {"formatVersion": 1, "components": [
-        {"uid": "net.minecraft", "version": "1.21.1", "important": True},
-        {"uid": "net.neoforged", "version": "21.1.172"},
+        {"uid": "net.minecraft", "version": MINECRAFT, "important": True},
+        {"uid": "net.neoforged", "version": NEOFORGE},
     ]}
     world = ".minecraft/saves/Energy-Grid"
     datapack = world + "/datapacks/energy-grid"
@@ -139,6 +142,22 @@ def main():
             files[f"{datapack}/{path.relative_to(SOURCE).as_posix()}"] = path.read_bytes()
     (OUTPUT / resource_name).write_bytes(resource_pack)
     (OUTPUT / "Energy-Grid-Skyblock-RU-Prototype.zip").write_bytes(archive(files))
+    index = {
+        "formatVersion": 1,
+        "game": "minecraft",
+        "versionId": "0.2.0",
+        "name": PACK_NAME,
+        "summary": "Первый платёж и терминал энергосети",
+        "files": [],
+        "dependencies": {"minecraft": MINECRAFT, "neoforge": NEOFORGE},
+    }
+    modrinth_files = {
+        "overrides/" + path.removeprefix(".minecraft/"): contents
+        for path, contents in files.items()
+        if path.startswith(".minecraft/")
+    }
+    modrinth_files["modrinth.index.json"] = json_bytes(index)
+    (OUTPUT / "Energy-Grid-Skyblock-RU.mrpack").write_bytes(archive(modrinth_files))
 
 
 if __name__ == "__main__":

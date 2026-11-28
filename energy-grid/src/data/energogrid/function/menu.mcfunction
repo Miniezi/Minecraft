@@ -1,0 +1,3 @@
+tellraw @s [{"text":"Энергосеть · Главное меню","color":"gold","bold":true}]
+tellraw @s [{"text":"[Станция]","color":"green","underlined":true,"clickEvent":{"action":"run_command","value":"/trigger eg set 6"}},{"text":"  "},{"text":"[Магазин]","color":"yellow","underlined":true,"clickEvent":{"action":"run_command","value":"/trigger eg set 7"}},{"text":"  "},{"text":"[Счёт]","color":"aqua","underlined":true,"clickEvent":{"action":"run_command","value":"/trigger eg set 8"}}]
+tellraw @s [{"text":"[Диагностика]","color":"white","underlined":true,"clickEvent":{"action":"run_command","value":"/trigger eg set 5"}},{"text":"  "},{"text":"[Восстановление]","color":"light_purple","underlined":true,"clickEvent":{"action":"run_command","value":"/trigger eg set 9"}}]

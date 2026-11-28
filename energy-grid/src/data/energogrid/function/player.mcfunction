@@ -6,4 +6,4 @@ scoreboard players set @s eg_run 0
 scoreboard players set @s eg_sales 0
 scoreboard players set @s eg_spend 0
 scoreboard players set @s eg_last 0
-tellraw @s {"text":"Откройте сундук у кафедры. Наберите /trigger eg set 1 для вызова терминала.","color":"gold"}
+tellraw @s [{"text":"Откройте сундук у кафедры. Возьмите книгу «Терминал энергосети» в руку и нажмите ПКМ.","color":"gold"}]
